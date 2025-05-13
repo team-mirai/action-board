@@ -1,6 +1,6 @@
+import type { Database } from "@/utils/types/supabase";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { Database } from '@/utils/types/supabase';
 
 export const updateSession = async (request: NextRequest) => {
 	// This `try/catch` block is only here for the interactive tutorial.
