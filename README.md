@@ -4,20 +4,25 @@
 
 - Node.js
   - brew install node
+- Docker  
 - Supabase CLI
   - brew install supabase/tap/supabase
 
 
 ## How to run
 
+1. Start supabase local env
+
+   ```bash
+   supabase start
+   ```
+
 1. Rename `.env.example` to `.env.local` and update the following:
 
    ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
+   NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY WHICH SHOWED AFTER `supabase start`]
    ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
 
 2. You can now run the Next.js local development server:
 
@@ -31,11 +36,5 @@
 3. Set Up Database
 
    ```
-   supabase link
-   # select your project
-
-   # execute migrations to your project database
-   supabase db push
+   supabase db reset
    ```
-
-   Open supabase SQL Editor on browser & paste `supabase/seed.sql` & Run for insert dummy data
