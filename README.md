@@ -33,8 +33,16 @@
    The project should now be running on [localhost:3000](http://localhost:3000/).
 
 
-3. Set Up Database
+3. Set Up Local Database
 
    ```
    supabase db reset
    ```
+
+## Guidelines
+
+generate table type definition when add or update tables.
+
+```
+npx supabase gen types typescript --local > utils/types/supabase.ts
+```

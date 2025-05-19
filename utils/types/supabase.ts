@@ -7,6 +7,31 @@ export type Json =
   | Json[];
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+          extensions?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       achievements: {
@@ -40,14 +65,7 @@ export type Database = {
             foreignKeyName: "achievements_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
-            referencedRelation: "private_users";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "achievements_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "public_users";
+            referencedRelation: "public_user_profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -163,27 +181,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      notes: {
-        Row: {
-          created_at: string;
-          id: number;
-          title: string | null;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: number;
-          title?: string | null;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: number;
-          title?: string | null;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       private_users: {
         Row: {
           address_prefecture: string;
@@ -192,6 +189,7 @@ export type Database = {
           id: string;
           name: string;
           postcode: string;
+          registered_at: string;
           updated_at: string;
           x_username: string | null;
         };
@@ -202,6 +200,7 @@ export type Database = {
           id: string;
           name: string;
           postcode: string;
+          registered_at?: string;
           updated_at?: string;
           x_username?: string | null;
         };
@@ -212,7 +211,32 @@ export type Database = {
           id?: string;
           name?: string;
           postcode?: string;
+          registered_at?: string;
           updated_at?: string;
+          x_username?: string | null;
+        };
+        Relationships: [];
+      };
+      public_user_profiles: {
+        Row: {
+          address_prefecture: string;
+          created_at: string;
+          id: string;
+          name: string;
+          x_username: string | null;
+        };
+        Insert: {
+          address_prefecture: string;
+          created_at: string;
+          id: string;
+          name: string;
+          x_username?: string | null;
+        };
+        Update: {
+          address_prefecture?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
           x_username?: string | null;
         };
         Relationships: [];
@@ -258,27 +282,12 @@ export type Database = {
       };
     };
     Views: {
-      public_users: {
+      activity_timeline_view: {
         Row: {
           address_prefecture: string | null;
           created_at: string | null;
-          id: string | null;
           name: string | null;
-          x_username: string | null;
-        };
-        Insert: {
-          address_prefecture?: string | null;
-          created_at?: string | null;
-          id?: string | null;
-          name?: string | null;
-          x_username?: string | null;
-        };
-        Update: {
-          address_prefecture?: string | null;
-          created_at?: string | null;
-          id?: string | null;
-          name?: string | null;
-          x_username?: string | null;
+          title: string | null;
         };
         Relationships: [];
       };
@@ -401,6 +410,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

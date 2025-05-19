@@ -47,6 +47,9 @@ create table public_user_profiles (
   x_username VARCHAR(200),
   created_at timestamptz not null
 );
+
+COMMENT ON COLUMN public_user_profiles.id IS 'ユーザーのUUID。主キー。private_users.idと同じ値がセットされる';
+
 -- RLS設定
 ALTER TABLE public_user_profiles ENABLE ROW LEVEL SECURITY;
 -- すべてのユーザーに読み込みは許可
@@ -106,11 +109,11 @@ CREATE POLICY select_all_missions
 
 -- ミッション達成を保持するテーブル。
 CREATE TABLE achievements (
+    id UUID PRIMARY KEY,
     mission_id UUID REFERENCES missions(id),
-    user_id UUID REFERENCES private_users(id),
+    user_id UUID REFERENCES public_user_profiles(id),
     evidence JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    PRIMARY KEY (mission_id, user_id)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 COMMENT ON TABLE achievements IS 'ユーザーによるミッション達成の記録';
@@ -118,6 +121,20 @@ COMMENT ON COLUMN achievements.mission_id IS '達成したミッションのID';
 COMMENT ON COLUMN achievements.user_id IS 'ミッションを達成したユーザーのID';
 COMMENT ON COLUMN achievements.evidence IS '達成の証拠(JSON形式)。達成の証拠が不要な場合は{}を入れる';
 COMMENT ON COLUMN achievements.created_at IS '記録日時(UTC)';
+
+
+-- 活動タイムラインに表示するためのView
+CREATE VIEW activity_timeline_view AS
+SELECT
+  a.id,
+  p.name,
+  p.address_prefecture,
+  m.title,
+  a.created_at
+FROM achievements a
+JOIN public_user_profiles p ON a.user_id = p.id
+JOIN missions m ON a.mission_id = m.id;
+
 
 -- RLS設定
 ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;

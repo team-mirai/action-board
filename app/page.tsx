@@ -18,6 +18,12 @@ export default async function Home() {
     .order("date", { ascending: false })
     .limit(2);
 
+  const { data: activityTimelines } = await supabase
+    .from("activity_timeline_view")
+    .select()
+    .order("created_at", { ascending: false })
+    .limit(2);
+
   const { data: dailyDashboardRegistrationSummary } = await supabase
     .from("daily_dashboard_registration_summary")
     .select()
@@ -60,6 +66,7 @@ export default async function Home() {
       <TopSection
         actionNum={actionNum}
         actionNumDiff={actionNumDiff}
+        activityTimelines={activityTimelines ?? []}
         currentDate={currentDate}
       />
 
@@ -79,11 +86,19 @@ export default async function Home() {
 type TopSectionProps = {
   actionNum: number;
   actionNumDiff: number;
+  activityTimelines: {
+    id: string | null;
+    address_prefecture: string | null;
+    created_at: string | null;
+    name: string | null;
+    title: string | null;
+  }[];
   currentDate: string;
 };
 function TopSection({
   actionNum,
   actionNumDiff,
+  activityTimelines,
   currentDate,
 }: TopSectionProps) {
   return (
@@ -110,27 +125,27 @@ function TopSection({
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="flex flex-row gap-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>アイコン</AvatarFallback>
-            </Avatar>
-            <div>
-              <p>愛知県のxxxxさんがダッシュボードに登録しました。</p>
-              <p>(2025/06/20 00:00)</p>
+          {activityTimelines.map((activity) => (
+            <div key={activity.id} className="flex flex-row gap-2">
+              <Avatar>
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                />
+                <AvatarFallback>アイコン</AvatarFallback>
+              </Avatar>
+              <div>
+                <p>
+                  {activity.address_prefecture}の{activity.name}さんが "
+                  {activity.title}" を達成しました！
+                </p>
+                <p>
+                  {activity.created_at &&
+                    dateTimeFormatter(new Date(activity.created_at))}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-row gap-1">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>アイコン</AvatarFallback>
-            </Avatar>
-            <div>
-              <p>愛知県のxxxxさんがダッシュボードに登録しました。</p>
-              <p>(2025/06/20 00:00)</p>
-            </div>
-          </div>
+          ))}
         </div>
       </Card>
     </div>
