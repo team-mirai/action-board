@@ -53,7 +53,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  return redirect("/");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -131,4 +131,52 @@ export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
+};
+
+export const achieveMissionAction = async (formData: FormData) => {
+  const referer = (await headers()).get("referer") || "";
+  const url = new URL(referer);
+  const missionId = url.pathname.split("/").filter(Boolean).pop();
+
+  if (!missionId) {
+    return encodedRedirect("error", "/missions", "Something went wrong");
+  }
+
+  const supabase = await createClient();
+
+  // ユーザーがログイン済みかチェック
+  const { data: authUser } = await supabase.auth.getUser();
+  if (!authUser) {
+    throw Error("User was not logged in.");
+  }
+
+  // ユーザーIDを取得
+  const { data: user } = await supabase
+    .from("private_users")
+    .select("id")
+    .single(); // RLSのため、そもそも1件しか取得できない
+  if (!user) {
+    throw Error("User was not found.");
+  }
+
+  // ミッション達成を記録
+  const { error } = await supabase.from("achievements").insert([
+    {
+      id: crypto.randomUUID(),
+      evidence: {}, // TODO: 一旦何も入れないがミッションに応じて何かをセットする
+      user_id: user.id,
+      mission_id: missionId,
+    },
+  ]);
+
+  if (error) {
+    console.error(`${error.code} ${error.message}`);
+    return encodedRedirect("error", `/missions/${missionId}`, error.message);
+  }
+
+  return encodedRedirect(
+    "success",
+    `/missions/${missionId}/complete`,
+    "Thank you!",
+  );
 };

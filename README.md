@@ -39,6 +39,20 @@
    supabase db reset
    ```
 
+## How to Use
+
+1. Create new user via [local supabase studio](http://localhost:54323/).
+  * Open "Authentication" menu
+  * Click "Add user" button & select "Create new user"
+  * Input mail address & password
+
+2. Insert a record into the private_users table using the ID of the newly created authenticated user.
+  * Open "Table Editor" menu
+  * Select private_users table
+  * Click "Insert" button & select  "Insert row"
+  * Input "id" as the ID of the newly created authenticated user id.
+
+
 ## Guidelines
 
 generate table type definition when add or update tables.

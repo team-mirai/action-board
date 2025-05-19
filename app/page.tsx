@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { dateTimeFormatter } from "@/utils/formatter";
 import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -216,7 +217,7 @@ function Mission({ missions }: MissionProps) {
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>アイコン</AvatarFallback>
             </Avatar>
-            <p>{mission.content}</p>
+            <Link href={`/missions/${mission.id}`}>{mission.content}</Link>
           </Card>
         ))}
       </div>
