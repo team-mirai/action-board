@@ -113,7 +113,8 @@ CREATE TABLE achievements (
     mission_id UUID REFERENCES missions(id),
     user_id UUID REFERENCES public_user_profiles(id),
     evidence JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE(mission_id, user_id)
 );
 
 COMMENT ON TABLE achievements IS 'ユーザーによるミッション達成の記録';
@@ -121,20 +122,6 @@ COMMENT ON COLUMN achievements.mission_id IS '達成したミッションのID';
 COMMENT ON COLUMN achievements.user_id IS 'ミッションを達成したユーザーのID';
 COMMENT ON COLUMN achievements.evidence IS '達成の証拠(JSON形式)。達成の証拠が不要な場合は{}を入れる';
 COMMENT ON COLUMN achievements.created_at IS '記録日時(UTC)';
-
-
--- 活動タイムラインに表示するためのView
-CREATE VIEW activity_timeline_view AS
-SELECT
-  a.id,
-  p.name,
-  p.address_prefecture,
-  m.title,
-  a.created_at
-FROM achievements a
-JOIN public_user_profiles p ON a.user_id = p.id
-JOIN missions m ON a.mission_id = m.id;
-
 
 -- RLS設定
 ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;
@@ -153,6 +140,19 @@ CREATE POLICY insert_own_achievement
 CREATE POLICY select_all_achievements
   ON achievements FOR SELECT
   USING (true);
+
+
+-- 活動タイムラインに表示するためのView
+CREATE VIEW activity_timeline_view AS
+SELECT
+  a.id,
+  p.name,
+  p.address_prefecture,
+  m.title,
+  a.created_at
+FROM achievements a
+JOIN public_user_profiles p ON a.user_id = p.id
+JOIN missions m ON a.mission_id = m.id;
 
 
 -- イベント
