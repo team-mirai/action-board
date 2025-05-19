@@ -38,20 +38,23 @@ export type Database = {
         Row: {
           created_at: string;
           evidence: Json;
-          mission_id: string;
-          user_id: string;
+          id: string;
+          mission_id: string | null;
+          user_id: string | null;
         };
         Insert: {
           created_at?: string;
           evidence: Json;
-          mission_id: string;
-          user_id: string;
+          id: string;
+          mission_id?: string | null;
+          user_id?: string | null;
         };
         Update: {
           created_at?: string;
           evidence?: Json;
-          mission_id?: string;
-          user_id?: string;
+          id?: string;
+          mission_id?: string | null;
+          user_id?: string | null;
         };
         Relationships: [
           {
@@ -286,6 +289,7 @@ export type Database = {
         Row: {
           address_prefecture: string | null;
           created_at: string | null;
+          id: string | null;
           name: string | null;
           title: string | null;
         };
