@@ -12,10 +12,10 @@ VALUES
   ('2246205f-933f-4a86-83af-dbf6bb6cde90', 'SNSに発信しよう', 'https://example.com/icon2.png', '活動の様子をSNSに投稿してみよう。');
 
 -- ミッション達成
-INSERT INTO achievements (mission_id, user_id, evidence)
+INSERT INTO achievements (id, mission_id, user_id, evidence)
 VALUES
-  ('e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '{"photo_url": "https://example.com/photo1.jpg"}'),
-  ('2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '{"tweet_url": "https://twitter.com/example/status/123"}');
+  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '{"photo_url": "https://example.com/photo1.jpg"}'),
+  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '{"tweet_url": "https://twitter.com/example/status/123"}');
 
 -- イベント
 INSERT INTO events (id, title, url, starts_at)
