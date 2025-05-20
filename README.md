@@ -14,7 +14,7 @@
 
    ```bash
    supabase start
-````
+   ````
 
 2. `.env.example` を `.env.local` にリネームし、以下の値を更新:
 
