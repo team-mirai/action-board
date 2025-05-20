@@ -1,0 +1,7 @@
+pre-commit:
+  commands:
+    biome:
+      glob: '*.{js,ts,jsx,tsx}'
+      run: npm run biome:check:write
+      stage_fixed: true
+

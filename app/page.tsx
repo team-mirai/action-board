@@ -1,3 +1,4 @@
+import { ActivityTimeline } from "@/components/activity-timeline";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { dateTimeFormatter } from "@/utils/formatter";
 import { createClient } from "@/utils/supabase/server";
+import type { Tables } from "@/utils/types/supabase";
 import Link from "next/link";
 
 export default async function Home() {
@@ -87,13 +89,7 @@ export default async function Home() {
 type TopSectionProps = {
   actionNum: number;
   actionNumDiff: number;
-  activityTimelines: {
-    id: string | null;
-    address_prefecture: string | null;
-    created_at: string | null;
-    name: string | null;
-    title: string | null;
-  }[];
+  activityTimelines: Tables<"activity_timeline_view">[];
   currentDate: string;
 };
 function TopSection({
@@ -126,27 +122,7 @@ function TopSection({
         </div>
 
         <div className="flex flex-col gap-2">
-          {activityTimelines.map((activity) => (
-            <div key={activity.id} className="flex flex-row gap-2">
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>アイコン</AvatarFallback>
-              </Avatar>
-              <div>
-                <p>
-                  {activity.address_prefecture}の{activity.name}さんが "
-                  {activity.title}" を達成しました！
-                </p>
-                <p>
-                  {activity.created_at &&
-                    dateTimeFormatter(new Date(activity.created_at))}
-                </p>
-              </div>
-            </div>
-          ))}
+          <ActivityTimeline timeline={activityTimelines} />
         </div>
       </Card>
     </div>
