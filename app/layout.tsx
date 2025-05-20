@@ -42,7 +42,12 @@ export default function RootLayout({
                 <div className="w-full flex justify-between items-center px-4 lg:px-6 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
                     <Link href="/">
-                      <Image src="/img/logo.png" alt="logo" width={57} height={48} />
+                      <Image
+                        src="/img/logo.png"
+                        alt="logo"
+                        width={57}
+                        height={48}
+                      />
                     </Link>
                   </div>
                   <HeaderAuth />

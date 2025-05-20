@@ -77,12 +77,14 @@ export default async function Home() {
       {!user && (
         <div className="flex flex-col items-center gap-2 my-2">
           <Link href="/sign-up">
-            <Button size="sm" className="min-w-72">チームみらいに参画する</Button>
+            <Button size="sm" className="min-w-72">
+              チームみらいに参画する
+            </Button>
           </Link>
         </div>
       )}
 
-      <div className="mt-4"></div>
+      <div className="mt-4" />
 
       <TopSection
         actionNum={actionNum}
@@ -317,7 +319,9 @@ function Sns() {
   return (
     <div className="flex flex-col bg-emerald-50 p-4 gap-2">
       <h2 className="text-lg font-bold">チームみらいのSNS</h2>
-      <p>「チームみらい」の活動の最新情報を発信しています。ぜひフォロー・登録お願いします。</p>
+      <p>
+        「チームみらい」の活動の最新情報を発信しています。ぜひフォロー・登録お願いします。
+      </p>
 
       <div className="flex flex-row justify-center gap-4">
         {snsData.map((sns) => (

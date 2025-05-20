@@ -2,9 +2,16 @@ import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
 import { BellIcon, LogOutIcon, UserCircleIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -22,7 +29,9 @@ export default async function AuthButton() {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar className="w-8 h-8">
-            <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">{profile?.name.substring(0, 1) ?? 'ユ'}</AvatarFallback>
+            <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
+              {profile?.name.substring(0, 1) ?? "ユ"}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -32,17 +41,13 @@ export default async function AuthButton() {
           sideOffset={4}
         >
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              アカウント
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              お知らせ
-            </DropdownMenuItem>
+            <DropdownMenuItem>アカウント</DropdownMenuItem>
+            <DropdownMenuItem>お知らせ</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <form action={signOutAction}>
             <DropdownMenuItem>
-              <button className="w-full text-left cursor-default">
+              <button type="submit" className="w-full text-left cursor-default">
                 ログアウト
               </button>
             </DropdownMenuItem>
