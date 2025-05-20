@@ -1,8 +1,8 @@
 import {
-  test,
+  assertAuthState,
   expect,
   generateRandomEmail,
-  assertAuthState,
+  test,
 } from "../e2e-test-helpers";
 
 test.describe("認証フロー", () => {
@@ -108,7 +108,7 @@ test.describe("認証フロー", () => {
     await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign up" })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Forgot Password?" })
+      page.getByRole("link", { name: "Forgot Password?" }),
     ).toBeVisible();
 
     // 2. 空の入力で送信するとエラーになることを確認
