@@ -1,51 +1,34 @@
-"use client";
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
-import type { Tables } from "@/utils/types/supabase";
 import { MapPin } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function UserDetailPage() {
-  const params = useParams();
-  const id =
-    typeof params.id === "string"
-      ? params.id
-      : Array.isArray(params.id)
-        ? params.id[0]
-        : "";
-  const [user, setUser] = useState<Tables<"public_user_profiles"> | null>(null);
-  const [timeline, setTimeline] = useState<Tables<"activity_timeline_view">[]>(
-    [],
-  );
-  const [loading, setLoading] = useState(true);
+type Params = {
+  id: string;
+};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const supabase = createClient();
-      // ユーザー情報取得
-      const { data: userData } = await supabase
-        .from("public_user_profiles")
-        .select("*")
-        .eq("id", id)
-        .single();
-      setUser(userData);
-      console.log(id, userData);
-      // 活動タイムライン取得
-      const { data: timelineData } = await supabase
-        .from("activity_timeline_view")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setTimeline(timelineData || []);
-      setLoading(false);
-    };
-    if (id) fetchData();
-  }, [id]);
+type Props = {
+  params: Params;
+};
 
-  if (loading) return <div>読み込み中...</div>;
+export default async function UserDetailPage({ params }: Props) {
+  const { id } = params;
+  const supabase = createClient();
+
+  // ユーザー情報取得
+  const { data: user } = await supabase
+    .from("public_user_profiles")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  // 活動タイムライン取得
+  const { data: timeline } = await supabase
+    .from("activity_timeline_view")
+    .select("*")
+    .order("created_at", { ascending: false });
+
   if (!user) return <div>ユーザーが見つかりません</div>;
 
   return (
@@ -67,7 +50,7 @@ export default function UserDetailPage() {
         <div className="flex flex-row justify-between items-center mb-2">
           <span className="text-lg font-bold">活動タイムライン</span>
         </div>
-        <ActivityTimeline timeline={timeline} />
+        <ActivityTimeline timeline={timeline || []} />
       </Card>
     </div>
   );
