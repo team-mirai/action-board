@@ -1,61 +1,71 @@
-# act-board
+# ゲーミフィケーションダッシュボード
 
-## Requirements
+## 必要な環境
 
-- Node.js
-  - brew install node
+- Node.js  
+  - Macの場合 `brew install node` でインストール
 - Docker  
-- Supabase CLI
-  - brew install supabase/tap/supabase
+- Supabase CLI  
+  - Macの場合 `brew install supabase/tap/supabase` でインストール
 
+## サービスの起動方法
 
-## How to run
-
-1. Start supabase local env
+1. Supabase のローカル環境を起動
 
    ```bash
    supabase start
-   ```
+````
 
-1. Rename `.env.example` to `.env.local` and update the following:
+2. `.env.example` を `.env.local` にリネームし、以下の値を更新:
 
    ```
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY WHICH SHOWED AFTER `supabase start`]
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=[`supabase start` 実行後に表示される SUPABASE プロジェクトの API ANON KEY を入力]
    ```
 
-2. You can now run the Next.js local development server:
+3. ローカルデータベースの初期化:
+
+   ```bash
+   supabase db reset
+   ```
+
+  supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。
+
+
+4. Next.js のローカル開発サーバーを起動:
 
    ```bash
    npm run dev
    ```
 
-   The project should now be running on [localhost:3000](http://localhost:3000/).
+   サービスは [localhost:3000](http://localhost:3000/) でアクセス可能になります。
 
 
-3. Set Up Local Database
 
-   ```
-   supabase db reset
-   ```
+## サービスの使い方
 
-## How to Use
+### 認証ユーザーの作成
 
-1. Create new user via [local supabase studio](http://localhost:54323/).
-  * Open "Authentication" menu
-  * Click "Add user" button & select "Create new user"
-  * Input mail address & password
+ローカルでサービスにログインできるユーザーとなるために、ユーザー登録が必要です。
 
-2. Insert a record into the private_users table using the ID of the newly created authenticated user.
-  * Open "Table Editor" menu
-  * Select private_users table
-  * Click "Insert" button & select  "Insert row"
-  * Input "id" as the ID of the newly created authenticated user id.
+1. [ローカル Supabase Studio](http://localhost:54323/) から新しいsupabase認証ユーザーを作成
+
+* 「Authentication」メニューを開く
+* 「Add user」ボタンをクリックし、「Create new user」を選択
+* メールアドレスとパスワードを入力(開発用なのでパスワードは任意です)
+
+2. supabase認証ユーザーレコードのID をメモし、サービスのユーザー情報である`private_users` テーブルにレコードを追加
+
+* 「Table Editor」メニューを開く
+* `private_users` テーブルを選択
+* 「Insert」ボタンをクリックし、「Insert row」を選択
+* 「id」欄に先ほど作成したsupabase認証ユーザーの ID を入力
+* その他の欄はよしなに入力する
 
 
-## Guidelines
+## 開発ガイドライン
 
-generate table type definition when add or update tables.
+migrationファイルの追加や編集で、テーブルの追加や更新を行った場合は、型定義を生成してください。
 
 ```
 npx supabase gen types typescript --local > utils/types/supabase.ts
