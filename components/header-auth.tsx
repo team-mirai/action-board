@@ -1,7 +1,10 @@
 import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
+import { BellIcon, LogOutIcon, UserCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -14,21 +17,45 @@ export default async function AuthButton() {
     .select("name")
     .single();
 
-  return user && profile ? (
-    <div className="flex items-center gap-4">
-      {profile.name}
-      <form action={signOutAction}>
-        <Button size="sm" type="submit" variant={"outline"}>
-          ログアウト
-        </Button>
-      </form>
-    </div>
+  return user /* && profile */ ? (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar className="w-8 h-8">
+            <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">{profile?.name.substring(0, 1) ?? 'ユ'}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          side="bottom"
+          align="end"
+          sideOffset={4}
+        >
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              アカウント
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              お知らせ
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <form action={signOutAction}>
+            <DropdownMenuItem>
+              <button className="w-full text-left cursor-default">
+                ログアウト
+              </button>
+            </DropdownMenuItem>
+          </form>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
+      <Button asChild size="sm" variant="outline">
         <Link href="/sign-in">ログイン</Link>
       </Button>
-      <Button asChild size="sm" variant={"default"}>
+      <Button asChild size="sm" variant="default">
         <Link href="/sign-up">サインアップ</Link>
       </Button>
     </div>

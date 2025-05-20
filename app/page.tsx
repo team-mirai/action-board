@@ -15,6 +15,11 @@ import Link from "next/link";
 
 export default async function Home() {
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: dailyActionSummary } = await supabase
     .from("daily_action_summary")
     .select()
@@ -64,7 +69,20 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-center p-4">チームみらい</h1>
+      <div className="mt-2">
+        <h1 className="text-center text-lg font-bold">チームみらい</h1>
+        <h1 className="text-center text-lg font-bold">アクションボード</h1>
+      </div>
+
+      {!user && (
+        <div className="flex flex-col items-center gap-2 my-2">
+          <Link href="/sign-up">
+            <Button size="sm" className="min-w-72">チームみらいに参画する</Button>
+          </Link>
+        </div>
+      )}
+
+      <div className="mt-4"></div>
 
       <TopSection
         actionNum={actionNum}
@@ -99,10 +117,10 @@ function TopSection({
   currentDate,
 }: TopSectionProps) {
   return (
-    <div className="flex flex-col bg-emerald-100 p-4 gap-2">
-      <div className="flex flex-row justify-between">
-        <h2 className="text-xl font-bold">これまでのチームみらいの活動</h2>
-        <p>{currentDate}更新</p>
+    <div className="flex flex-col bg-emerald-50 p-4 gap-2">
+      <div className="flex flex-row justify-between items-center">
+        <h2 className="text-lg font-bold">これまでのチームみらいの活動</h2>
+        <div className="text-xs">{currentDate}更新</div>
       </div>
 
       <Card className="p-2">
@@ -136,9 +154,9 @@ type ProgressProps = {
 function Progress({ registrationNum, eventNum }: ProgressProps) {
   return (
     <div className="flex flex-col p-4 gap-2">
-      <div className="flex flex-row justify-between">
-        <h2 className="text-xl font-bold">今日までの活動</h2>
-        <p>2025/xx/xx xx:xx更新</p>
+      <div className="flex flex-row justify-between items-center">
+        <h2 className="text-lg font-bold">今日までの活動</h2>
+        <div className="text-xs">2025/xx/xx xx:xx更新</div>
       </div>
 
       <Accordion type="single" collapsible>
@@ -183,8 +201,8 @@ type MissionProps = {
 };
 function Mission({ missions }: MissionProps) {
   return (
-    <div className="flex flex-col bg-emerald-100 p-4 gap-2">
-      <h2 className="text-xl font-bold">ミッション</h2>
+    <div className="flex flex-col bg-emerald-50 p-4 gap-2">
+      <h2 className="text-lg font-bold">ミッション</h2>
 
       <div className="flex flex-col gap-2">
         {missions.map((mission) => (
@@ -214,7 +232,7 @@ type EventProps = {
 function Event({ events }: EventProps) {
   return (
     <div className="flex flex-col p-4 gap-2">
-      <h2 className="text-xl font-bold">今後のイベント</h2>
+      <h2 className="text-lg font-bold">今後のイベント</h2>
 
       {events.map((event) => (
         <Card key={event.id} className="flex flex-col p-4">
@@ -245,8 +263,8 @@ function OpenChat() {
     },
   ];
   return (
-    <div className="flex flex-col bg-emerald-100 p-4 gap-2">
-      <h2 className="text-xl font-bold">チームみらいの公認オープンチャット</h2>
+    <div className="flex flex-col bg-emerald-50 p-4 gap-2">
+      <h2 className="text-lg font-bold">チームみらいの公認オープンチャット</h2>
 
       <Card className="flex flex-col gap-2 p-4">
         {chatRoomData.map((chatRoom) => (
@@ -297,20 +315,17 @@ function Sns() {
   ];
 
   return (
-    <div className="flex flex-col bg-emerald-100 p-4 gap-2">
-      <h2 className="text-xl font-bold">チームみらいのSNS</h2>
-      <p>
-        「チームみらい」の活動の最新情報を発信しています。ぜひフォロー・登録お願いします。
-      </p>
+    <div className="flex flex-col bg-emerald-50 p-4 gap-2">
+      <h2 className="text-lg font-bold">チームみらいのSNS</h2>
+      <p>「チームみらい」の活動の最新情報を発信しています。ぜひフォロー・登録お願いします。</p>
 
       <div className="flex flex-row justify-center gap-4">
         {snsData.map((sns) => (
-          <Avatar key={sns.id}>
-            <a href={sns.link} target="_blank" rel="noreferrer">
-              <AvatarImage src={sns.icon} alt={sns.id} />
-            </a>
-            <AvatarFallback>アイコン</AvatarFallback>
-          </Avatar>
+          <a key={sns.id} href={sns.link} target="_blank" rel="noreferrer">
+            <Avatar>
+              <AvatarFallback>{sns.id.substring(0, 2)}</AvatarFallback>
+            </Avatar>
+          </a>
         ))}
       </div>
     </div>
