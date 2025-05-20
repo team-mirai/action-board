@@ -1,6 +1,9 @@
 import { achieveMissionAction } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { ShareButton } from "./ShareButton";
+import { ShareTwitterButton } from "./ShareTwitterButton";
 type Params = {
   id: string;
 };
@@ -26,11 +29,20 @@ export default async function MissionPage({ params }: Props) {
     throw new Error("Mission not found");
   }
 
+  const message = `ミッション「${mission.title}」が完了しました！`;
+  const shareMessage = `チームみらい Action Board で${message}\n`;
+
   return (
     <div className="flex flex-col">
       <h1>おめでとう！</h1>
-      <p>ミッション「{mission.title}」が完了しました！</p>
-      TODO: シェア機能
+      <p>{message}</p>
+      <ShareTwitterButton className="mt-4" message={shareMessage}>
+        Xでシェア
+      </ShareTwitterButton>
+      {/* navigator.share()を使っているのモバイルのみ表示 */}
+      <ShareButton className="mt-2 md:hidden" message={shareMessage}>
+        その他のサービスにシェア
+      </ShareButton>
     </div>
   );
 }
