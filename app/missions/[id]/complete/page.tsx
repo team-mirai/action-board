@@ -1,6 +1,3 @@
-import { achieveMissionAction } from "@/app/actions";
-import { SubmitButton } from "@/components/submit-button";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { ShareButton } from "./ShareButton";
 import { ShareTwitterButton } from "./ShareTwitterButton";
@@ -36,11 +33,19 @@ export default async function MissionPage({ params }: Props) {
     <div className="flex flex-col">
       <h1>おめでとう！</h1>
       <p>{message}</p>
-      <ShareTwitterButton className="mt-4" message={shareMessage}>
+      <ShareTwitterButton
+        className="mt-4"
+        message={shareMessage}
+        missionId={id}
+      >
         Xでシェア
       </ShareTwitterButton>
       {/* navigator.share()を使っているのモバイルのみ表示 */}
-      <ShareButton className="mt-2 md:hidden" message={shareMessage}>
+      <ShareButton
+        className="mt-2 md:hidden"
+        message={shareMessage}
+        missionId={id}
+      >
         その他のサービスにシェア
       </ShareButton>
     </div>

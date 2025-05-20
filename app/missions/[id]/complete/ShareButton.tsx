@@ -6,13 +6,19 @@ import { Share } from "lucide-react";
 type Props = {
   children: React.ReactNode;
   message: string;
+  missionId: string;
   className?: string;
   url?: string;
 };
 
-export function ShareButton({ children, message, className, url }: Props) {
-  const shareUrl =
-    url ?? (typeof window !== "undefined" ? window.location.href : "");
+export function ShareButton({
+  children,
+  message,
+  missionId,
+  className,
+  url,
+}: Props) {
+  const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
   const handleShare = async () => {
     if (navigator.share) {
       try {
