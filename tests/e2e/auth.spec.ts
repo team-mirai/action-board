@@ -22,7 +22,7 @@ test.describe("認証フロー", () => {
     await page.getByRole("link", { name: "サインアップ" }).click();
     await expect(page).toHaveURL("/sign-up");
     await expect(
-      page.getByRole("heading", { name: "チームみらいに参画する" })
+      page.getByRole("heading", { name: "チームみらいに参画する" }),
     ).toBeVisible();
 
     // 3. サインアップ情報を入力
@@ -77,12 +77,12 @@ test.describe("認証フロー", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(
-      page.getByRole("heading", { name: "チームみらいに参画する" })
+      page.getByRole("heading", { name: "チームみらいに参画する" }),
     ).toBeVisible();
     await expect(page.getByText("Email", { exact: true })).toBeVisible();
     await expect(page.getByText("Password", { exact: true })).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "サインアップ" })
+      page.getByRole("button", { name: "サインアップ" }),
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
 
@@ -116,7 +116,7 @@ test.describe("認証フロー", () => {
     await expect(page.getByRole("button", { name: "ログイン" })).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "パスワードを忘れた方" })
+      page.getByRole("link", { name: "パスワードを忘れた方" }),
     ).toBeVisible();
 
     // 2. 空の入力で送信するとエラーになることを確認
