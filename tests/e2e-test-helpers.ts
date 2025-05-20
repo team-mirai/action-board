@@ -1,0 +1,57 @@
+import { test as base, expect, Page } from "@playwright/test";
+
+// カスタムテストフィクスチャを定義
+type TestFixtures = {
+  signedInPage: Page;
+};
+
+// テストヘルパー関数を拡張したテストオブジェクト
+export const test = base.extend<TestFixtures>({
+  signedInPage: async ({ page }, use) => {
+    // ログイン処理
+    await page.goto("/sign-in");
+    await page.fill('input[name="email"]', "test@example.com");
+    await page.fill('input[name="password"]', "password123");
+    await page.click('button[type="submit"]');
+
+    // ログイン完了を確認（ホームページにリダイレクトされることを想定）
+    await page.waitForURL("/");
+
+    // ログイン済みのページを渡す
+    await use(page);
+  },
+});
+
+export { expect };
+
+/**
+ * テスト用にランダムなメールアドレスを生成する
+ * @returns {string} ランダムなメールアドレス
+ */
+export function generateRandomEmail(): string {
+  const randomString = Math.random().toString(36).substring(2, 10);
+  return `test-${randomString}@example.com`;
+}
+
+/**
+ * 認証関連の要素が存在するか確認する
+ * @param page Playwrightのページオブジェクト
+ * @param isLoggedIn ログイン状態の場合はtrue
+ */
+export async function assertAuthState(
+  page: Page,
+  isLoggedIn: boolean
+): Promise<void> {
+  if (isLoggedIn) {
+    // ログイン時はログアウトボタンが表示されること
+    await expect(
+      page.getByRole("button", { name: "ログアウト" })
+    ).toBeVisible();
+  } else {
+    // 未ログイン時はログインとサインアップリンクが表示されること
+    await expect(page.getByRole("link", { name: "ログイン" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "サインアップ" })
+    ).toBeVisible();
+  }
+}

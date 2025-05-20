@@ -9,14 +9,15 @@ export default async function AuthButton() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   const { data: profile } = await supabase
     .from("private_users")
     .select("name")
     .single();
 
-  return user && profile ? (
+  return user /* && profile */ ? (
     <div className="flex items-center gap-4">
-      {profile.name}
+      {profile?.name ?? "ユーザー名"}
       <form action={signOutAction}>
         <Button size="sm" type="submit" variant={"outline"}>
           ログアウト

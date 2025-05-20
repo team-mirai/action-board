@@ -4,7 +4,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "biome:check:write": "npx biome check --write"
+    "biome:check:write": "npx biome check --write",
+    "test:e2e": "playwright test --workers=1",
+    "test:e2e:ui": "playwright test --ui --workers=1",
+    "test:e2e:debug": "playwright test --debug --workers=1"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.10",
@@ -27,9 +30,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@playwright/test": "^1.52.0",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
+    "dotenv": "^16.5.0",
     "postcss": "8.4.49",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "3.4.17",
