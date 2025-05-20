@@ -40,18 +40,16 @@ export function generateRandomEmail(): string {
  */
 export async function assertAuthState(
   page: Page,
-  isLoggedIn: boolean,
+  isLoggedIn: boolean
 ): Promise<void> {
   if (isLoggedIn) {
-    // ログイン時はログアウトボタンが表示されること
-    await expect(
-      page.getByRole("button", { name: "ログアウト" }),
-    ).toBeVisible();
+    // ログイン時はアバターアイコンが表示されること
+    await expect(page.getByTestId("avatar")).toBeVisible();
   } else {
     // 未ログイン時はログインとサインアップリンクが表示されること
     await expect(page.getByRole("link", { name: "ログイン" })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "サインアップ" }),
+      page.getByRole("link", { name: "サインアップ" })
     ).toBeVisible();
   }
 }
