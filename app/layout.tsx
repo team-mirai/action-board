@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import Image from "next/image";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -12,8 +13,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "チームみらい アクションボード",
+  description: "チームみらいのアクションボードです。",
 };
 
 const geistSans = Geist({
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html lang="ja" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -36,16 +37,23 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-20 items-center">
+            <div className="flex-1 w-full flex flex-col items-center">
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-2xl flex justify-between items-center p-3 px-5 text-sm">
+                <div className="w-full flex justify-between items-center px-4 lg:px-6 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>チームみらい</Link>
+                    <Link href="/">
+                      <Image
+                        src="/img/logo.png"
+                        alt="logo"
+                        width={57}
+                        height={48}
+                      />
+                    </Link>
                   </div>
                   <HeaderAuth />
                 </div>
               </nav>
-              <div className="flex flex-col gap-20 max-w-5xl">{children}</div>
+              <div className="flex flex-col py-4">{children}</div>
 
               {/* <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
                 <p>チームみらい</p>
