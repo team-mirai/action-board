@@ -26,7 +26,7 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
       .from("activity_timeline_view")
       .select("*")
       .order("created_at", { ascending: false })
-      .range(timeline.length, timeline.length + PAGE_SIZE);
+      .range(timeline.length, timeline.length + props.pageSize);
     if (takeTimeline) {
       const newTimeline = [...timeline, ...takeTimeline];
       setTimeline(newTimeline);
