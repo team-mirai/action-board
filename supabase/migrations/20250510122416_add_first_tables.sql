@@ -146,6 +146,7 @@ CREATE POLICY select_all_achievements
 CREATE VIEW activity_timeline_view AS
 SELECT
   a.id,
+  p.id as user_id,
   p.name,
   p.address_prefecture,
   m.title,

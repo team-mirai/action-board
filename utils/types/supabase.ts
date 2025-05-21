@@ -68,6 +68,13 @@ export type Database = {
             foreignKeyName: "achievements_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
+            referencedRelation: "activity_timeline_view";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "achievements_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
             referencedRelation: "public_user_profiles";
             referencedColumns: ["id"];
           },
@@ -292,6 +299,7 @@ export type Database = {
           id: string | null;
           name: string | null;
           title: string | null;
+          user_id: string | null;
         };
         Relationships: [];
       };
