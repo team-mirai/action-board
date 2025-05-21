@@ -16,21 +16,21 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
           key={activity.id || idx}
           className="flex flex-row gap-2 items-center"
         >
-          <Link href={`/user/${activity.user_id}`}>
+          <Link href={`/users/${activity.user_id}`}>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
               <AvatarFallback>アイコン</AvatarFallback>
             </Avatar>
           </Link>
           <div>
-            <p>
+            <div className="text-sm">
               {activity.address_prefecture}の{activity.name}さんが「
               {activity.title}」を達成しました！
-            </p>
-            <p className="text-xs text-gray-500">
+            </div>
+            <div className="text-xs text-gray-500">
               {activity.created_at &&
                 dateTimeFormatter(new Date(activity.created_at))}
-            </p>
+            </div>
           </div>
         </div>
       ))}

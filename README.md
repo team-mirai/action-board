@@ -14,7 +14,7 @@
 
    ```bash
    supabase start
-````
+   ````
 
 2. `.env.example` を `.env.local` にリネームし、以下の値を更新:
 
@@ -73,3 +73,63 @@ migrationファイルの追加や編集で、テーブルの追加や更新を�
 ```
 npx supabase gen types typescript --local > utils/types/supabase.ts
 ```
+
+## E2Eテスト
+
+このプロジェクトでは、Playwrightを使用したE2Eテストを実装しています。テストは`tests/e2e`ディレクトリに配置されています。
+
+### テストの実行方法
+
+1. テスト実行前に、ローカル開発環境が起動していることを確認してください:
+
+   ```bash
+   supabase start
+   ```
+
+2. 以下のコマンドですべてのテストを実行できます:
+
+   ```bash
+   npm run test:e2e
+   ```
+
+3. 特定のテストファイルのみを実行する場合:
+
+   ```bash
+   npm run test:e2e -- tests/e2e/auth.spec.ts
+   ```
+
+4. 特定のプロジェクト（ブラウザ/デバイス）でのみテストを実行する場合:
+
+   ```bash
+   # デスクトップブラウザ
+   npm run test:e2e -- --project=chromium
+   npm run test:e2e -- --project=firefox
+   npm run test:e2e -- --project=webkit
+   
+   # モバイルデバイス
+   npm run test:e2e -- --project=mobile-chrome
+   npm run test:e2e -- --project=mobile-safari
+   ```
+
+5. UIモードでテストを実行する場合（デバッグに便利）:
+
+   ```bash
+   npm run test:e2e:ui
+   ```
+
+### テストレポートの確認
+
+テスト実行後、HTMLレポートが生成されます。以下のコマンドで確認できます:
+
+```bash
+npx playwright show-report
+```
+
+### テストの追加方法
+
+新しいテストを追加する場合は、以下のファイル構造に従ってください:
+
+- `tests/e2e/`: すべてのE2Eテストファイルを配置
+- `tests/e2e-test-helpers.ts`: テスト用のヘルパー関数と拡張されたテストフィクスチャ
+
+テストファイル命名規則: `機能名.spec.ts`

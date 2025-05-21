@@ -1,9 +1,8 @@
 import { signOutAction } from "@/app/actions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { BellIcon, LogOutIcon, UserCircleIcon } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +18,7 @@ export default async function AuthButton() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   const { data: profile } = await supabase
     .from("private_users")
     .select("name")
@@ -28,7 +28,7 @@ export default async function AuthButton() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Avatar className="w-8 h-8">
+          <Avatar className="w-8 h-8" data-testid="avatar">
             <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
               {profile?.name.substring(0, 1) ?? "ユ"}
             </AvatarFallback>
