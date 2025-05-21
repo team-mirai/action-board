@@ -27,7 +27,6 @@ export default async function UserDetailPage({ params }: Props) {
   if (!user) return <div>ユーザーが見つかりません</div>;
 
   // 活動タイムライン取得
-  console.log(PAGE_SIZE);
   const { data: timeline } = await supabase
     .from("activity_timeline_view")
     .select("*")
