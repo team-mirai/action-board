@@ -19,7 +19,9 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
   const [hasNext, setHasNext] = useState(
     props.totalCount > props.initialTimeline.length,
   );
-  console.log(hasNext, props.totalCount, props.initialTimeline.length);
+  if (process.env.NODE_ENV === "development") {
+    console.log(hasNext, props.totalCount, props.initialTimeline.length);
+  }
 
   const handleLoadMore = async () => {
     const { data: takeTimeline } = await supabase
