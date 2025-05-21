@@ -1,6 +1,5 @@
 name: Test E2E & RLS
 on:
-  push:
   pull_request:
 
 jobs:

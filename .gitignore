@@ -46,3 +46,4 @@ jest-report/
 # Playwright
 test-results/
 playwright-report/
+*storybook.log
