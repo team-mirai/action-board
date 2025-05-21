@@ -1,13 +1,22 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { dateTimeFormatter } from "@/utils/formatter";
 import type { Tables } from "@/utils/types/supabase";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface ActivityTimelineProps {
   timeline: Tables<"activity_timeline_view">[];
+  hasNext: boolean;
+  onLoadMore?: () => void;
 }
 
-export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
+export function ActivityTimeline({
+  timeline,
+  hasNext,
+  onLoadMore,
+}: ActivityTimelineProps) {
   return (
     <div className="flex flex-col gap-4">
       {timeline.length === 0 && <div>活動履歴がありません</div>}
@@ -34,6 +43,11 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
           </div>
         </div>
       ))}
+      {hasNext && (
+        <Button variant="outline" onClick={onLoadMore}>
+          もっと見る
+        </Button>
+      )}
     </div>
   );
 }
