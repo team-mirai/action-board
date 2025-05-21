@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Jest
+jest-report/
+
 # Playwright
 test-results/
 playwright-report/

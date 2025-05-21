@@ -9,9 +9,12 @@
     "build": "next build",
     "start": "next start",
     "biome:check:write": "biome check --write .",
+    "test": "jest && playwright test --workers=1",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit && playwright test --workers=1",
     "test:e2e": "playwright test --workers=1",
     "test:e2e:ui": "playwright test --ui --workers=1",
-    "test:e2e:debug": "playwright test --debug --workers=1"
+    "test:e2e:debug": "playwright test --debug --workers=1",
+    "test:rls": "jest"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.10",
@@ -29,21 +32,30 @@
     "lucide-react": "^0.468.0",
     "next": "latest",
     "next-themes": "^0.4.3",
-    "prettier": "^3.3.3",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@playwright/test": "^1.52.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
+    "dotenv": "^16.5.0",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
     "lefthook": "^1.11.13",
     "postcss": "8.4.49",
+    "prettier": "^3.5.3",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
+    "ts-jest": "^29.3.4",
     "typescript": "5.7.2"
+  },
+  "jest-junit": {
+    "outputDirectory": "./jest-report",
+    "outputName": "junit.xml"
   }
 }

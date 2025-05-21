@@ -133,3 +133,56 @@ npx playwright show-report
 - `tests/e2e-test-helpers.ts`: テスト用のヘルパー関数と拡張されたテストフィクスチャ
 
 テストファイル命名規則: `機能名.spec.ts`
+
+## RLSテスト
+
+このプロジェクトでは、Supabaseの行レベルセキュリティ（RLS）ポリシーのテストを実装しています。テストは`tests/rls`ディレクトリに配置されています。
+
+### テストの実行方法
+
+1. テスト実行前に、`.env`ファイルを設定してください（本番環境ではなくテスト環境のSupabase情報を使用）:
+
+   ```bash
+   # .env.test の例
+   NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   ```
+
+2. 以下のコマンドですべてのRLSテストを実行できます:
+
+   ```bash
+   npm run test:rls
+   ```
+
+### テストの概要
+
+RLSテストは以下のテーブルに対して実装されています:
+
+- `private-users.test.ts` - private_usersテーブルのRLSポリシーをテスト
+- `public-user-profiles.test.ts` - public_user_profilesテーブルのRLSポリシーをテスト
+- `achievements.test.ts` - achievementsテーブルのRLSポリシーをテスト
+- `missions.test.ts` - missionsテーブルのRLSポリシーをテスト
+
+### テストの構造
+
+各テストファイルは以下の構造に従っています：
+
+1. **テストユーザーの作成**: `utils.ts`を使用して異なる権限を持つテストユーザーを作成
+2. **データ操作テスト**: 各テーブルに対する挿入・参照・更新・削除操作の権限をテスト
+3. **ポリシー検証**: 各RLSポリシーが正しく機能することを検証
+
+### 新しいテーブルのテスト追加方法
+
+1. `tests/rls`ディレクトリに新しいテストファイルを作成します
+2. `utils.ts`の関数を使用してテストユーザーを作成・管理します
+3. テーブルごとのRLSポリシーに応じたテストを記述します
+4. テストを実行して結果を確認します
+
+### 注意事項
+
+- テストはテスト用のデータベースで実行してください
+- テスト中にデータベースにテストデータが作成されますが、テスト後にクリーンアップされます
+- テスト用のユーザーも自動的に作成・削除されます
+- テスト実行前にRLSが有効になっていることを確認してください
+- 各テストでは、成功ケースと失敗ケースの両方をテストすることが重要です
