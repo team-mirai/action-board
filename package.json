@@ -8,6 +8,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "types": "supabase gen types typescript --local > utils/types/supabase.ts",
     "biome:check:write": "biome check --write .",
     "test": "jest && playwright test --workers=1",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit && playwright test --workers=1",
