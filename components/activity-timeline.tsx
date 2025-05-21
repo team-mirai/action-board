@@ -16,7 +16,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
           key={activity.id || idx}
           className="flex flex-row gap-2 items-center"
         >
-          <Link href={`/user/${activity.user_id}`}>
+          <Link href={`/users/${activity.user_id}`}>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
               <AvatarFallback>アイコン</AvatarFallback>
