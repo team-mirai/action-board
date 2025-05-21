@@ -24,28 +24,62 @@ export async function updateProfile(
     console.error("User not found");
     return redirect("/sign-in");
   }
+  console.log("user", user);
 
   const name = formData.get("name") as string;
   const address_prefecture = formData.get("address_prefecture") as string;
+  const postcode = formData.get("postcode") as string;
   const x_username = formData.get("x_username") as string | null;
 
-  // private_users テーブルを更新
-  const { error: privateUserError } = await supabaseServiceClient
+  const { data: authUser } = await supabaseClient.auth.getUser();
+  const { data: privateUser } = await supabaseClient
     .from("private_users")
-    .update({
-      name,
-      address_prefecture,
-      x_username,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", user.id);
+    .select("*")
+    .eq("auth_id", user.id)
+    .single();
 
-  if (privateUserError) {
-    console.error("Error updating private_users:", privateUserError);
-    return {
-      success: false,
-      error: "ユーザー情報の更新に失敗しました",
-    };
+  if (!authUser) {
+    console.error("Public user not found");
+    return redirect("/sign-in");
+  }
+  // private_users テーブルを更新
+  if (!privateUser) {
+    const { error: privateUserError } = await supabaseServiceClient
+      .from("private_users")
+      .insert({
+        id: crypto.randomUUID(),
+        auth_id: user.id,
+        name,
+        address_prefecture,
+        postcode,
+        x_username,
+        updated_at: new Date().toISOString(),
+      });
+    if (privateUserError) {
+      console.error("Error updating private_users:", privateUserError);
+      return {
+        success: false,
+        error: "ユーザー情報の登録に失敗しました",
+      };
+    }
+  } else {
+    const { error: privateUserError } = await supabaseServiceClient
+      .from("private_users")
+      .update({
+        name,
+        address_prefecture,
+        postcode,
+        x_username,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("auth_id", user.id);
+    if (privateUserError) {
+      console.error("Error updating private_users:", privateUserError);
+      return {
+        success: false,
+        error: "ユーザー情報の更新に失敗しました",
+      };
+    }
   }
 
   revalidatePath("/settings/profile");

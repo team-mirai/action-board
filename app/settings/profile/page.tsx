@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { PrefectureSelect } from "./PrefectureSelect";
 import { updateProfile } from "./actions";
 
@@ -26,52 +26,50 @@ export default function ProfileSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [state, formAction, isPending] = useActionState(updateProfile, null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [privateUser, setPrivateUser] = useState<{
+    postcode: string;
+  } | null>(null);
   const router = useRouter();
   // nameが空文字列なら新規登録とみなす
   const isNew = profile?.name === "";
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        router.replace("/sign-in");
-        return;
-      }
-      const { data } = await supabase
-        .from("public_user_profiles")
-        .select("name, address_prefecture, x_username")
-        .eq("id", user.id)
-        .single();
-      setProfile(data);
-      setLoading(false);
-    };
-    fetchProfile();
+  const fetchProfile = useCallback(async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      router.replace("/sign-in");
+      return;
+    }
+    const { data: privateUser } = await supabase
+      .from("private_users")
+      .select("*")
+      .eq("auth_id", user.id)
+      .single();
+    setPrivateUser(privateUser);
+    if (!privateUser) {
+      return;
+    }
+    const { data } = await supabase
+      .from("public_user_profiles")
+      .select("name, address_prefecture, x_username")
+      .eq("id", privateUser.id)
+      .single();
+    setProfile(data);
+    setLoading(false);
   }, [router.replace]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   // 追加: stateが変化したら再取得
   useEffect(() => {
     if (state) {
-      setIsRefreshing(true);
-      const fetchProfile = async () => {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (!user) return;
-        const { data } = await supabase
-          .from("public_user_profiles")
-          .select("name, address_prefecture, x_username")
-          .eq("id", user.id)
-          .single();
-        setProfile(data);
-        setIsRefreshing(false);
-      };
       fetchProfile();
     }
-  }, [state]);
+  }, [state, fetchProfile]);
 
   useEffect(() => {
     if (state && isNew && state.success) {
@@ -117,6 +115,18 @@ export default function ProfileSettingsPage() {
                 name="address_prefecture"
                 id="address_prefecture"
                 defaultValue={profile?.address_prefecture || ""}
+                required
+                disabled={isPending || isRefreshing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="postcode">郵便番号(ハイフンなし7桁)</Label>
+              <p className="text-sm text-gray-500">この項目は公開されません</p>
+              <Input
+                id="postcode"
+                name="postcode"
+                type="text"
+                defaultValue={privateUser?.postcode || ""}
                 required
                 disabled={isPending || isRefreshing}
               />
