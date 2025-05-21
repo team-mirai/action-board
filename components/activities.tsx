@@ -23,7 +23,7 @@ export default async function Activities() {
     .from("activity_timeline_view")
     .select()
     .order("created_at", { ascending: false })
-    .limit(2);
+    .limit(10);
 
   const currentDate = dailyDashboardRegistrationSummary?.[0]?.date
     ? dateTimeFormatter(new Date(dailyDashboardRegistrationSummary[0].date))
@@ -66,7 +66,10 @@ export default async function Activities() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <ActivityTimeline timeline={activityTimelines ?? []} />
+          <ActivityTimeline
+            timeline={activityTimelines ?? []}
+            hasNext={false}
+          />
         </div>
       </Card>
     </div>
