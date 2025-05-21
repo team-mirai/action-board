@@ -133,3 +133,11 @@ npx playwright show-report
 - `tests/e2e-test-helpers.ts`: テスト用のヘルパー関数と拡張されたテストフィクスチャ
 
 テストファイル命名規則: `機能名.spec.ts`
+
+### storybookの実行
+
+```bash
+npm run storybook
+```
+
+`stories`ディレクトリにstorybookのファイルを配置してください。
