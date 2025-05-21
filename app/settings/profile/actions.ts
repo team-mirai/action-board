@@ -24,7 +24,6 @@ export async function updateProfile(
     console.error("User not found");
     return redirect("/sign-in");
   }
-  console.log("user", user);
 
   const name = formData.get("name") as string;
   const address_prefecture = formData.get("address_prefecture") as string;

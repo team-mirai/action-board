@@ -29,9 +29,8 @@ export default function ProfileSettingsPage() {
   const [privateUser, setPrivateUser] = useState<{
     postcode: string;
   } | null>(null);
+  const [isNew, setIsNew] = useState(false);
   const router = useRouter();
-  // nameが空文字列なら新規登録とみなす
-  const isNew = profile?.name === "";
 
   const fetchProfile = useCallback(async () => {
     const supabase = createClient();
@@ -48,15 +47,15 @@ export default function ProfileSettingsPage() {
       .eq("auth_id", user.id)
       .single();
     setPrivateUser(privateUser);
-    if (!privateUser) {
-      return;
+    setIsNew(Boolean(!privateUser));
+    if (privateUser) {
+      const { data } = await supabase
+        .from("public_user_profiles")
+        .select("name, address_prefecture, x_username")
+        .eq("id", privateUser.id)
+        .single();
+      setProfile(data);
     }
-    const { data } = await supabase
-      .from("public_user_profiles")
-      .select("name, address_prefecture, x_username")
-      .eq("id", privateUser.id)
-      .single();
-    setProfile(data);
     setLoading(false);
   }, [router.replace]);
 
