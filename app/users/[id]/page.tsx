@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default async function UserDetailPage({ params }: Props) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = createClient();
 
   // ユーザー情報取得
