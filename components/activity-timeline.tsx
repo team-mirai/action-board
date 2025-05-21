@@ -23,14 +23,14 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
             </Avatar>
           </Link>
           <div>
-            <p>
+            <div className="text-sm">
               {activity.address_prefecture}の{activity.name}さんが「
               {activity.title}」を達成しました！
-            </p>
-            <p className="text-xs text-gray-500">
+            </div>
+            <div className="text-xs text-gray-500">
               {activity.created_at &&
                 dateTimeFormatter(new Date(activity.created_at))}
-            </p>
+            </div>
           </div>
         </div>
       ))}

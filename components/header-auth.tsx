@@ -1,9 +1,8 @@
 import { signOutAction } from "@/app/actions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { BellIcon, LogOutIcon, UserCircleIcon } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
