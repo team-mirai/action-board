@@ -41,7 +41,9 @@ export default async function AuthButton() {
           sideOffset={4}
         >
           <DropdownMenuGroup>
-            <DropdownMenuItem>アカウント</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings/profile">アカウント</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>お知らせ</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
