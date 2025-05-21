@@ -21,6 +21,9 @@
    ```
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
    NEXT_PUBLIC_SUPABASE_ANON_KEY=[`supabase start` 実行後に表示される SUPABASE プロジェクトの API ANON KEY を入力]
+
+   # ローカル開発時は http://localhost:54323/ にアクセスして Cmd+K でコマンドメニューから 「Copy service API key」 で取得できます。
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    ```
 
 3. ローカルデータベースの初期化:
