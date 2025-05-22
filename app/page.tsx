@@ -38,7 +38,7 @@ export default async function Home() {
 
       <Progress />
 
-      <Missions />
+      <Missions userId={user?.id} showAchievedMissions={true} />
 
       <Events />
 

@@ -6,10 +6,11 @@ VALUES
   ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, '5300001', '1a3f83e9-4e63-478d-b79e-43265ed9705d');
 
 -- ミッション
-INSERT INTO missions (id, title, icon_url, content)
+INSERT INTO missions (id, title, icon_url, content, difficulty, event_date)
 VALUES
-  ('e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'ゴミ拾いをしよう', NULL, '近所のゴミを拾ってみよう！'),
-  ('2246205f-933f-4a86-83af-dbf6bb6cde90', 'SNSに発信しよう', 'https://example.com/icon2.png', '活動の様子をSNSに投稿してみよう。');
+  ('e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'ゴミ拾いをしよう', NULL, '近所のゴミを拾ってみよう！', 1, NULL),
+  ('2246205f-933f-4a86-83af-dbf6bb6cde90', 'SNSに発信しよう', '/img/mission_fallback_icon.png', '活動の様子をSNSに投稿してみよう。', 2, NULL),
+  ('3346205f-933f-4a86-83af-dbf6bb6cde90', '日付付きミッション１', '/img/mission_fallback_icon.png', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01');
 
 -- ミッション達成
 INSERT INTO achievements (id, mission_id, user_id, evidence)
