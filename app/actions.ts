@@ -192,6 +192,39 @@ export const achieveMissionAction = async (formData: FormData) => {
   }
 
   if (missionData?.max_achievement_count !== null) {
+    // ユーザーの達成回数を取得
+    const { data: userAchievements, error: userAchievementError } =
+      await supabase
+        .from("achievements")
+        .select("id", { count: "exact" })
+        .eq("user_id", userId)
+        .eq("mission_id", missionId);
+
+    if (userAchievementError) {
+      console.error(
+        `User achievement count fetch error: ${userAchievementError.message}`,
+      );
+      return encodedRedirect(
+        "error",
+        `/missions/${missionId}`,
+        "ユーザーの達成回数の取得に失敗しました。",
+      );
+    }
+
+    // ユーザーの達成回数が最大達成回数に達しているかチェック
+    if (
+      userAchievements &&
+      typeof missionData.max_achievement_count === "number" &&
+      userAchievements.length >= missionData.max_achievement_count
+    ) {
+      return encodedRedirect(
+        "error",
+        `/missions/${missionId}`,
+        "あなたはこのミッションの達成回数の上限に達しています。",
+      );
+    }
+
+    // ミッション全体の達成回数を取得（全体の上限がある場合）
     const { data: countData, error: countError } = await supabase
       .from("mission_achievement_count_view")
       .select("achievement_count")
@@ -207,7 +240,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       );
     }
 
-    // achievement_count が null でないことを確認
+    // ミッション全体の達成回数が上限に達しているかチェック
     if (
       countData &&
       typeof countData.achievement_count === "number" &&
@@ -217,7 +250,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       return encodedRedirect(
         "error",
         `/missions/${missionId}`,
-        "このミッションは達成回数の上限に達しています。",
+        "このミッションは全体の達成回数の上限に達しています。",
       );
     }
   }

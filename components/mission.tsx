@@ -8,13 +8,27 @@ interface MissionProps {
   mission: Tables<"missions">;
   achieved: boolean;
   achievementsCount?: number;
+  userAchievementCount?: number;
 }
 
 export default function Mission({
   mission,
   achieved,
   achievementsCount,
+  userAchievementCount = 0,
 }: MissionProps) {
+  // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
+  const hasReachedMaxAchievements =
+    mission.max_achievement_count !== null &&
+    userAchievementCount >= (mission.max_achievement_count || 0);
+
+  // 達成済みとして表示する条件：
+  // 1. 最大達成回数が設定されている場合は、ユーザーの達成回数が最大に達している
+  // 2. 最大達成回数が設定されていない場合は、1回でも達成していれば達成済み
+  const displayAsAchieved =
+    mission.max_achievement_count !== null
+      ? hasReachedMaxAchievements
+      : achieved;
   const iconUrl = mission.icon_url ?? "/img/mission_fallback_icon.png";
 
   // 日付の整形
@@ -27,7 +41,7 @@ export default function Mission({
     <Card
       className={clsx(
         "border border-[#C7F5EF] rounded-xl p-4 w-[320px] mx-auto",
-        achieved && "bg-[#F0F0F0]",
+        displayAsAchieved && "bg-[#F0F0F0]",
       )}
     >
       <div className="flex items-start gap-3">
@@ -36,11 +50,18 @@ export default function Mission({
             <AvatarImage src={iconUrl} alt={mission.title} />
             <AvatarFallback>ミッション</AvatarFallback>
           </Avatar>
-          {achieved && (
+          {displayAsAchieved && (
             <div className="flex text-xs text-gray-500 items-center justify-center mt-1">
               達成済み
             </div>
           )}
+          {achieved &&
+            !displayAsAchieved &&
+            mission.max_achievement_count !== null && (
+              <div className="flex text-xs text-blue-500 items-center justify-center mt-1">
+                {userAchievementCount}/{mission.max_achievement_count}回
+              </div>
+            )}
         </div>
         <div className="flex-1 p-1">
           <div className="text-xs font-bold leading-tight">{mission.title}</div>

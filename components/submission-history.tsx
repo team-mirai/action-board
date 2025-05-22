@@ -33,8 +33,8 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
   userId,
   maxAchievementCount,
 }) => {
-  // 最大達成回数が1より大きいミッションかつ1つ以上の履歴が存在する場合のみ表示
-  if (maxAchievementCount <= 1 || submissions.length === 0) {
+  // 1つ以上の履歴が存在する場合のみ表示
+  if (submissions.length === 0) {
     return null;
   }
 

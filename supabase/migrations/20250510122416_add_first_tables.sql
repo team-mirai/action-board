@@ -184,8 +184,7 @@ CREATE TABLE achievements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mission_id UUID REFERENCES missions(id),
     user_id UUID REFERENCES public_user_profiles(id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE(mission_id, user_id)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 COMMENT ON TABLE achievements IS 'ユーザーによるミッション達成の記録';
