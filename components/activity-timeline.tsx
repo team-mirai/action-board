@@ -1,10 +1,8 @@
-"use client";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { dateTimeFormatter } from "@/utils/formatter";
 import type { Tables } from "@/utils/types/supabase";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import UserAvatar from "./user-avatar";
 
 interface ActivityTimelineProps {
   timeline: Tables<"activity_timeline_view">[];
@@ -26,10 +24,7 @@ export function ActivityTimeline({
           className="flex flex-row gap-2 items-center"
         >
           <Link href={`/users/${activity.user_id}`}>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-              <AvatarFallback>アイコン</AvatarFallback>
-            </Avatar>
+            <UserAvatar userId={activity.user_id} className="w-10 h-10" />
           </Link>
           <div>
             <div className="text-sm">

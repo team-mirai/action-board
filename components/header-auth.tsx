@@ -1,8 +1,8 @@
 import { signOutAction } from "@/app/actions";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import MyAvatar from "./my-avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import UserAvator from "./user-avator";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -20,16 +19,11 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("private_users")
-    .select("name")
-    .single();
-
   return user /* && profile */ ? (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <UserAvator />
+          <MyAvatar className="w-8 h-8" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
