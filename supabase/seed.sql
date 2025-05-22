@@ -1,9 +1,9 @@
 
--- ユーザー（auth_id はダミー文字列）
-INSERT INTO private_users (id, name, address_prefecture, x_username, postcode, auth_id)
+-- ユーザー
+INSERT INTO private_users (id, name, address_prefecture, x_username, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '山田太郎', '東京都', 'yamada_x', '1000001', 'b8534fa4-d252-46a0-a639-ea66cadbd7e0'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, '5300001', '1a3f83e9-4e63-478d-b79e-43265ed9705d');
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '山田太郎', '東京都', 'yamada_x', '1000001'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, '5300001');
 
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date)

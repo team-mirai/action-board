@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default async function MissionPage({ params }: Props) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClient();
   const { data: mission, error } = await supabase
     .from("missions")

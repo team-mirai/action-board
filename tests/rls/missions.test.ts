@@ -18,6 +18,7 @@ describe("missions テーブルのRLSテスト", () => {
       id: crypto.randomUUID(),
       title: "テストミッション for RLS",
       content: "これはRLSテスト用のミッションです",
+      difficulty: 1,
     };
 
     const { error } = await adminClient.from("missions").insert(missionData);
@@ -29,7 +30,7 @@ describe("missions テーブルのRLSテスト", () => {
   afterEach(async () => {
     // テストデータをクリーンアップ
     await adminClient.from("missions").delete().eq("id", missionId);
-    await cleanupTestUser(user1.user.authId);
+    await cleanupTestUser(user1.user.userId);
   });
 
   test("匿名ユーザーはミッション一覧を読み取れる", async () => {
@@ -57,6 +58,7 @@ describe("missions テーブルのRLSテスト", () => {
       id: newMissionId,
       title: "匿名ユーザーからのミッション",
       content: "これは失敗するはずです",
+      difficulty: 1,
     });
 
     expect(error).toBeTruthy();
@@ -70,6 +72,7 @@ describe("missions テーブルのRLSテスト", () => {
       id: newMissionId,
       title: "一般ユーザーからのミッション",
       content: "これは失敗するはずです",
+      difficulty: 1,
     });
 
     expect(error).toBeTruthy();

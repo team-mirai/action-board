@@ -10,7 +10,7 @@ describe("public_user_profiles テーブルのRLSテスト", () => {
 
   afterEach(async () => {
     // テストユーザーをクリーンアップ
-    await cleanupTestUser(user1.user.authId);
+    await cleanupTestUser(user1.user.userId);
   });
 
   test("匿名ユーザーはpublic_user_profilesテーブルを読み取れる", async () => {
@@ -76,7 +76,7 @@ describe("public_user_profiles テーブルのRLSテスト", () => {
     await user1.client
       .from("private_users")
       .update({ name: newName })
-      .eq("auth_id", user1.user.authId);
+      .eq("id", user1.user.userId);
 
     // 少し待ってトリガーが実行されるのを待つ
     await new Promise((resolve) => setTimeout(resolve, 500));

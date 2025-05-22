@@ -16,7 +16,7 @@ export default async function Missions({
   const supabase = await createClient();
 
   let achievedMissionIds: string[] = [];
-  if (userId && !showAchievedMissions) {
+  if (userId) {
     const { data: achievements } = await supabase
       .from("achievements")
       .select("mission_id")
@@ -36,11 +36,14 @@ export default async function Missions({
     ]),
   );
 
-  const query = supabase
+  let query = supabase
     .from("missions")
     .select()
     .order("created_at", { ascending: false });
 
+  if (!showAchievedMissions) {
+    query = query.not("id", "in", `("${achievedMissionIds.join('","')}")`);
+  }
   const { data: missions } = maxSize ? await query.limit(maxSize) : await query;
 
   return (

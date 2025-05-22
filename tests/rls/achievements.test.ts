@@ -20,6 +20,7 @@ describe("achievements テーブルのRLSテスト", () => {
       id: crypto.randomUUID(),
       title: "テストミッション",
       content: "これはテスト用のミッションです",
+      difficulty: 1,
     };
 
     const { error } = await adminClient.from("missions").insert(missionData);
@@ -32,8 +33,8 @@ describe("achievements テーブルのRLSテスト", () => {
     // テストデータをクリーンアップ
     await adminClient.from("achievements").delete().eq("mission_id", missionId);
     await adminClient.from("missions").delete().eq("id", missionId);
-    await cleanupTestUser(user1.user.authId);
-    await cleanupTestUser(user2.user.authId);
+    await cleanupTestUser(user1.user.userId);
+    await cleanupTestUser(user2.user.userId);
   });
 
   test("認証済みユーザーは自分のミッション達成記録を作成できる", async () => {

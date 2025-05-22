@@ -207,7 +207,6 @@ export type Database = {
       private_users: {
         Row: {
           address_prefecture: string;
-          auth_id: string;
           avatar_url: string | null;
           created_at: string;
           id: string;
@@ -219,7 +218,6 @@ export type Database = {
         };
         Insert: {
           address_prefecture: string;
-          auth_id: string;
           avatar_url?: string | null;
           created_at?: string;
           id: string;
@@ -231,7 +229,6 @@ export type Database = {
         };
         Update: {
           address_prefecture?: string;
-          auth_id?: string;
           avatar_url?: string | null;
           created_at?: string;
           id?: string;

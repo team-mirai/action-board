@@ -17,8 +17,8 @@ describe("private_users テーブルのRLSテスト", () => {
 
   afterEach(async () => {
     // テストユーザーをクリーンアップ
-    await cleanupTestUser(user1.user.authId);
-    await cleanupTestUser(user2.user.authId);
+    await cleanupTestUser(user1.user.userId);
+    await cleanupTestUser(user2.user.userId);
   });
 
   test("認証されていないユーザーはprivate_usersテーブルにアクセスできない", async () => {
@@ -33,7 +33,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: user1Data, error: user1Error } = await user1.client
       .from("private_users")
       .select("*")
-      .eq("auth_id", user1.user.authId)
+      .eq("id", user1.user.userId)
       .single();
 
     expect(user1Error).toBeNull();
@@ -44,7 +44,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: otherUserData, error: otherUserError } = await user1.client
       .from("private_users")
       .select("*")
-      .eq("auth_id", user2.user.authId)
+      .eq("id", user2.user.userId)
       .single();
 
     expect(otherUserError).toBeTruthy();
@@ -58,7 +58,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: updateData, error: updateError } = await user1.client
       .from("private_users")
       .update({ name: newName })
-      .eq("auth_id", user1.user.authId)
+      .eq("id", user1.user.userId)
       .select()
       .single();
 
@@ -69,7 +69,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: checkData } = await user1.client
       .from("private_users")
       .select("name")
-      .eq("auth_id", user1.user.authId)
+      .eq("id", user1.user.userId)
       .single();
 
     expect(checkData?.name).toBe(newName);
@@ -80,7 +80,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: updateData } = await user1.client
       .from("private_users")
       .update({ name: "Hacked Name" })
-      .eq("auth_id", user2.user.authId);
+      .eq("id", user2.user.userId);
 
     expect(updateData).toBeNull();
 
@@ -88,7 +88,7 @@ describe("private_users テーブルのRLSテスト", () => {
     const { data: checkData } = await adminClient
       .from("private_users")
       .select("name")
-      .eq("auth_id", user2.user.authId)
+      .eq("id", user2.user.userId)
       .single();
 
     expect(checkData?.name).toBe("テストユーザー");
