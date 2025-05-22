@@ -6,7 +6,6 @@ CREATE TABLE private_users (
     x_username VARCHAR(200),
     avatar_url VARCHAR(500),
     postcode VARCHAR(7) NOT NULL,
-    auth_id UUID NOT NULL UNIQUE,
     registered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -19,7 +18,6 @@ COMMENT ON COLUMN private_users.address_prefecture IS '都道府県(例：東京
 COMMENT ON COLUMN private_users.x_username IS 'X(旧Twitter)のユーザー名。NULL可能';
 COMMENT ON COLUMN private_users.avatar_url IS 'ユーザープロフィール画像のURL。NULL可能';
 COMMENT ON COLUMN private_users.postcode IS '郵便番号。ハイフンなしの7桁(例:1000001) サービス上に露出させない';
-COMMENT ON COLUMN private_users.auth_id IS 'Supabase Auth のユーザーID。サービス上に露出させない';
 COMMENT ON COLUMN private_users.created_at IS 'レコード作成日時(UTC)';
 COMMENT ON COLUMN private_users.updated_at IS 'レコード更新日時(UTC)';
 
@@ -28,16 +26,16 @@ ALTER TABLE private_users ENABLE ROW LEVEL SECURITY;
 -- private_usersへの追加は、認証したユーザーのみが行える
 CREATE POLICY insert_own_user
   ON private_users FOR INSERT
-  WITH CHECK (auth.uid() = auth_id);
+  WITH CHECK (auth.uid() = id);
 -- private_usersからの読み込みは、認証したユーザーのみが行える
 CREATE POLICY select_own_user
   ON private_users FOR SELECT
-  USING (auth.uid() = auth_id);
+  USING (auth.uid() = id);
 -- private_usersへの更新は、認証したユーザーのみが行える
 CREATE POLICY update_own_user
   ON private_users FOR UPDATE
-  USING (auth.uid() = auth_id)
-  WITH CHECK (auth.uid() = auth_id);
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
 
 
 -- ユーザーの公開プロフィールテーブル、カラム定義はprivate_usersの一部を取り出した形
@@ -198,14 +196,7 @@ ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;
 -- ミッション達成は、その本人だけが追加できる
 CREATE POLICY insert_own_achievement
   ON achievements FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1
-      FROM private_users
-      WHERE private_users.id = achievements.user_id
-        AND private_users.auth_id = auth.uid()
-    )
-  );
+  WITH CHECK (auth.uid() = user_id);
 -- SELECTはすべてのユーザーに許可（匿名ユーザーも含む）
 CREATE POLICY select_all_achievements
   ON achievements FOR SELECT

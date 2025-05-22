@@ -21,7 +21,7 @@ export default async function UserAvator() {
   const { data: profile } = await supabase
     .from("private_users")
     .select("name, avatar_url")
-    .eq("auth_id", user.id)
+    .eq("id", user.id)
     .single();
 
   return (

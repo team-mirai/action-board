@@ -21,7 +21,6 @@ export type TestUser = {
   email: string;
   password: string;
   userId: string;
-  authId: string;
 };
 
 /**
@@ -55,18 +54,16 @@ export async function createTestUser(
     );
   }
 
-  const userId = crypto.randomUUID();
   const authId = authData.user.id;
 
   // private_usersテーブルにデータを挿入（管理者権限で）
   const { error: insertError } = await adminClient
     .from("private_users")
     .insert({
-      id: userId,
+      id: authId,
       name: "テストユーザー",
       address_prefecture: "東京都",
       postcode: "1000001",
-      auth_id: authId,
     });
 
   if (insertError) {
@@ -105,8 +102,7 @@ export async function createTestUser(
     user: {
       email,
       password,
-      userId,
-      authId,
+      userId: authId,
     },
     client: userClient,
   };
@@ -120,7 +116,7 @@ export async function cleanupTestUser(authId: string): Promise<void> {
   const { data } = await adminClient
     .from("private_users")
     .select("id")
-    .eq("auth_id", authId)
+    .eq("id", authId)
     .single();
 
   if (!data) {
@@ -131,7 +127,7 @@ export async function cleanupTestUser(authId: string): Promise<void> {
   await adminClient.from("public_user_profiles").delete().eq("id", data?.id);
 
   // private_usersからユーザーを削除
-  await adminClient.from("private_users").delete().eq("auth_id", authId);
+  await adminClient.from("private_users").delete().eq("id", authId);
 
   // Auth ユーザーを削除
   await adminClient.auth.admin.deleteUser(authId);

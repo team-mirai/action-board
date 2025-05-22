@@ -17,7 +17,7 @@ export default async function ProfileSettingsPage() {
   const { data: privateUser } = await supabase
     .from("private_users")
     .select("*")
-    .eq("auth_id", user.id)
+    .eq("id", user.id)
     .single();
 
   // 新規ユーザーかどうか判定

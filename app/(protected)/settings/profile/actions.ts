@@ -37,7 +37,7 @@ export async function updateProfile(
   const { data: privateUser } = await supabaseClient
     .from("private_users")
     .select("*")
-    .eq("auth_id", user.id)
+    .eq("id", user.id)
     .single();
 
   if (!authUser) {
@@ -131,11 +131,10 @@ export async function updateProfile(
 
   // private_users テーブルを更新
   if (!privateUser) {
-    const { error: privateUserError } = await supabaseServiceClient
+    const { error: privateUserError } = await supabaseClient
       .from("private_users")
       .insert({
-        id: crypto.randomUUID(),
-        auth_id: user.id,
+        id: user.id,
         name,
         address_prefecture,
         postcode,
@@ -151,7 +150,7 @@ export async function updateProfile(
       };
     }
   } else {
-    const { error: privateUserError } = await supabaseServiceClient
+    const { error: privateUserError } = await supabaseClient
       .from("private_users")
       .update({
         name,
@@ -161,7 +160,7 @@ export async function updateProfile(
         avatar_url,
         updated_at: new Date().toISOString(),
       })
-      .eq("auth_id", user.id);
+      .eq("id", user.id);
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
       return {
@@ -197,7 +196,7 @@ export async function uploadAvatar(
     const { data: privateUser } = await supabaseClient
       .from("private_users")
       .select("id")
-      .eq("auth_id", user.id)
+      .eq("id", user.id)
       .single();
 
     if (!privateUser) {
