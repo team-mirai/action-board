@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { PrefectureSelect } from "./PrefectureSelect";
 import { updateProfile } from "./actions";
 
@@ -51,8 +51,12 @@ export default function ProfileForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // フォームの状態と処理
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  useEffect(() => {
+    // フォーム送信成功時の処理
+    if (state?.success && isNew) {
+      router.push("/");
+    }
+  }, [state?.success, isNew, router]);
 
   // ファイル選択時のプレビュー処理
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,13 +77,6 @@ export default function ProfileForm({
     };
     reader.readAsDataURL(file);
   };
-
-  // フォーム送信成功時の処理
-  if (state?.success && isNew && !isRedirecting) {
-    setIsRedirecting(true);
-    router.push("/");
-    return null;
-  }
 
   return (
     <Card className="w-full max-w-md">
