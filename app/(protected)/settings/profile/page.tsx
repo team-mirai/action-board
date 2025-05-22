@@ -2,7 +2,12 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import ProfileForm from "./ProfileForm";
 
-export default async function ProfileSettingsPage() {
+export default async function ProfileSettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -21,7 +26,7 @@ export default async function ProfileSettingsPage() {
     .single();
 
   // 新規ユーザーかどうか判定
-  const isNew = Boolean(!privateUser);
+  const isNew = Boolean(params.new);
 
   return (
     <div className="flex flex-col items-center justify-center py-2">

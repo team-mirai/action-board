@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -14,6 +15,16 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (user) {
+    const { data: privateUser } = await supabase
+      .from("private_users")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+    if (!privateUser) {
+      redirect("/settings/profile?new=true");
+    }
+  }
 
   return (
     <div className="flex flex-col">
