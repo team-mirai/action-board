@@ -4,6 +4,7 @@ CREATE TABLE private_users (
     name VARCHAR(50) NOT NULL,
     address_prefecture VARCHAR(4) NOT NULL,
     x_username VARCHAR(200),
+    avatar_url VARCHAR(500),
     postcode VARCHAR(7) NOT NULL,
     auth_id UUID NOT NULL UNIQUE,
     registered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -16,6 +17,7 @@ COMMENT ON COLUMN private_users.id IS 'ユーザーのUUID。主キー';
 COMMENT ON COLUMN private_users.name IS 'ユーザーの氏名';
 COMMENT ON COLUMN private_users.address_prefecture IS '都道府県(例：東京都)';
 COMMENT ON COLUMN private_users.x_username IS 'X(旧Twitter)のユーザー名。NULL可能';
+COMMENT ON COLUMN private_users.avatar_url IS 'ユーザープロフィール画像のURL。NULL可能';
 COMMENT ON COLUMN private_users.postcode IS '郵便番号。ハイフンなしの7桁(例:1000001) サービス上に露出させない';
 COMMENT ON COLUMN private_users.auth_id IS 'Supabase Auth のユーザーID。サービス上に露出させない';
 COMMENT ON COLUMN private_users.created_at IS 'レコード作成日時(UTC)';
@@ -44,10 +46,12 @@ create table public_user_profiles (
   name VARCHAR(50) NOT NULL,
   address_prefecture VARCHAR(4) NOT NULL,
   x_username VARCHAR(200),
+  avatar_url VARCHAR(500),
   created_at timestamptz not null
 );
 
 COMMENT ON COLUMN public_user_profiles.id IS 'ユーザーのUUID。主キー。private_users.idと同じ値がセットされる';
+COMMENT ON COLUMN public_user_profiles.avatar_url IS 'ユーザープロフィール画像のURL。NULL可能';
 
 -- RLS設定
 ALTER TABLE public_user_profiles ENABLE ROW LEVEL SECURITY;
@@ -65,6 +69,55 @@ CREATE POLICY update_trigger_only_public_user_profiles
   ON public_user_profiles FOR UPDATE
   USING (current_setting('my.is_trigger', true)::boolean = true);
 
+-- プロフィール画像用のストレージバケットを作成
+INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types)
+VALUES (
+  'avatars',
+  'avatars',
+  true, -- パブリックアクセス可能に変更
+  false, -- avif自動検出無効
+  5242880, -- ファイルサイズ制限 5MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'] -- 許可するMIMEタイプ
+);
+
+-- プロフィール画像用のRLSポリシーを設定
+-- 認証ユーザーのみアップロード可能、かつ自分のIDをパスに含むものだけ
+CREATE POLICY "authenticated users can upload avatars"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (
+    bucket_id = 'avatars' AND
+    (storage.foldername(name))[1] = auth.uid()::text -- ユーザー自身のIDディレクトリのみ
+  );
+
+-- ユーザー自身のプロフィール画像は参照（SELECT）が可能
+CREATE POLICY "users can view their own avatars"
+  ON storage.objects FOR SELECT TO authenticated
+  USING (
+    bucket_id = 'avatars' AND
+    (storage.foldername(name))[1] = auth.uid()::text -- ユーザー自身のIDディレクトリのみ
+  );
+
+-- URLを知っていれば誰でも参照可能にする（プロフィール画面表示などのため）
+CREATE POLICY "anyone can view avatars"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'avatars');
+
+-- 自分のプロフィール画像のみ更新（上書きアップロード）可能
+CREATE POLICY "authenticated users can update their own avatars"
+  ON storage.objects FOR UPDATE TO authenticated
+  USING (
+    bucket_id = 'avatars' AND
+    (storage.foldername(name))[1] = auth.uid()::text -- ユーザー自身のIDディレクトリのみ
+  );
+
+-- 自分のプロフィール画像のみ削除可能
+CREATE POLICY "authenticated users can delete their own avatars"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (
+    bucket_id = 'avatars' AND
+    (storage.foldername(name))[1] = auth.uid()::text -- ユーザー自身のIDディレクトリのみ
+  );
+
 -- トリガーで更新
 create or replace function sync_public_user_profile()
 returns trigger as $$
@@ -73,12 +126,13 @@ begin
   PERFORM set_config('my.is_trigger', 'true', true);
   
   -- INSERT or UPDATE の場合は upsert
-  insert into public_user_profiles (id, name, address_prefecture, x_username, created_at)
-  values (new.id, new.name, new.address_prefecture, new.x_username, new.created_at)
+  insert into public_user_profiles (id, name, address_prefecture, x_username, avatar_url, created_at)
+  values (new.id, new.name, new.address_prefecture, new.x_username, new.avatar_url, new.created_at)
   on conflict (id) do update
   set name = excluded.name,
       address_prefecture = excluded.address_prefecture,
       x_username = excluded.x_username,
+      avatar_url = excluded.avatar_url,
       created_at = excluded.created_at;
 
   -- カスタム設定をリセット

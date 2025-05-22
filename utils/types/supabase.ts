@@ -208,6 +208,7 @@ export type Database = {
         Row: {
           address_prefecture: string;
           auth_id: string;
+          avatar_url: string | null;
           created_at: string;
           id: string;
           name: string;
@@ -219,6 +220,7 @@ export type Database = {
         Insert: {
           address_prefecture: string;
           auth_id: string;
+          avatar_url?: string | null;
           created_at?: string;
           id: string;
           name: string;
@@ -230,6 +232,7 @@ export type Database = {
         Update: {
           address_prefecture?: string;
           auth_id?: string;
+          avatar_url?: string | null;
           created_at?: string;
           id?: string;
           name?: string;
@@ -243,6 +246,7 @@ export type Database = {
       public_user_profiles: {
         Row: {
           address_prefecture: string;
+          avatar_url: string | null;
           created_at: string;
           id: string;
           name: string;
@@ -250,6 +254,7 @@ export type Database = {
         };
         Insert: {
           address_prefecture: string;
+          avatar_url?: string | null;
           created_at: string;
           id: string;
           name: string;
@@ -257,6 +262,7 @@ export type Database = {
         };
         Update: {
           address_prefecture?: string;
+          avatar_url?: string | null;
           created_at?: string;
           id?: string;
           name?: string;
