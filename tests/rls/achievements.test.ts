@@ -45,7 +45,6 @@ describe("achievements テーブルのRLSテスト", () => {
         id: achievementId,
         mission_id: missionId,
         user_id: user1.user.userId,
-        evidence: { text: "テスト達成の証拠" },
       })
       .select();
 
@@ -60,7 +59,6 @@ describe("achievements テーブルのRLSテスト", () => {
       id: achievementId,
       mission_id: missionId,
       user_id: user2.user.userId, // 別ユーザーのIDを使用
-      evidence: { text: "不正な達成の証拠" },
     });
 
     expect(error).toBeTruthy();
@@ -75,7 +73,6 @@ describe("achievements テーブルのRLSテスト", () => {
       id: achievementId,
       mission_id: missionId,
       user_id: user1.user.userId,
-      evidence: { text: "匿名ユーザーからの達成の証拠" },
     });
 
     expect(error).toBeTruthy();
@@ -89,7 +86,6 @@ describe("achievements テーブルのRLSテスト", () => {
       id: achievementId,
       mission_id: missionId,
       user_id: user1.user.userId,
-      evidence: { text: "テスト達成の証拠2" },
     });
 
     // user2がその達成記録を読み取れるか確認
@@ -123,7 +119,6 @@ describe("achievements テーブルのRLSテスト", () => {
       id: achievementId,
       mission_id: missionId,
       user_id: user1.user.userId,
-      evidence: { text: "削除テスト用の証拠" },
     });
 
     // 自分の達成記録を削除しようとする
