@@ -16,7 +16,7 @@ export default async function UserAvatar({
 
   if (!userId) {
     return (
-      <Avatar data-testid="avatar" className={className}>
+      <Avatar className={className}>
         <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
           <User2Icon />
         </AvatarFallback>
@@ -32,7 +32,7 @@ export default async function UserAvatar({
 
   if (!profile) {
     return (
-      <Avatar data-testid="avatar" className={className}>
+      <Avatar className={className}>
         <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
           ユ
         </AvatarFallback>
@@ -41,7 +41,7 @@ export default async function UserAvatar({
   }
 
   return (
-    <Avatar data-testid="avatar" className={className}>
+    <Avatar className={className}>
       <AvatarImage
         src={profile?.avatar_url || undefined}
         alt="プロフィール画像"
