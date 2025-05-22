@@ -28,6 +28,7 @@ const dummyMission = {
 export const Default: Story = {
   args: {
     mission: dummyMission,
+    achieved: false,
     achievementsCount: 123,
   },
 };
@@ -42,6 +43,15 @@ const dummyMissionWithDate = {
 export const WithDate: Story = {
   args: {
     mission: dummyMissionWithDate,
+    achieved: false,
+    achievementsCount: 123,
+  },
+};
+
+export const Achieved: Story = {
+  args: {
+    mission: dummyMissionWithDate,
+    achieved: true,
     achievementsCount: 123,
   },
 };

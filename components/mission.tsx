@@ -1,14 +1,20 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import type { Tables } from "@/utils/types/supabase";
+import clsx from "clsx";
 import Link from "next/link";
 
 interface MissionProps {
   mission: Tables<"missions">;
+  achieved: boolean;
   achievementsCount?: number;
 }
 
-export default function Mission({ mission, achievementsCount }: MissionProps) {
+export default function Mission({
+  mission,
+  achieved,
+  achievementsCount,
+}: MissionProps) {
   const iconUrl = mission.icon_url ?? "/img/mission_fallback_icon.png";
 
   // 日付の整形
@@ -18,12 +24,24 @@ export default function Mission({ mission, achievementsCount }: MissionProps) {
     : null;
 
   return (
-    <Card className="border border-[#C7F5EF] rounded-xl p-4 w-[320px] mx-auto">
+    <Card
+      className={clsx(
+        "border border-[#C7F5EF] rounded-xl p-4 w-[320px] mx-auto",
+        achieved && "bg-[#F0F0F0]",
+      )}
+    >
       <div className="flex items-start gap-3">
-        <Avatar className="h-14 w-14">
-          <AvatarImage src={iconUrl} alt={mission.title} />
-          <AvatarFallback>ミッション</AvatarFallback>
-        </Avatar>
+        <div className="flex-col items-center justify-center">
+          <Avatar className="h-14 w-14">
+            <AvatarImage src={iconUrl} alt={mission.title} />
+            <AvatarFallback>ミッション</AvatarFallback>
+          </Avatar>
+          {achieved && (
+            <div className="flex text-xs text-gray-500 items-center justify-center mt-1">
+              達成済み
+            </div>
+          )}
+        </div>
         <div className="flex-1 p-1">
           <div className="text-xs font-bold leading-tight">{mission.title}</div>
           {dateStr && (

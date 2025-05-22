@@ -15,13 +15,13 @@ export default async function Missions({
 }: MissionsProps) {
   const supabase = await createClient();
 
-  let excludedMissionIds: string[] = [];
+  let achievedMissionIds: string[] = [];
   if (userId && !showAchievedMissions) {
     const { data: achievements } = await supabase
       .from("achievements")
       .select("mission_id")
       .eq("user_id", userId);
-    excludedMissionIds =
+    achievedMissionIds =
       achievements?.map((achievement) => achievement.mission_id ?? "") ?? [];
   }
 
@@ -58,6 +58,7 @@ export default async function Missions({
             <Mission
               key={mission.id}
               mission={mission}
+              achieved={achievedMissionIds.includes(mission.id)}
               achievementsCount={achievement_count_map.get(mission.id) ?? 0}
             />
           ))
