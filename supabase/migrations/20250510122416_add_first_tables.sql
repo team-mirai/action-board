@@ -86,6 +86,8 @@ CREATE TABLE missions (
     title VARCHAR(200) NOT NULL,
     icon_url VARCHAR(500),
     content TEXT,
+    difficulty INTEGER NOT NULL,
+    event_date DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -155,6 +157,14 @@ FROM achievements a
 JOIN public_user_profiles p ON a.user_id = p.id
 JOIN missions m ON a.mission_id = m.id;
 
+-- ミッション達成数を取得するView
+CREATE VIEW mission_achievement_count_view AS
+SELECT
+  m.id as mission_id,
+  COUNT(a.id) as achievement_count
+FROM missions m
+LEFT JOIN achievements a ON m.id = a.mission_id
+GROUP BY m.id;
 
 -- イベント
 CREATE TABLE events (

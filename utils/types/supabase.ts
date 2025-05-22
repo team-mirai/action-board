@@ -61,6 +61,13 @@ export type Database = {
             foreignKeyName: "achievements_mission_id_fkey";
             columns: ["mission_id"];
             isOneToOne: false;
+            referencedRelation: "mission_achievement_count_view";
+            referencedColumns: ["mission_id"];
+          },
+          {
+            foreignKeyName: "achievements_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
             referencedRelation: "missions";
             referencedColumns: ["id"];
           },
@@ -168,6 +175,8 @@ export type Database = {
         Row: {
           content: string | null;
           created_at: string;
+          difficulty: number;
+          event_date: string | null;
           icon_url: string | null;
           id: string;
           title: string;
@@ -176,6 +185,8 @@ export type Database = {
         Insert: {
           content?: string | null;
           created_at?: string;
+          difficulty: number;
+          event_date?: string | null;
           icon_url?: string | null;
           id: string;
           title: string;
@@ -184,6 +195,8 @@ export type Database = {
         Update: {
           content?: string | null;
           created_at?: string;
+          difficulty?: number;
+          event_date?: string | null;
           icon_url?: string | null;
           id?: string;
           title?: string;
@@ -300,6 +313,13 @@ export type Database = {
           name: string | null;
           title: string | null;
           user_id: string | null;
+        };
+        Relationships: [];
+      };
+      mission_achievement_count_view: {
+        Row: {
+          achievement_count: number | null;
+          mission_id: string | null;
         };
         Relationships: [];
       };

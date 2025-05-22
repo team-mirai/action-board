@@ -1,0 +1,47 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import Mission from "../components/mission";
+
+const meta = {
+  title: "Mission",
+  component: Mission,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+} satisfies Meta<typeof Mission>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const dummyMission = {
+  id: "mission-1",
+  title:
+    "ミッションタイトルです。ミッションタイトルです。ミッションタイトルです。",
+  content: "これはサンプルのミッション内容です。",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-02T00:00:00Z",
+  icon_url: null,
+  difficulty: 1,
+  event_date: null,
+};
+
+export const Default: Story = {
+  args: {
+    mission: dummyMission,
+    achievementsCount: 123,
+  },
+};
+
+// 日付付きミッション
+const dummyMissionWithDate = {
+  ...dummyMission,
+  difficulty: 5,
+  event_date: "2025-05-01",
+};
+
+export const WithDate: Story = {
+  args: {
+    mission: dummyMissionWithDate,
+    achievementsCount: 123,
+  },
+};
