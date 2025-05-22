@@ -1,7 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/server";
+import type { HTMLProps } from "react";
 
-export default async function UserAvator() {
+interface MyAvatarProps {
+  className?: HTMLProps<HTMLElement>["className"];
+}
+
+export default async function MyAvatar({ className }: MyAvatarProps) {
   const supabase = await createClient();
 
   const {
@@ -10,7 +15,7 @@ export default async function UserAvator() {
 
   if (!user) {
     return (
-      <Avatar data-testid="avatar">
+      <Avatar data-testid="avatar" className={className}>
         <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
           ユ
         </AvatarFallback>
@@ -20,12 +25,12 @@ export default async function UserAvator() {
 
   const { data: profile } = await supabase
     .from("private_users")
-    .select("name, avatar_url")
-    .eq("id", user.id)
+    .select("*")
+    .eq("auth_id", user.id)
     .single();
 
   return (
-    <Avatar data-testid="avatar" className="w-8 h-8">
+    <Avatar data-testid="avatar" className={className}>
       <AvatarImage
         src={profile?.avatar_url || undefined}
         alt="プロフィール画像"
