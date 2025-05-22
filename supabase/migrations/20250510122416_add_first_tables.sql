@@ -1,4 +1,3 @@
-
 -- ユーザー登録時に情報を保存するテーブル。ユーザー本人のみ追加・閲覧・更新可能
 CREATE TABLE private_users (
     id UUID PRIMARY KEY,
@@ -57,10 +56,22 @@ CREATE POLICY select_all_public_user_profiles
   ON public_user_profiles FOR SELECT
   USING (true);
 
+-- アプリケーション経由からの直接書き込みを禁止し、トリガー関数からのみ更新可能にするポリシー
+CREATE POLICY insert_trigger_only_public_user_profiles
+  ON public_user_profiles FOR INSERT
+  WITH CHECK (current_setting('my.is_trigger', true)::boolean = true);
+
+CREATE POLICY update_trigger_only_public_user_profiles
+  ON public_user_profiles FOR UPDATE
+  USING (current_setting('my.is_trigger', true)::boolean = true);
+
 -- トリガーで更新
 create or replace function sync_public_user_profile()
 returns trigger as $$
 begin
+  -- トリガーからの実行であることを示すカスタム設定を追加
+  PERFORM set_config('my.is_trigger', 'true', true);
+  
   -- INSERT or UPDATE の場合は upsert
   insert into public_user_profiles (id, name, address_prefecture, x_username, created_at)
   values (new.id, new.name, new.address_prefecture, new.x_username, new.created_at)
@@ -70,9 +81,12 @@ begin
       x_username = excluded.x_username,
       created_at = excluded.created_at;
 
+  -- カスタム設定をリセット
+  PERFORM set_config('my.is_trigger', 'false', true);
+  
   return new;
 end;
-$$ language plpgsql;  
+$$ language plpgsql security definer;  -- SECURITY DEFINERに変更
 
 create trigger trg_sync_public_user_profile
 after insert or update on private_users
