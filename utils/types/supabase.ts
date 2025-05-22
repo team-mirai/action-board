@@ -37,21 +37,18 @@ export type Database = {
       achievements: {
         Row: {
           created_at: string;
-          evidence: Json;
           id: string;
           mission_id: string | null;
           user_id: string | null;
         };
         Insert: {
           created_at?: string;
-          evidence: Json;
-          id: string;
+          id?: string;
           mission_id?: string | null;
           user_id?: string | null;
         };
         Update: {
           created_at?: string;
-          evidence?: Json;
           id?: string;
           mission_id?: string | null;
           user_id?: string | null;
@@ -171,6 +168,109 @@ export type Database = {
         };
         Relationships: [];
       };
+      mission_artifact_geolocations: {
+        Row: {
+          accuracy: number | null;
+          altitude: number | null;
+          created_at: string;
+          id: number;
+          lat: number;
+          lon: number;
+          mission_artifact_id: string;
+        };
+        Insert: {
+          accuracy?: number | null;
+          altitude?: number | null;
+          created_at?: string;
+          id?: number;
+          lat: number;
+          lon: number;
+          mission_artifact_id: string;
+        };
+        Update: {
+          accuracy?: number | null;
+          altitude?: number | null;
+          created_at?: string;
+          id?: number;
+          lat?: number;
+          lon?: number;
+          mission_artifact_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_artifact_geolocations_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      mission_artifacts: {
+        Row: {
+          achievement_id: string;
+          artifact_type: string;
+          created_at: string;
+          description: string | null;
+          id: string;
+          image_storage_path: string | null;
+          link_url: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          achievement_id: string;
+          artifact_type: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          image_storage_path?: string | null;
+          link_url?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          achievement_id?: string;
+          artifact_type?: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          image_storage_path?: string | null;
+          link_url?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mission_artifacts_achievement_id_fkey";
+            columns: ["achievement_id"];
+            isOneToOne: false;
+            referencedRelation: "achievements";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mission_artifacts_achievement_id_fkey";
+            columns: ["achievement_id"];
+            isOneToOne: false;
+            referencedRelation: "activity_timeline_view";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "mission_artifacts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "activity_timeline_view";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "mission_artifacts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "public_user_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       missions: {
         Row: {
           content: string | null;
@@ -179,6 +279,8 @@ export type Database = {
           event_date: string | null;
           icon_url: string | null;
           id: string;
+          max_achievement_count: number | null;
+          required_artifact_type: string;
           title: string;
           updated_at: string;
         };
@@ -189,6 +291,8 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id: string;
+          max_achievement_count?: number | null;
+          required_artifact_type?: string;
           title: string;
           updated_at?: string;
         };
@@ -199,6 +303,8 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id?: string;
+          max_achievement_count?: number | null;
+          required_artifact_type?: string;
           title?: string;
           updated_at?: string;
         };
