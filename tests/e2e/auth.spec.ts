@@ -19,7 +19,12 @@ test.describe("認証フロー", () => {
     await assertAuthState(page, false);
 
     // 2. サインアップページに移動
-    await page.getByRole("link", { name: "サインアップ" }).click();
+    if (await page.getByRole("menu").isVisible()) {
+      await page.getByRole("menuitem", { name: "サインアップ" }).click();
+    } else {
+      await page.getByRole("link", { name: "サインアップ" }).click();
+    }
+
     await expect(page).toHaveURL("/sign-up");
     await expect(
       page.getByRole("heading", { name: "チームみらいに参画する" }),
@@ -55,9 +60,8 @@ test.describe("認証フロー", () => {
       await assertAuthState(page, true);
 
       // 11. ログアウト
-      await page.getByTestId("avatar").click();
-
-      await page.getByText("ログアウト").click();
+      await page.getByRole("menu").click();
+      await page.getByRole("menuitem", { name: "ログアウト" }).click();
 
       // 12. ログイン画面にリダイレクトされること
       await page.waitForURL("/sign-in");

@@ -22,7 +22,7 @@ export default async function AuthButton() {
   return user /* && profile */ ? (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger role="menu">
           <MyAvatar className="w-8 h-8" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -33,14 +33,27 @@ export default async function AuthButton() {
         >
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
+              <Link href="/">ダッシュボード</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/missions">ミッション</Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild>
               <Link href="/settings/profile">アカウント</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>お知らせ</DropdownMenuItem>
+            <DropdownMenuItem asChild>お知らせ</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <form action={signOutAction}>
             <DropdownMenuItem>
-              <button type="submit" className="w-full text-left cursor-default">
+              <button
+                type="submit"
+                className="w-full text-left cursor-default"
+                data-testid="sign-out"
+              >
                 ログアウト
               </button>
             </DropdownMenuItem>
