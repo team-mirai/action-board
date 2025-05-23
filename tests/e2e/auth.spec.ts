@@ -36,11 +36,18 @@ test.describe("認証フロー", () => {
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
 
+    // 利用規約に同意する
+    await page.locator("#terms").click();
+    // プライバシーポリシーに同意する
+    await page.locator("#privacy").click();
+
     // 4. サインアップボタンをクリック
     await page.getByRole("button", { name: "サインアップ" }).click();
 
     // 5. サインアップ成功メッセージが表示されることを確認
-    await expect(page.getByText("Thanks for signing up!")).toBeVisible();
+    await expect(
+      page.getByText("参画頂きありがとうございます！"),
+    ).toBeVisible();
 
     // 6. サインインページに移動
     await page.goto("/sign-in");
@@ -89,6 +96,11 @@ test.describe("認証フロー", () => {
       page.getByRole("button", { name: "サインアップ" }),
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
+
+    // 利用規約に同意する
+    await page.locator("#terms").click();
+    // プライバシーポリシーに同意する
+    await page.locator("#privacy").click();
 
     // 2. 空の入力で送信するとエラーになることを確認
     await page.getByRole("button", { name: "サインアップ" }).click();
