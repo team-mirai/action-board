@@ -51,11 +51,11 @@ export default async function Home() {
 
       <Missions userId={user?.id} showAchievedMissions={true} />
 
-      <Events />
+      {/* <Events /> */}
 
-      <OpenChat />
+      {/* <OpenChat /> */}
 
-      <Sns />
+      {/* <Sns /> */}
     </div>
   );
 }

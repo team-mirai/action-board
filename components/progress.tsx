@@ -44,6 +44,7 @@ export default async function Progress() {
           </AccordionTrigger>
           <AccordionContent>本当はここに日本地図が入る</AccordionContent>
         </AccordionItem>
+        {/*
         <AccordionItem value="event">
           <AccordionTrigger>
             <div className="flex flex-row gap-2">
@@ -56,6 +57,7 @@ export default async function Progress() {
           </AccordionTrigger>
           <AccordionContent>本当はここに日本地図が入る</AccordionContent>
         </AccordionItem>
+        */}
       </Accordion>
     </div>
   );
