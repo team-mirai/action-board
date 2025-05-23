@@ -21,10 +21,6 @@ export function useMissionSubmission(
       return "このミッションは完了済みです";
     }
 
-    if (userAchievementCount > 0) {
-      return "再度提出する";
-    }
-
     return "完了する";
   }, [authUser, mission.max_achievement_count, userAchievementCount]);
 

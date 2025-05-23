@@ -14,7 +14,7 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
         <img
           src={mission.icon_url}
           alt={mission.title}
-          className="w-32 h-32 object-cover rounded-md"
+          className="w-32 h-32 object-cover rounded-full"
         />
       )}
       <p className="text-gray-700 whitespace-pre-wrap">{mission.content}</p>
