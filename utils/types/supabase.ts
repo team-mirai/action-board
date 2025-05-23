@@ -417,6 +417,7 @@ export type Database = {
       activity_timeline_view: {
         Row: {
           address_prefecture: string | null;
+          avatar_url: string | null;
           created_at: string | null;
           id: string | null;
           name: string | null;

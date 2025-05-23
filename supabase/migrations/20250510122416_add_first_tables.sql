@@ -300,6 +300,7 @@ SELECT
   p.id as user_id,
   p.name,
   p.address_prefecture,
+  p.avatar_url,
   m.title,
   a.created_at
 FROM achievements a
