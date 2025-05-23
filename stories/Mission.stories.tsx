@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Mission from "../components/mission";
+import Mission from "../components/mission/mission";
 
 const meta = {
   title: "Mission",
@@ -23,6 +23,8 @@ const dummyMission = {
   icon_url: null,
   difficulty: 1,
   event_date: null,
+  max_achievement_count: null,
+  required_artifact_type: "IMAGE",
 };
 
 export const Default: Story = {

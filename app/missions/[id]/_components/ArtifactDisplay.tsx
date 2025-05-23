@@ -11,19 +11,18 @@ interface ArtifactDisplayProps {
 const ImageArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
-  <div className="mb-2">
-    <div className="w-32 h-32 relative mb-2">
+  <div className="flex flex-row gap-2">
+    <div className="w-24 h-24 flex-shrink-0 relative mb-2">
       {artifact.image_storage_path && (
         <img
           src={artifact.image_storage_path}
           alt="提出画像"
-          className="w-32 h-32 object-cover rounded"
+          className="w-24 h-24 object-cover rounded"
         />
       )}
     </div>
-    <p className="text-xs text-gray-400">位置情報: なし</p>
     {artifact.description && (
-      <p className="text-sm mt-1">{artifact.description}</p>
+      <p className="text-sm mt-1 flex-1">{artifact.description}</p>
     )}
   </div>
 );
@@ -31,32 +30,34 @@ const ImageArtifact: React.FC<{ artifact: MissionArtifact }> = ({
 const ImageWithGeolocationArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
-  <div className="mb-2">
-    <div className="w-32 h-32 relative mb-2">
+  <div className="flex flex-row gap-2">
+    <div className="w-24 h-24 flex-shrink-0 relative mb-2">
       {artifact.image_storage_path && (
         <img
           src={artifact.image_storage_path}
           alt="提出画像"
-          className="w-32 h-32 object-cover rounded"
+          className="w-24 h-24 object-cover rounded"
         />
       )}
     </div>
-    <p className="text-xs text-gray-400">
-      位置情報:{" "}
-      {artifact.geolocations && artifact.geolocations.length > 0
-        ? "あり"
-        : "なし"}
-    </p>
-    {artifact.description && (
-      <p className="text-sm mt-1">{artifact.description}</p>
-    )}
+    <div className="flex-1">
+      <p className="text-xs text-gray-400">
+        位置情報:{" "}
+        {artifact.geolocations && artifact.geolocations.length > 0
+          ? "あり"
+          : "なし"}
+      </p>
+      {artifact.description && (
+        <p className="text-sm mt-1">{artifact.description}</p>
+      )}
+    </div>
   </div>
 );
 
 const LinkArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   artifact,
 }) => (
-  <div className="mb-2">
+  <div className="">
     {artifact.link_url && (
       <Link
         href={artifact.link_url}

@@ -22,7 +22,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
 
   return (
     <li className="border p-4 rounded-lg shadow">
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-center">
         <p className="text-sm text-gray-500">
           提出日時: {new Date(submission.created_at).toLocaleString()}
           {isLatest && (
@@ -34,7 +34,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
         {canCancel && (
           <Button
             variant="secondary"
-            size="sm"
+            size="xs"
             onClick={() => onCancelClick(submission.id)}
           >
             提出をキャンセル
@@ -43,7 +43,9 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
       </div>
       <div>
         {submission.artifacts.map((artifact) => (
-          <ArtifactDisplay key={artifact.id} artifact={artifact} />
+          <div className="mt-2" key={artifact.id}>
+            <ArtifactDisplay key={artifact.id} artifact={artifact} />
+          </div>
         ))}
       </div>
     </li>
