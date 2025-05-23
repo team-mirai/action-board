@@ -1,7 +1,7 @@
 "use client";
 
-import SubmissionHistoryComponent from "@/components/submission-history";
 import type { SubmissionData } from "../_lib/types";
+import SubmissionHistoryComponent from "./SubmissionHistory";
 
 type Props = {
   submissions: SubmissionData[];

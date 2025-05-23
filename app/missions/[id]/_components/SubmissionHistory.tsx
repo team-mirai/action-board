@@ -1,6 +1,5 @@
 "use client";
 
-import { cancelSubmissionAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +14,7 @@ import type { Tables } from "@/utils/types/supabase";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
+import { cancelSubmissionAction } from "../actions";
 
 // mission_artifacts と achievements を結合したような型を想定
 // achievements には user_id, mission_id, created_at があり、

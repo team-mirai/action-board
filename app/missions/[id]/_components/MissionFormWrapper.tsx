@@ -1,6 +1,5 @@
 "use client";
 
-import { achieveMissionAction } from "@/app/actions";
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
@@ -8,6 +7,7 @@ import type { Tables } from "@/utils/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import type { Achievement } from "../_lib/types";
+import { achieveMissionAction } from "../actions";
 
 type Props = {
   mission: Tables<"missions">;
