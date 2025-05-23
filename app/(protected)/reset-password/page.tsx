@@ -20,6 +20,7 @@ export default async function ResetPassword(props: {
         name="password"
         placeholder="New password"
         required
+        autoComplete="new-password"
       />
       <Label htmlFor="confirmPassword">Confirm password</Label>
       <Input
@@ -27,6 +28,7 @@ export default async function ResetPassword(props: {
         name="confirmPassword"
         placeholder="Confirm password"
         required
+        autoComplete="new-password"
       />
       <SubmitButton formAction={resetPasswordAction}>
         Reset password
