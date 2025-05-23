@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 type GeolocationData = {
@@ -53,20 +54,21 @@ export function GeolocationInput({
   };
 
   return (
-    <div className="mt-4">
-      <button
+    <div className="space-y-2">
+      <Button
         type="button"
+        variant="secondary"
+        size="sm"
         onClick={handleGetGeolocation}
         disabled={disabled || isFetchingGeo}
-        className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded disabled:opacity-50"
       >
         {isFetchingGeo ? "位置情報取得中..." : "位置情報を取得する"}
-      </button>
+      </Button>
       {geolocationError && (
-        <p className="mt-1 text-xs text-red-500">{geolocationError}</p>
+        <p className="text-xs text-destructive">{geolocationError}</p>
       )}
       {geolocation && (
-        <p className="mt-1 text-xs text-green-500">
+        <p className="text-xs text-green-600">
           位置情報取得完了: Lat: {geolocation.lat.toFixed(4)}, Lon:{" "}
           {geolocation.lon.toFixed(4)}
         </p>

@@ -1,5 +1,7 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import type { Tables } from "@/utils/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -69,37 +71,27 @@ export function ImageUploader({
   };
 
   return (
-    <div>
-      <label
-        htmlFor="artifactImage"
-        className="block text-sm font-medium text-gray-700"
-      >
-        画像ファイル
-      </label>
-      <input
+    <div className="space-y-2">
+      <Label htmlFor="artifactImage">画像ファイル</Label>
+      <Input
         type="file"
         id="artifactImage"
         accept={allowedMimeTypes?.join(",")}
-        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
         disabled={disabled || uploading}
         onChange={handleImageUpload}
         required
       />
-      {uploading && (
-        <p className="mt-1 text-xs text-blue-500">アップロード中...</p>
-      )}
-      {uploadError && (
-        <p className="mt-1 text-xs text-red-500">{uploadError}</p>
-      )}
+      {uploading && <p className="text-xs text-blue-600">アップロード中...</p>}
+      {uploadError && <p className="text-xs text-destructive">{uploadError}</p>}
       {/* プレビュー表示 */}
       {previewImageUrl && (
         <img
           src={previewImageUrl}
           alt="プレビュー"
-          className="mt-2 w-24 h-24 object-cover rounded border"
+          className="w-24 h-24 object-cover rounded border"
         />
       )}
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         最大ファイルサイズ: {maxFileSizeMB}MB
       </p>
     </div>

@@ -60,7 +60,6 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
     (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
-  const latestSubmission = sortedSubmissions[0];
 
   const handleCancelClick = (submissionId: string) => {
     setSelectedSubmissionId(submissionId);
@@ -113,10 +112,9 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       onClick={() => handleCancelClick(submission.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
                       提出をキャンセル
                     </Button>
