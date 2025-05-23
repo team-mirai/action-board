@@ -1,6 +1,20 @@
+"use client";
+
+import { cancelSubmissionAction } from "@/app/actions";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Tables } from "@/utils/types/supabase";
 import Link from "next/link";
 import type React from "react";
+import { useState } from "react";
 
 // mission_artifacts と achievements を結合したような型を想定
 // achievements には user_id, mission_id, created_at があり、
@@ -33,20 +47,105 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
   userId,
   maxAchievementCount,
 }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<string>("");
+
   // 1つ以上の履歴が存在する場合のみ表示
   if (submissions.length === 0) {
     return null;
   }
 
+  // 提出日時でソートして最新の提出を取得
+  const sortedSubmissions = [...submissions].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
+  const latestSubmission = sortedSubmissions[0];
+
+  const handleCancelClick = (submissionId: string) => {
+    setSelectedSubmissionId(submissionId);
+    setIsDialogOpen(true);
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!selectedSubmissionId) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("achievementId", selectedSubmissionId);
+      formData.append("missionId", missionId);
+
+      const result = await cancelSubmissionAction(formData);
+
+      if (result.success) {
+        // 成功時はページをリロードして最新の状態を反映
+        window.location.reload();
+      } else {
+        // エラー時はアラートを表示
+        alert(result.error || "キャンセル処理に失敗しました。");
+      }
+    } catch (error) {
+      console.error("キャンセル処理でエラーが発生しました:", error);
+      alert("キャンセル処理に失敗しました。もう一度お試しください。");
+    } finally {
+      setIsDialogOpen(false);
+      setSelectedSubmissionId("");
+    }
+  };
+
   return (
     <div className="mt-8">
       <h2 className="text-xl font-semibold mb-4">提出履歴</h2>
       <ul className="space-y-4">
-        {submissions.map((submission) => (
+        {sortedSubmissions.map((submission, index) => (
           <li key={submission.id} className="border p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-500 mb-2">
-              提出日時: {new Date(submission.created_at).toLocaleString()}
-            </p>
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-500">
+                提出日時: {new Date(submission.created_at).toLocaleString()}
+                {index === 0 && (
+                  <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    最新
+                  </span>
+                )}
+              </p>
+              {/* 最新の提出についてのみキャンセルボタンを表示 */}
+              {index === 0 && userId && submission.user_id === userId && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCancelClick(submission.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      提出をキャンセル
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>提出をキャンセルしますか？</DialogTitle>
+                      <DialogDescription>
+                        この操作は取り消すことができません。提出した成果物と関連データがすべて削除されます。
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDialogOpen(false)}
+                      >
+                        キャンセル
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={handleCancelConfirm}
+                      >
+                        削除する
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
             {submission.artifacts.map((artifact) => (
               <div key={artifact.id} className="mb-2">
                 {artifact.artifact_type === "IMAGE" ||

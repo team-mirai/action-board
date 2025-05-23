@@ -436,3 +436,57 @@ export const achieveMissionAction = async (formData: FormData) => {
     "ミッションを達成しました！",
   );
 };
+
+export const cancelSubmissionAction = async (formData: FormData) => {
+  const achievementId = formData.get("achievementId")?.toString();
+  const missionId = formData.get("missionId")?.toString();
+
+  if (!achievementId) {
+    return { success: false, error: "達成IDがありません。" };
+  }
+  if (!missionId) {
+    return { success: false, error: "ミッションIDがありません。" };
+  }
+
+  const supabase = await createClient();
+
+  // ユーザーがログイン済みかチェック
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+  if (!authUser) {
+    return { success: false, error: "認証エラーが発生しました。" };
+  }
+
+  // 達成記録が存在し、ユーザーのものかチェック
+  const { data: achievement, error: achievementFetchError } = await supabase
+    .from("achievements")
+    .select("id, user_id")
+    .eq("id", achievementId)
+    .eq("user_id", authUser.id)
+    .single();
+
+  if (achievementFetchError || !achievement) {
+    console.error("Achievement fetch error:", achievementFetchError);
+    return {
+      success: false,
+      error: "達成記録が見つからないか、アクセス権限がありません。",
+    };
+  }
+
+  // 達成記録を削除（CASCADE により関連する mission_artifacts と mission_artifact_geolocations も削除される）
+  const { error: deleteError } = await supabase
+    .from("achievements")
+    .delete()
+    .eq("id", achievementId);
+
+  if (deleteError) {
+    console.error(`Delete Error: ${deleteError.code} ${deleteError.message}`);
+    return {
+      success: false,
+      error: `提出のキャンセルに失敗しました: ${deleteError.message}`,
+    };
+  }
+
+  return { success: true, message: "提出をキャンセルしました。" };
+};

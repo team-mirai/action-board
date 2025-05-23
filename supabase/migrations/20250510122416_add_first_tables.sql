@@ -202,6 +202,10 @@ CREATE POLICY insert_own_achievement
 CREATE POLICY select_all_achievements
   ON achievements FOR SELECT
   USING (true);
+-- ミッション達成は、その本人だけが削除できる
+CREATE POLICY delete_own_achievement
+  ON achievements FOR DELETE
+  USING (auth.uid() = user_id);
 
 
 -- ミッション成果物を保持するテーブル (新規追加)
