@@ -36,6 +36,11 @@ setup("テスト用アカウントのセットアップ", async ({ page }) => {
   await page.fill('input[name="password"]', TEST_ACCOUNT.password);
   await page.getByRole("button", { name: "Sign up" }).click();
 
+  // 利用規約に同意する
+  await page.locator("#terms").click();
+  // プライバシーポリシーに同意する
+  await page.locator("#privacy").click();
+
   // 結果に関わらず進める（既存アカウントの場合はエラーになるが、テスト自体は進行させる）
   try {
     await page.waitForSelector("text=Thanks for signing up!", {

@@ -7,21 +7,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface SignUpFormProps {
-  searchParams: Promise<Message>;
+  searchParams: Message;
 }
 
 export default function SignUpForm({ searchParams }: SignUpFormProps) {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
-  const [message, setMessage] = useState<Message>({ message: "" });
 
-  // searchParamsを非同期で取得
-  useEffect(() => {
-    searchParams.then(setMessage);
-  }, [searchParams]);
+  const isSuccess = "success" in searchParams;
 
   return (
     <form className="flex flex-col min-w-72 max-w-72 mx-auto">
@@ -36,7 +32,12 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       </p>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
         <Label htmlFor="email">Email</Label>
-        <Input name="email" placeholder="you@example.com" required />
+        <Input
+          name="email"
+          placeholder="you@example.com"
+          required
+          disabled={isSuccess}
+        />
         <Label htmlFor="password">Password</Label>
         <Input
           type="password"
@@ -44,6 +45,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           placeholder="Your password"
           minLength={6}
           required
+          disabled={isSuccess}
         />
 
         <div className="flex flex-col gap-3 mb-4">
@@ -95,11 +97,11 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
         <SubmitButton
           formAction={signUpAction}
           pendingText="Signing up..."
-          disabled={!isTermsAgreed || !isPrivacyAgreed}
+          disabled={!isTermsAgreed || !isPrivacyAgreed || isSuccess}
         >
           サインアップ
         </SubmitButton>
-        <FormMessage message={message} />
+        <FormMessage message={searchParams} />
       </div>
     </form>
   );

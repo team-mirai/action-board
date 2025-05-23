@@ -5,7 +5,7 @@ import SignUpForm from "./SignUpForm";
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
-  const searchParams = props.searchParams;
+  const searchParams = await props.searchParams;
   return (
     <div className="flex-1 flex flex-col min-w-72">
       <div className="flex justify-center items-center m-4">

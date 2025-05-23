@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      
+
       # npmのキャッシュを設定
       - name: Cache Node.js modules
         uses: actions/cache@v4
@@ -38,6 +38,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
+      # Dockerイメージのキャッシュをロードする
+      - name: Load cached Docker images
+        if: steps.cache-supabase.outputs.cache-hit == 'true'
+        run: |
+          for img in /tmp/supabase-docker-cache/*.tar; do
+            docker load < $img
+          done
+          docker images
+
       # Supabase CLIのセットアップと起動
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -46,10 +55,18 @@ jobs:
 
       - name: Start Supabase
         run: |
-          supabase start
+          supabase start -x studio,postgres-meta,imgproxy
         env:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
+
+      # Dockerイメージのキャッシュを保存する
+      - name: Save Docker images to cache
+        if: steps.cache-supabase.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/supabase-docker-cache
+          docker images | grep supabase | awk '{print $1":"$2}' | xargs -I {} sh -c 'docker save {} > /tmp/supabase-docker-cache/$(echo {} | tr "/" "_" | tr ":" "_").tar'
+          ls -la /tmp/supabase-docker-cache/
 
       - name: Install dependencies
         run: npm ci
@@ -60,7 +77,7 @@ jobs:
           echo "Waiting for Supabase to be ready..."
           timeout 30 bash -c 'until curl -s http://localhost:54321/rest/v1/ > /dev/null; do sleep 1; done'
           echo "Supabase is ready!"
-      
+
       # 環境変数を設定（ローカルSupabaseの接続情報）
       - name: Set Supabase environment variables
         run: |
@@ -93,4 +110,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-
