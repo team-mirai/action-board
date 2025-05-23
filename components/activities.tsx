@@ -1,17 +1,34 @@
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
 import { dateTimeFormatter } from "@/utils/formatter";
-import { createClient } from "@/utils/supabase/server";
+import { createClient, createServiceClient } from "@/utils/supabase/server";
+import { toZonedTime } from "date-fns-tz";
 import Link from "next/link";
 
 export default async function Activities() {
   const supabase = await createClient();
+  const supabaseAdmin = await createServiceClient();
 
   const { data: dailyActionSummary } = await supabase
     .from("daily_action_summary")
     .select()
     .order("date", { ascending: false })
     .limit(2);
+
+  // count achievements
+  const { count: achievementCount } = await supabaseAdmin
+    .from("achievements")
+    .select("*", { count: "exact", head: true });
+
+  // count today's achievements
+  const timeZone = "Asia/Tokyo";
+  const date = toZonedTime(new Date(), timeZone);
+  date.setHours(0, 0, 0, 0);
+
+  const { count: todayAchievementCount } = await supabaseAdmin
+    .from("achievements")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", date.toISOString());
 
   const { data: dailyDashboardRegistrationSummary } = await supabase
     .from("daily_dashboard_registration_summary")
@@ -47,12 +64,12 @@ export default async function Activities() {
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-2">
             <span className="text-3xl font-bold text-emerald-400">
-              {actionNumDiff.toLocaleString()}
+              {achievementCount || "エラー"}
             </span>
             <span className="text-lg font-bold ml-1">件</span>
           </div>
           <div className="text-sm text-gray-500">
-            昨日から + {actionNumDiff}
+            昨日から + {todayAchievementCount || "エラー"}
           </div>
         </div>
       </Card>
