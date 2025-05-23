@@ -47,3 +47,5 @@ jest-report/
 test-results/
 playwright-report/
 *storybook.log
+
+copilot-instructions.md

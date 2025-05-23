@@ -27,8 +27,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="mt-2">
+    <div className="flex flex-col py-4">
+      <div>
         <h1 className="text-center text-lg font-bold">チームみらい</h1>
         <h1 className="text-center text-lg font-bold">アクションボード</h1>
       </div>
