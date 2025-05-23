@@ -16,10 +16,22 @@ export default async function UserAvatar({
   className,
   userProfile,
 }: UserAvatarProps) {
+  let avatarUrl = userProfile.avatar_url;
+  if (avatarUrl) {
+    const supabase = createClient();
+    const { data } = supabase.storage.from("avatars").getPublicUrl(avatarUrl, {
+      transform: {
+        width: 240,
+        height: 240,
+        resize: "cover",
+      },
+    });
+    avatarUrl = data.publicUrl;
+  }
   return (
     <Avatar className={className}>
       <AvatarImage
-        src={userProfile.avatar_url || undefined}
+        src={avatarUrl || undefined}
         alt="プロフィール画像"
         style={{ objectFit: "cover" }}
       />
