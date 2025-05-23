@@ -77,7 +77,7 @@ export default function Mission({
         <Link href={`/missions/${mission.id}`} className="w-full">
           <button
             type="button"
-            className="w-full bg-[#101828] text-white rounded-lg py-2 text-sm hover:bg-[#1a2533] transition"
+            className="w-full bg-[#101828] text-white rounded-lg py-2 text-sm hover:bg-[#1a2533] hover:opacity-50 transition"
           >
             詳細を見る
           </button>
