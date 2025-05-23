@@ -12,7 +12,7 @@ export type UpdateProfileResult = {
 
 export type UploadAvatarResult = {
   success: boolean;
-  avatarUrl?: string;
+  avatarPath?: string;
   error?: string;
 };
 
@@ -51,7 +51,7 @@ export async function updateProfile(
   const x_username = formData.get("x_username") as string | null;
 
   // フォームから送信されたavatar_url
-  let avatar_url = formData.get("avatar_url") as string | null;
+  let avatar_path = formData.get("avatar_path") as string | null;
 
   // 以前の画像URL
   const previousAvatarUrl = privateUser?.avatar_url || null;
@@ -64,7 +64,7 @@ export async function updateProfile(
   // 2. 新しい画像がアップロードされる場合
   const shouldDeleteOldAvatar =
     previousAvatarUrl &&
-    (avatar_url === null || (avatar_file && avatar_file.size > 0));
+    (avatar_path === null || (avatar_file && avatar_file.size > 0));
 
   if (shouldDeleteOldAvatar) {
     try {
@@ -120,9 +120,8 @@ export async function updateProfile(
         const { data } = supabaseServiceClient.storage
           .from("avatars")
           .getPublicUrl(fileName);
-
-        avatar_url = data.publicUrl;
       }
+      avatar_path = fileName;
     } catch (error) {
       console.error("Avatar upload error during profile update:", error);
       // エラーがあっても他のプロフィール情報の更新は続ける
@@ -139,7 +138,7 @@ export async function updateProfile(
         address_prefecture,
         postcode,
         x_username,
-        avatar_url,
+        avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       });
     if (privateUserError) {
@@ -157,7 +156,7 @@ export async function updateProfile(
         address_prefecture,
         postcode,
         x_username,
-        avatar_url,
+        avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
@@ -234,7 +233,7 @@ export async function uploadAvatar(
 
     return {
       success: true,
-      avatarUrl: data.publicUrl,
+      avatarPath: fileName,
     };
   } catch (error) {
     console.error("Avatar upload error:", error);

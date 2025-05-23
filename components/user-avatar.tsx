@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarUrl } from "@/lib/avatar";
 import { createClient } from "@/utils/supabase/client";
 import type { HTMLProps } from "react";
 
@@ -16,17 +17,10 @@ export default async function UserAvatar({
   className,
   userProfile,
 }: UserAvatarProps) {
+  const supabase = createClient();
   let avatarUrl = userProfile.avatar_url;
   if (avatarUrl) {
-    const supabase = createClient();
-    const { data } = supabase.storage.from("avatars").getPublicUrl(avatarUrl, {
-      transform: {
-        width: 240,
-        height: 240,
-        resize: "cover",
-      },
-    });
-    avatarUrl = data.publicUrl;
+    avatarUrl = getAvatarUrl(supabase, avatarUrl);
   }
   return (
     <Avatar className={className}>

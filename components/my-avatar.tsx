@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarUrl } from "@/lib/avatar";
 import { createClient } from "@/utils/supabase/server";
 import type { HTMLProps } from "react";
 
@@ -29,10 +30,14 @@ export default async function MyAvatar({ className }: MyAvatarProps) {
     .eq("id", user.id)
     .single();
 
+  const avatarUrl = profile?.avatar_url
+    ? getAvatarUrl(supabase, profile.avatar_url)
+    : null;
+
   return (
     <Avatar data-testid="avatar" className={className}>
       <AvatarImage
-        src={profile?.avatar_url || undefined}
+        src={avatarUrl || undefined}
         alt="プロフィール画像"
         style={{ objectFit: "cover" }}
       />
