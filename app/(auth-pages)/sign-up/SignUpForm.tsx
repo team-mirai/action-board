@@ -37,6 +37,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           placeholder="you@example.com"
           required
           disabled={isSuccess}
+          autoComplete="username"
         />
         <Label htmlFor="password">Password</Label>
         <Input
@@ -46,6 +47,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           minLength={6}
           required
           disabled={isSuccess}
+          autoComplete="new-password"
         />
 
         <div className="flex flex-col gap-3 mb-4">
