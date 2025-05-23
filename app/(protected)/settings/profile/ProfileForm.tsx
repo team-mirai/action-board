@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getAvatarUrl } from "@/lib/avatar";
+import { createClient } from "@/utils/supabase/client";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
@@ -40,13 +42,16 @@ export default function ProfileForm({
   initialProfile,
   initialPrivateUser,
 }: ProfileFormProps) {
+  const supabase = createClient();
   const [state, formAction, isPending] = useActionState(updateProfile, null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+  const [avatarPath, setAvatarPath] = useState<string | null>(
     initialProfile?.avatar_url || null,
   );
   // 画像プレビュー用のステート
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
-    initialProfile?.avatar_url || null,
+    initialProfile?.avatar_url
+      ? getAvatarUrl(supabase, initialProfile.avatar_url)
+      : null,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -114,7 +119,7 @@ export default function ProfileForm({
                   className="absolute top-0 right-0 bg-red-400 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
                   onClick={() => {
                     // 画像URLをクリアし、プレビューも削除
-                    setAvatarUrl(null);
+                    setAvatarPath(null);
                     setAvatarPreview(null);
                   }}
                   disabled={isPending}
@@ -126,7 +131,7 @@ export default function ProfileForm({
             </div>
 
             {/* 現在のアバターURLをサーバーに送信するための隠しフィールド */}
-            <input type="hidden" name="avatar_url" value={avatarUrl || ""} />
+            <input type="hidden" name="avatar_path" value={avatarPath || ""} />
 
             {/* 画像選択入力フィールド - これでServer Actionにファイルを送る */}
             <div className="flex flex-col items-center gap-2">
