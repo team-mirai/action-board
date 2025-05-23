@@ -26,7 +26,7 @@ export default async function MyAvatar({ className }: MyAvatarProps) {
   const { data: profile } = await supabase
     .from("private_users")
     .select("*")
-    .eq("auth_id", user.id)
+    .eq("id", user.id)
     .single();
 
   return (
