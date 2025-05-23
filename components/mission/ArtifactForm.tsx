@@ -122,19 +122,23 @@ export function ArtifactForm({
                     name="longitude"
                     value={geolocation.lon}
                   />
-                  {geolocation.accuracy && (
+                  {geolocation.accuracy ? (
                     <input
                       type="hidden"
                       name="accuracy"
                       value={geolocation.accuracy}
                     />
+                  ) : (
+                    ""
                   )}
-                  {geolocation.altitude && (
+                  {geolocation.altitude ? (
                     <input
                       type="hidden"
                       name="altitude"
                       value={geolocation.altitude}
                     />
+                  ) : (
+                    ""
                   )}
                 </>
               )}

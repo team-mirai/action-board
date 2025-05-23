@@ -69,8 +69,6 @@ export function GeolocationInput({
         <p className="mt-1 text-xs text-green-500">
           位置情報取得完了: Lat: {geolocation.lat.toFixed(4)}, Lon:{" "}
           {geolocation.lon.toFixed(4)}
-          {geolocation.accuracy &&
-            ` (精度: ${geolocation.accuracy.toFixed(1)}m)`}
         </p>
       )}
     </div>
