@@ -112,7 +112,7 @@ describe("achievements テーブルのRLSテスト", () => {
     expect(anonData?.user_id).toBe(user1.user.userId);
   });
 
-  test("認証済みユーザーは自分のミッション達成記録を削除できない（RLSポリシーなし）", async () => {
+  test("認証済みユーザーは自分のミッション達成記録を削除できる", async () => {
     // まずuser1が達成記録を作成
     const achievementId = crypto.randomUUID();
     await user1.client.from("achievements").insert({
@@ -136,7 +136,7 @@ describe("achievements テーブルのRLSテスト", () => {
       .eq("id", achievementId)
       .single();
 
-    expect(error).toBeNull();
-    expect(checkData?.id).toBe(achievementId);
+    expect(error).toBeTruthy();
+    expect(checkData).toBeNull();
   });
 });
