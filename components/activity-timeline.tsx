@@ -24,7 +24,13 @@ export function ActivityTimeline({
           className="flex flex-row gap-2 items-center"
         >
           <Link href={`/users/${activity.user_id}`}>
-            <UserAvatar userId={activity.user_id} className="w-10 h-10" />
+            <UserAvatar
+              className="w-10 h-10"
+              userProfile={{
+                name: activity.name,
+                avatar_url: activity.avatar_url,
+              }}
+            />
           </Link>
           <div>
             <div className="text-sm">
