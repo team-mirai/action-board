@@ -3,18 +3,26 @@ import { Card } from "@/components/ui/card";
 import type { Tables } from "@/utils/types/supabase";
 import clsx from "clsx";
 import Link from "next/link";
+import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
   mission: Tables<"missions">;
   achieved: boolean;
   achievementsCount?: number;
+  userAchievementCount?: number;
 }
 
 export default function Mission({
   mission,
   achieved,
   achievementsCount,
+  userAchievementCount = 0,
 }: MissionProps) {
+  // 最大達成回数が設定されている場合、ユーザーの達成回数が最大に達しているかどうかを確認
+  const hasReachedMaxAchievements =
+    mission.max_achievement_count !== null &&
+    userAchievementCount >= (mission.max_achievement_count || 0);
+
   const iconUrl = mission.icon_url ?? "/img/mission_fallback_icon.png";
 
   // 日付の整形
@@ -27,7 +35,7 @@ export default function Mission({
     <Card
       className={clsx(
         "border border-[#C7F5EF] rounded-xl p-4 w-[320px] mx-auto",
-        achieved && "bg-[#F0F0F0]",
+        hasReachedMaxAchievements && "bg-[#F0F0F0]",
       )}
     >
       <div className="flex items-start gap-3">
@@ -36,11 +44,11 @@ export default function Mission({
             <AvatarImage src={iconUrl} alt={mission.title} />
             <AvatarFallback>ミッション</AvatarFallback>
           </Avatar>
-          {achieved && (
-            <div className="flex text-xs text-gray-500 items-center justify-center mt-1">
-              達成済み
-            </div>
-          )}
+          <MissionAchievementStatus
+            hasReachedMaxAchievements={hasReachedMaxAchievements}
+            userAchievementCount={userAchievementCount}
+            maxAchievementCount={mission.max_achievement_count}
+          />
         </div>
         <div className="flex-1 p-1">
           <div className="text-xs font-bold leading-tight">{mission.title}</div>
@@ -54,8 +62,8 @@ export default function Mission({
           <div className="flex items-center gap-1">
             <span className="text-xs text-gray-700">
               {achievementsCount !== undefined
-                ? `${achievementsCount.toLocaleString()}名が達成`
-                : "-名が達成"}
+                ? `みんなで${achievementsCount.toLocaleString()}回達成`
+                : "-回達成"}
             </span>
           </div>
           <div className="flex items-center gap-1">

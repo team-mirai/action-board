@@ -1,86 +1,48 @@
-import { achieveMissionAction } from "@/app/actions";
-import { SubmitButton } from "@/components/submit-button";
-import { createClient } from "@/utils/supabase/server";
-import type { User } from "@supabase/supabase-js";
+import { MissionDetails } from "@/components/mission/MissionDetails";
+import { createClient as createServerClient } from "@/utils/supabase/server";
+import { MissionFormWrapper } from "./_components/MissionFormWrapper";
+import { SubmissionHistoryWrapper } from "./_components/SubmissionHistoryWrapper";
+import { getMissionPageData } from "./_lib/data";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
-
-type buttonLabelProps = {
-  authUser: User | null;
-  achievement: {
-    created_at: string;
-    id: string;
-    mission_id: string | null;
-    user_id: string | null;
-  } | null;
-};
-function buttonLabel({ authUser, achievement }: buttonLabelProps) {
-  if (authUser === null) {
-    return "ログインしてください";
-  }
-
-  if (achievement !== null) {
-    return "このミッションは完了済みです";
-  }
-
-  return "完了する";
-}
 
 export default async function MissionPage({ params }: Props) {
-  const { id } = await params;
-  const supabase = await createClient();
-
-  // 認証状態に応じてボタンを変化させるため、認証ユーザーを取得
+  const supabase = await createServerClient();
   const {
-    data: { user: authUser },
+    data: { user },
   } = await supabase.auth.getUser();
 
-  // ミッション情報を取得
-  const { data: mission } = await supabase
-    .from("missions")
-    .select()
-    .eq("id", id)
-    .single();
+  const { id } = await params;
+  const pageData = await getMissionPageData(id, user?.id);
 
-  if (!mission) {
-    throw new Error("Mission not found");
+  if (!pageData) {
+    return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  // 達成済みのものは完了ボタンをdisabledにするため、達成状況も取得
-  const { data: user } = await supabase
-    .from("private_users")
-    .select("id")
-    .single(); // 認証していない場合にはnullになる可能性がある
-
-  // 達成状況の取得
-  let achievement = null;
-
-  if (user?.id) {
-    const { data: achievementData } = await supabase
-      .from("achievements")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("mission_id", mission.id)
-      .single();
-
-    achievement = achievementData;
-  }
+  const { mission, userAchievements, submissions, userAchievementCount } =
+    pageData;
 
   return (
-    <div className="flex flex-col">
-      <h1>{mission.title}</h1>
-      <p>{mission.content}</p>
-      <form className="flex-1 flex flex-col min-w-64">
-        <SubmitButton
-          pendingText="登録中..."
-          formAction={achieveMissionAction}
-          disabled={authUser === null || achievement !== null}
-        >
-          {buttonLabel({ authUser, achievement })}
-        </SubmitButton>
-      </form>
+    <div className="flex flex-col gap-4 p-4">
+      <MissionDetails mission={mission} />
+
+      <MissionFormWrapper
+        mission={mission}
+        authUser={user}
+        userAchievementCount={userAchievementCount}
+        userAchievements={userAchievements}
+      />
+
+      {submissions.length > 0 && (
+        <SubmissionHistoryWrapper
+          submissions={submissions}
+          missionId={id}
+          userId={user?.id}
+          maxAchievementCount={mission.max_achievement_count || 0}
+        />
+      )}
     </div>
   );
 }

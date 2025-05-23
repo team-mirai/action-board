@@ -154,6 +154,8 @@ CREATE TABLE missions (
     content TEXT,
     difficulty INTEGER NOT NULL,
     event_date DATE,
+    required_artifact_type TEXT DEFAULT 'NONE' NOT NULL,
+    max_achievement_count INTEGER, -- 追加: 最大達成回数 (NULLの場合は無制限)
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -163,6 +165,8 @@ COMMENT ON COLUMN missions.id IS 'ミッションID';
 COMMENT ON COLUMN missions.title IS 'ミッションのタイトル';
 COMMENT ON COLUMN missions.icon_url IS 'アイコン画像URL(NULL可能)';
 COMMENT ON COLUMN missions.content IS '説明文(Markdown対応)';
+COMMENT ON COLUMN missions.required_artifact_type IS 'ミッション達成に必要な成果物の種類 (LINK, IMAGE, NONE)';
+COMMENT ON COLUMN missions.max_achievement_count IS 'ミッションの最大達成可能回数。NULLの場合は無制限。'; -- 追加
 COMMENT ON COLUMN missions.created_at IS '作成日時(UTC)';
 COMMENT ON COLUMN missions.updated_at IS '更新日時(UTC)';
 
@@ -177,18 +181,15 @@ CREATE POLICY select_all_missions
 
 -- ミッション達成を保持するテーブル。
 CREATE TABLE achievements (
-    id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mission_id UUID REFERENCES missions(id),
     user_id UUID REFERENCES public_user_profiles(id),
-    evidence JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE(mission_id, user_id)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 COMMENT ON TABLE achievements IS 'ユーザーによるミッション達成の記録';
 COMMENT ON COLUMN achievements.mission_id IS '達成したミッションのID';
 COMMENT ON COLUMN achievements.user_id IS 'ミッションを達成したユーザーのID';
-COMMENT ON COLUMN achievements.evidence IS '達成の証拠(JSON形式)。達成の証拠が不要な場合は{}を入れる';
 COMMENT ON COLUMN achievements.created_at IS '記録日時(UTC)';
 
 -- RLS設定
@@ -201,6 +202,95 @@ CREATE POLICY insert_own_achievement
 CREATE POLICY select_all_achievements
   ON achievements FOR SELECT
   USING (true);
+-- ミッション達成は、その本人だけが削除できる
+CREATE POLICY delete_own_achievement
+  ON achievements FOR DELETE
+  USING (auth.uid() = user_id);
+
+
+-- ミッション成果物を保持するテーブル (新規追加)
+CREATE TABLE mission_artifacts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    achievement_id UUID NOT NULL REFERENCES achievements(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES public_user_profiles(id) ON DELETE CASCADE,
+    artifact_type TEXT NOT NULL, -- 'LINK', 'IMAGE', 'IMAGE_WITH_GEOLOCATION'
+    link_url TEXT,
+    image_storage_path TEXT, -- Supabase Storage内のパス
+    description TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT check_artifact_type CHECK (artifact_type IN ('LINK', 'IMAGE', 'IMAGE_WITH_GEOLOCATION')), -- 変更
+    CONSTRAINT ensure_link_or_image CHECK ( -- 変更: IMAGE_WITH_GEOLOCATION も image_storage_path が必須
+        (artifact_type = 'LINK' AND link_url IS NOT NULL AND image_storage_path IS NULL) OR
+        (artifact_type = 'IMAGE' AND image_storage_path IS NOT NULL AND link_url IS NULL) OR
+        (artifact_type = 'IMAGE_WITH_GEOLOCATION' AND image_storage_path IS NOT NULL AND link_url IS NULL)
+    )
+);
+
+COMMENT ON TABLE mission_artifacts IS 'ミッション達成時に提出された成果物';
+COMMENT ON COLUMN mission_artifacts.id IS '成果物ID';
+COMMENT ON COLUMN mission_artifacts.achievement_id IS '関連するミッション達成記録のID';
+COMMENT ON COLUMN mission_artifacts.user_id IS '成果物を提出したユーザーのID';
+COMMENT ON COLUMN mission_artifacts.artifact_type IS '提出された成果物の種類 (LINK, IMAGE)';
+COMMENT ON COLUMN mission_artifacts.link_url IS '成果物がリンクの場合のURL';
+COMMENT ON COLUMN mission_artifacts.image_storage_path IS '成果物が画像の場合のStorageパス';
+COMMENT ON COLUMN mission_artifacts.description IS '成果物に関する補足説明';
+COMMENT ON COLUMN mission_artifacts.created_at IS 'レコード作成日時(UTC)';
+COMMENT ON COLUMN mission_artifacts.updated_at IS 'レコード更新日時(UTC)';
+
+-- mission_artifacts テーブルのRLS設定 (新規追加)
+ALTER TABLE mission_artifacts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own mission artifacts"
+  ON mission_artifacts
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- インデックス作成 (新規追加)
+CREATE INDEX idx_mission_artifacts_achievement_id ON mission_artifacts(achievement_id);
+CREATE INDEX idx_mission_artifacts_user_id ON mission_artifacts(user_id);
+
+-- 位置情報を保持するテーブル (新規追加)
+CREATE TABLE mission_artifact_geolocations (
+    id BIGSERIAL PRIMARY KEY,
+    mission_artifact_id UUID NOT NULL REFERENCES mission_artifacts(id) ON DELETE CASCADE,
+    lat DECIMAL(9,6) NOT NULL,
+    lon DECIMAL(9,6) NOT NULL,
+    accuracy DOUBLE PRECISION,
+    altitude DOUBLE PRECISION,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE mission_artifact_geolocations IS '成果物の位置情報';
+COMMENT ON COLUMN mission_artifact_geolocations.id IS '位置情報ID';
+COMMENT ON COLUMN mission_artifact_geolocations.mission_artifact_id IS '関連する成果物のID';
+COMMENT ON COLUMN mission_artifact_geolocations.lat IS '緯度';
+COMMENT ON COLUMN mission_artifact_geolocations.lon IS '経度';
+COMMENT ON COLUMN mission_artifact_geolocations.accuracy IS '位置精度(メートル)';
+COMMENT ON COLUMN mission_artifact_geolocations.altitude IS '高度(メートル)';
+COMMENT ON COLUMN mission_artifact_geolocations.created_at IS '記録日時(UTC)';
+
+-- mission_artifact_geolocations テーブルのRLS設定 (新規追加)
+-- 基本的には mission_artifacts のRLSに依存するが、直接アクセスされる可能性も考慮
+ALTER TABLE mission_artifact_geolocations ENABLE ROW LEVEL SECURITY;
+
+-- 成果物の所有者のみが関連する位置情報を参照・操作可能 (mission_artifacts経由でのアクセスを主とする)
+CREATE POLICY "Users can manage geolocations linked to their artifacts"
+  ON mission_artifact_geolocations
+  FOR ALL
+  USING (
+    auth.uid() = (
+      SELECT ma.user_id FROM mission_artifacts ma WHERE ma.id = mission_artifact_id
+    )
+  )
+  WITH CHECK (
+    auth.uid() = (
+      SELECT ma.user_id FROM mission_artifacts ma WHERE ma.id = mission_artifact_id
+    )
+  );
+
+CREATE INDEX idx_mission_artifact_geolocations_mission_artifact_id ON mission_artifact_geolocations(mission_artifact_id);
 
 
 -- 活動タイムラインに表示するためのView
@@ -355,3 +445,52 @@ ALTER TABLE weekly_event_count_by_prefecture_summary ENABLE ROW LEVEL SECURITY;
 CREATE POLICY select_all_weekly_event_count_by_prefecture_summary
   ON weekly_event_count_by_prefecture_summary FOR SELECT
   USING (true);
+
+-- ミッション成果物ファイル用のストレージバケットを作成 (新規追加)
+INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types)
+VALUES (
+  'mission_artifact_files', -- 変更
+  'mission_artifact_files', -- 変更
+  false, -- 非公開バケットとして作成 (RLSで制御)
+  false,
+  10485760, -- ファイルサイズ制限 10MB (例)
+  NULL -- 全てのMIMEタイプを許可 (または必要に応じて指定)
+) ON CONFLICT (id) DO NOTHING; -- 既に存在する場合は何もしない
+
+-- mission_artifact_files バケットのRLSポリシー (新規追加)
+-- 認証ユーザーは、自身のuser_idをパスに含むオブジェクトのみ挿入可能
+CREATE POLICY "Users can upload their own mission artifact files"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (
+    bucket_id = 'mission_artifact_files' AND -- 変更
+    (storage.foldername(name))[1] = auth.uid()::text -- パスの第一階層がuser_id
+    -- 必要に応じて、(storage.foldername(name))[2] で achievement_id もチェック
+  );
+
+-- 認証ユーザーは、自身のuser_idをパスに含むオブジェクトのみ参照可能
+CREATE POLICY "Users can select their own mission artifact files"
+  ON storage.objects FOR SELECT TO authenticated
+  USING (
+    bucket_id = 'mission_artifact_files' AND -- 変更
+    (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- 認証ユーザーは、自身のuser_idをパスに含むオブジェクトのみ更新可能
+CREATE POLICY "Users can update their own mission artifact files"
+  ON storage.objects FOR UPDATE TO authenticated
+  USING (
+    bucket_id = 'mission_artifact_files' AND -- 変更
+    (storage.foldername(name))[1] = auth.uid()::text
+  )
+  WITH CHECK (
+    bucket_id = 'mission_artifact_files' AND -- 変更
+    (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- 認証ユーザーは、自身のuser_idをパスに含むオブジェクトのみ削除可能
+CREATE POLICY "Users can delete their own mission artifact files"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (
+    bucket_id = 'mission_artifact_files' AND -- 変更
+    (storage.foldername(name))[1] = auth.uid()::text
+  );

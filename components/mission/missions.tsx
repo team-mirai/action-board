@@ -15,14 +15,34 @@ export default async function Missions({
 }: MissionsProps) {
   const supabase = await createClient();
 
+  // ユーザーが達成したミッションIDのリスト
   let achievedMissionIds: string[] = [];
+  // ユーザーの各ミッションに対する達成回数のマップ
+  let userAchievementCountMap = new Map<string, number>();
+
   if (userId) {
+    // ユーザーの達成情報を取得
     const { data: achievements } = await supabase
       .from("achievements")
       .select("mission_id")
       .eq("user_id", userId);
+
+    // 達成したミッションIDのリストを作成
     achievedMissionIds =
       achievements?.map((achievement) => achievement.mission_id ?? "") ?? [];
+
+    // 各ミッションの達成回数をカウント
+    if (achievements && achievements.length > 0) {
+      const missionCounts = achievements.reduce((counts, achievement) => {
+        const missionId = achievement.mission_id;
+        if (missionId) {
+          counts.set(missionId, (counts.get(missionId) || 0) + 1);
+        }
+        return counts;
+      }, new Map<string, number>());
+
+      userAchievementCountMap = missionCounts;
+    }
   }
 
   // すべてのミッションに対する達成人数を取得
@@ -63,6 +83,9 @@ export default async function Missions({
               mission={mission}
               achieved={achievedMissionIds.includes(mission.id)}
               achievementsCount={achievement_count_map.get(mission.id) ?? 0}
+              userAchievementCount={
+                userAchievementCountMap.get(mission.id) ?? 0
+              }
             />
           ))
         ) : (

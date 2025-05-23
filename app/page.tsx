@@ -1,6 +1,6 @@
 import Activities from "@/components/activities";
 import Events from "@/components/events";
-import Missions from "@/components/missions";
+import Missions from "@/components/mission/missions";
 import Progress from "@/components/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
