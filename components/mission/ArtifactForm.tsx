@@ -47,7 +47,7 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>成果物の提出 ({artifactConfig.displayName})</CardTitle>
+        <CardTitle>提出フォーム - {artifactConfig.displayName}</CardTitle>
         <p className="text-sm text-muted-foreground">{artifactConfig.prompt}</p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -152,7 +152,7 @@ export function ArtifactForm({
           <Textarea
             name="artifactDescription"
             id="artifactDescription"
-            placeholder="成果物に関する補足説明 (任意)"
+            placeholder="提出内容に関する補足説明 (任意)"
             rows={3}
             disabled={disabled}
           />
