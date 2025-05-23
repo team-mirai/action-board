@@ -5,9 +5,35 @@ import { encodedRedirect } from "@/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { z } from "zod";
+
+const signUpAndLoginFormSchema = z.object({
+  email: z
+    .string()
+    .nonempty({ message: "メールアドレスを入力してください" })
+    .email({ message: "有効なメールアドレスを入力してください" }),
+  password: z
+    .string()
+    .nonempty({ message: "パスワードを入力してください" })
+    .min(6, { message: "パスワードは8文字以上で入力してください" }),
+});
+
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+
+  const validatedFields = signUpAndLoginFormSchema.safeParse({
+    email,
+    password,
+  });
+  if (!validatedFields.success) {
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      validatedFields.error.errors.map((error) => error.message).join("\n"),
+    );
+  }
+
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -42,6 +68,19 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  const validatedFields = signUpAndLoginFormSchema.safeParse({
+    email,
+    password,
+  });
+  if (!validatedFields.success) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      validatedFields.error.errors.map((error) => error.message).join("\n"),
+    );
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -56,6 +95,13 @@ export const signInAction = async (formData: FormData) => {
   return redirect("/");
 };
 
+const forgotPasswordFormSchema = z.object({
+  email: z
+    .string()
+    .nonempty({ message: "メールアドレスを入力してください" })
+    .email({ message: "有効なメールアドレスを入力してください" }),
+});
+
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const supabase = await createClient();
@@ -64,6 +110,15 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   if (!email) {
     return encodedRedirect("error", "/forgot-password", "Email is required");
+  }
+
+  const validatedFields = forgotPasswordFormSchema.safeParse({ email });
+  if (!validatedFields.success) {
+    return encodedRedirect(
+      "error",
+      "/forgot-password",
+      validatedFields.error.errors.map((error) => error.message).join("\n"),
+    );
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
