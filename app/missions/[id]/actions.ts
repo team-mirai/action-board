@@ -264,7 +264,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     formData.forEach((value, key) => {
       formDataObj[key] = String(value);
     });
-    console.log("[achieveMissionAction] formData:", formDataObj);
 
     if (validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key) {
       artifactTypeLabel = "LINK";
