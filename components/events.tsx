@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { dateTimeFormatter } from "@/utils/formatter";
-import { createClient } from "@/utils/supabase/server";
+import { dateTimeFormatter } from "@/lib/formatter";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Events() {
   const supabase = await createClient();

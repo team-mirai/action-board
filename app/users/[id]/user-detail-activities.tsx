@@ -1,8 +1,8 @@
 "use client";
 
 import { ActivityTimeline } from "@/components/activity-timeline";
-import { createClient } from "@/utils/supabase/client";
-import type { Tables } from "@/utils/types/supabase";
+import { createClient } from "@/lib/supabase/client";
+import type { Tables } from "@/lib/utils/types/supabase";
 import { useState } from "react";
 
 interface UserDetailActivitiesProps {

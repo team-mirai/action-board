@@ -1,7 +1,7 @@
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
-import { dateTimeFormatter } from "@/utils/formatter";
-import { createClient, createServiceClient } from "@/utils/supabase/server";
+import { dateTimeFormatter } from "@/lib/formatter";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { toZonedTime } from "date-fns-tz";
 import Link from "next/link";
 

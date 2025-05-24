@@ -2,8 +2,8 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
-import type { Tables } from "@/utils/types/supabase";
+import { createClient } from "@/lib/supabase/client";
+import type { Tables } from "@/lib/utils/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 

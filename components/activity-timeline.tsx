@@ -1,5 +1,5 @@
-import { dateTimeFormatter } from "@/utils/formatter";
-import type { Tables } from "@/utils/types/supabase";
+import { dateTimeFormatter } from "@/lib/formatter";
+import type { Tables } from "@/lib/utils/types/supabase";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar";

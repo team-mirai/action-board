@@ -1,7 +1,7 @@
 // filepath: /home/seiichi3141/apps/team-mirai/action-board/app/(protected)/settings/profile/actions.ts
 "use server";
 
-import { createClient, createServiceClient } from "@/utils/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

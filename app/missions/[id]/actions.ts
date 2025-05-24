@@ -1,9 +1,9 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { createClient } from "@/utils/supabase/server";
-import type { TablesInsert } from "@/utils/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
-import { encodedRedirect } from "@/utils/utils";
+import { createClient } from "@/lib/supabase/server";
+import type { TablesInsert } from "@/lib/utils/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
+import { encodedRedirect } from "@/lib/utils/utils";
 import { z } from "zod";
 
 // 基本スキーマ（共通項目）
