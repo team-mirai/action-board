@@ -115,7 +115,13 @@ export async function getSubmissionHistory(
             if (artifact.image_storage_path) {
               const { data: signedUrlData } = await supabase.storage
                 .from("mission_artifact_files")
-                .createSignedUrl(artifact.image_storage_path, 60);
+                .createSignedUrl(artifact.image_storage_path, 60, {
+                  transform: {
+                    width: 240,
+                    height: 240,
+                    resize: "contain",
+                  },
+                });
 
               if (signedUrlData) {
                 return {

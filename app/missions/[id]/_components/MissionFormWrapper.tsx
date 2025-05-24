@@ -28,7 +28,6 @@ export function MissionFormWrapper({
   return (
     <form action={achieveMissionAction} className="flex flex-col gap-4">
       <input type="hidden" name="missionId" value={mission.id} />
-      <input type="hidden" name="userId" value={authUser?.id ?? ""} />
       <input
         type="hidden"
         name="requiredArtifactType"
@@ -53,17 +52,13 @@ export function MissionFormWrapper({
       {!hasReachedUserMaxAchievements &&
         userAchievementCount > 0 &&
         mission?.max_achievement_count !== null && (
-          <p className="text-sm text-blue-600 font-semibold text-center">
+          <p className="text-sm font-semibold text-center">
             あなたの達成回数: {userAchievementCount} /{" "}
             {mission.max_achievement_count}回
           </p>
         )}
 
-      <SubmitButton
-        pendingText="登録中..."
-        disabled={isButtonDisabled}
-        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-      >
+      <SubmitButton pendingText="登録中..." disabled={isButtonDisabled}>
         {buttonLabel}
       </SubmitButton>
     </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { SubmissionData } from "../_lib/types";
-import SubmissionHistoryComponent from "./SubmissionHistory";
+import SubmissionHistory from "./SubmissionHistory";
 
 type Props = {
   submissions: SubmissionData[];
@@ -21,7 +21,7 @@ export function SubmissionHistoryWrapper({
   }
 
   return (
-    <SubmissionHistoryComponent
+    <SubmissionHistory
       submissions={submissions.map((sub) => ({
         ...sub,
         mission_id: sub.mission_id || "",
