@@ -209,14 +209,14 @@ export default function ProfileForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="x_username">
-              X(旧Twitter)のアカウント名(オプション)
+              X(旧Twitter)のユーザー名(オプション)
             </Label>
             <Input
               id="x_username"
               name="x_username"
               type="text"
               defaultValue={initialProfile?.x_username || ""}
-              placeholder="Xのアカウント名(オプション)"
+              placeholder="Xのユーザー名(オプション)"
               disabled={isPending}
               maxLength={50}
             />
