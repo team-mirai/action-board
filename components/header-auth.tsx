@@ -1,6 +1,6 @@
 import { signOutAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import MyAvatar from "./my-avatar";
 import {

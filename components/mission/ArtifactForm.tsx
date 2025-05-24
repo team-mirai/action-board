@@ -1,7 +1,7 @@
 "use client";
 
 import { ARTIFACT_TYPES, getArtifactConfig } from "@/lib/artifactTypes";
-import type { Tables } from "@/utils/types/supabase";
+import type { Tables } from "@/lib/utils/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { GeolocationInput } from "./GeolocationInput";

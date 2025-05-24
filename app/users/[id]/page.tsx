@@ -1,17 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { MapPin } from "lucide-react";
 import UserDetailActivities from "./user-detail-activities";
 
-export const PAGE_SIZE = 20;
+const PAGE_SIZE = 20;
 
 type Params = {
   id: string;
 };
 
 type Props = {
-  params: Params;
+  params: Promise<Params>;
 };
 
 export default async function UserDetailPage({ params }: Props) {

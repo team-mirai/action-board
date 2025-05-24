@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Tables } from "@/utils/types/supabase";
+import type { Tables } from "@/lib/utils/types/supabase";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";

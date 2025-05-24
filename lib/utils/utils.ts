@@ -1,4 +1,10 @@
+import { type ClassValue, clsx } from "clsx";
 import { redirect } from "next/navigation";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.

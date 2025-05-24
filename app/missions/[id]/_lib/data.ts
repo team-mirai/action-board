@@ -1,5 +1,5 @@
-import { createClient as createServerClient } from "@/utils/supabase/server";
-import type { Tables } from "@/utils/types/supabase";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import type { Tables } from "@/lib/utils/types/supabase";
 import type {
   Achievement,
   MissionArtifact,
