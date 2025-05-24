@@ -13,11 +13,19 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   }
 
   included_files = [
-    "cloudbuild.yaml",
     "Dockerfile",
-    "app/**",
     "package.json",
-    "package-lock.json"
+    "package-lock.json",
+    "next.config.ts",
+    "tsconfig.json",
+    "postcss.config.js",
+    "tailwind.config.ts",
+    "middleware.ts",
+    "app/**",
+    "components/**",
+    "lib/**",
+    "utils/**",
+    "public/**"
   ]
 
   filename = "cloudbuild.yaml"
