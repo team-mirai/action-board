@@ -25,7 +25,7 @@ export default async function MissionPage({ params }: Props) {
     pageData;
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-screen-md">
+    <div className="flex flex-col gap-4 p-4 max-w-screen-md w-full">
       <MissionDetails mission={mission} />
 
       <MissionFormWrapper
