@@ -1,7 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { ShareButton } from "./ShareButton";
 import { ShareFacebookButton } from "./ShareFacebookButton";
+import { ShareLineButton } from "./ShareLineButton";
 import { ShareTwitterButton } from "./ShareTwitterButton";
+
 type Params = {
   id: string;
 };
@@ -44,7 +46,11 @@ export default async function MissionPage({ params }: Props) {
       <ShareFacebookButton className="mt-4" missionId={id}>
         Facebookでシェア
       </ShareFacebookButton>
-      {/* navigator.share()を使っているのモバイルのみ表示 */}
+      {/* 内部で判定しておりモバイルのみ表示 */}
+      <ShareLineButton className="mt-4" missionId={id}>
+        Lineでシェア
+      </ShareLineButton>
+      {/* navigator.share()を使っているのでモバイルのみ表示 */}
       <ShareButton
         className="mt-2 md:hidden"
         message={shareMessage}

@@ -17,8 +17,8 @@ export function ShareFacebookButton({
 }: Props) {
   const shareUrl = url ?? `${window.location.origin}/missions/${missionId}`;
   const handleShare = () => {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-    window.open(facebookUrl, "_blank", "noopener,noreferrer");
+    const facebookIntentUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookIntentUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
