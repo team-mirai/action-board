@@ -1,7 +1,7 @@
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
-  name            = "build-and-deploy-${var.service_name}-${var.environment}"
-  description     = "Build and deploy ${var.service_name} ${var.environment} to Cloud Run"
+  name            = "build-and-deploy-${var.app_name}-${var.environment}"
+  description     = "Build and deploy ${var.app_name} ${var.environment} to Cloud Run"
   location        = var.region
   service_account = data.google_service_account.cloud_build.id
 
@@ -32,7 +32,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
 
   substitutions = {
     _REGION          = var.region
-    _SERVICE_NAME    = "${var.service_name}-${var.environment}"
+    _SERVICE_NAME    = "${var.app_name}-${var.environment}"
     _REPOSITORY_NAME = var.repository_name
     _NEXT_PUBLIC_SUPABASE_URL = var.NEXT_PUBLIC_SUPABASE_URL
     _NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY

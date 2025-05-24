@@ -8,10 +8,9 @@ variable "region" {
   type        = string
 }
 
-variable "service_name" {
-  description = "The name of the Cloud Run service"
+variable "app_name" {
+  description = "The name of the application"
   type        = string
-  default     = "nextjs-app"
 }
 
 variable "min_instance_count" {

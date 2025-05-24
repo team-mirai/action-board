@@ -1,12 +1,12 @@
 # Cloud Run Service Account
 resource "google_service_account" "cloud_run" {
-  account_id   = "${var.service_name}-${var.environment}-sa-cr"
-  display_name = "Service Account for ${var.service_name} ${var.environment} Cloud Run"
+  account_id   = "${var.app_name}-${var.environment}-sa-cr"
+  display_name = "Service Account for ${var.app_name} ${var.environment} Cloud Run"
 }
 
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
-  name     = "${var.service_name}-${var.environment}"
+  name     = "${var.app_name}-${var.environment}"
   location = var.region
 
   # Public access (no IAP)
@@ -77,7 +77,7 @@ resource "google_cloud_run_service_iam_member" "public_access" {
 # Output values
 output "service_name" {
   description = "The name of the Cloud Run service"
-  value       = var.service_name
+  value       = "${var.app_name}-${var.environment}"
 }
 
 output "service_location" {

@@ -4,7 +4,7 @@ module "nextjs_app" {
 
   project_id           = var.project_id
   region               = var.region
-  service_name         = "action-board"  # リポジトリ名に合わせて変更
+  app_name             = var.app_name
   environment          = var.environment
   min_instance_count   = var.min_instance_count
   max_instance_count   = var.max_instance_count
