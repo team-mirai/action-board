@@ -51,11 +51,7 @@ export default async function MissionPage({ params }: Props) {
         Lineでシェア
       </ShareLineButton>
       {/* navigator.share()を使っているのでモバイルのみ表示 */}
-      <ShareButton
-        className="mt-2 md:hidden"
-        message={shareMessage}
-        missionId={id}
-      >
+      <ShareButton className="mt-4" message={shareMessage} missionId={id}>
         その他のサービスにシェア
       </ShareButton>
     </div>
