@@ -4,6 +4,81 @@ import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { createClient } from "@/utils/supabase/server";
 import type { TablesInsert } from "@/utils/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
 import { encodedRedirect } from "@/utils/utils";
+import { z } from "zod";
+
+// 基本スキーマ（共通項目）
+const baseMissionFormSchema = z.object({
+  missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
+  userId: z.string().nonempty({ message: "ユーザーIDが必要です" }),
+  requiredArtifactType: z
+    .string()
+    .nonempty({ message: "提出タイプが必要です" }),
+  artifactDescription: z.string().optional(),
+});
+
+// LINKタイプ用スキーマ
+const linkArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.LINK.key),
+  artifactLink: z
+    .string()
+    .nonempty({ message: "リンクURLが必要です" })
+    .url({ message: "有効なURLを入力してください" }),
+});
+
+// IMAGEタイプ用スキーマ
+const imageArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.IMAGE.key),
+  artifactImagePath: z.string().nonempty({ message: "画像が必要です" }),
+});
+
+// IMAGE_WITH_GEOLOCATIONタイプ用スキーマ
+const imageWithGeolocationArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key),
+  artifactImagePath: z.string().nonempty({ message: "画像が必要です" }),
+  latitude: z
+    .string()
+    .nonempty({ message: "緯度が必要です" })
+    .refine((val) => !Number.isNaN(Number.parseFloat(val)), {
+      message: "有効な緯度を入力してください",
+    }),
+  longitude: z
+    .string()
+    .nonempty({ message: "経度が必要です" })
+    .refine((val) => !Number.isNaN(Number.parseFloat(val)), {
+      message: "有効な経度を入力してください",
+    }),
+  accuracy: z
+    .string()
+    .optional()
+    .refine((val) => !val || !Number.isNaN(Number.parseFloat(val)), {
+      message: "有効な精度を入力してください",
+    }),
+  altitude: z
+    .string()
+    .optional()
+    .refine((val) => !val || !Number.isNaN(Number.parseFloat(val)), {
+      message: "有効な高度を入力してください",
+    }),
+});
+
+// NONEタイプ用スキーマ
+const noneArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.NONE.key),
+});
+
+// 統合スキーマ
+const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
+  linkArtifactSchema,
+  imageArtifactSchema,
+  imageWithGeolocationArtifactSchema,
+  noneArtifactSchema,
+]);
+
+// 提出キャンセルアクションのバリデーションスキーマ
+const cancelSubmissionFormSchema = z.object({
+  achievementId: z.string().nonempty({ message: "達成IDが必要です" }),
+  missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
+});
 
 export const achieveMissionAction = async (formData: FormData) => {
   const missionId = formData.get("missionId")?.toString();
@@ -18,17 +93,35 @@ export const achieveMissionAction = async (formData: FormData) => {
   const accuracy = formData.get("accuracy")?.toString();
   const altitude = formData.get("altitude")?.toString();
 
-  if (!missionId) {
-    return encodedRedirect("error", "/missions", "ミッションIDがありません。");
-  }
-  if (!userId) {
-    // 本来はサーバーサイドで認証情報から取得するべき
+  // zodによるバリデーション
+  const validatedFields = achieveMissionFormSchema.safeParse({
+    missionId,
+    userId,
+    requiredArtifactType,
+    artifactLink,
+    artifactImagePath,
+    artifactDescription,
+    latitude,
+    longitude,
+    accuracy,
+    altitude,
+  });
+
+  if (!validatedFields.success) {
     return encodedRedirect(
       "error",
-      `/missions/${missionId}`,
-      "ユーザーIDがありません。",
+      missionId ? `/missions/${missionId}` : "/missions",
+      validatedFields.error.errors.map((error) => error.message).join("\n"),
     );
   }
+
+  const validatedData = validatedFields.data;
+  const {
+    missionId: validatedMissionId,
+    userId: validatedUserId,
+    requiredArtifactType: validatedRequiredArtifactType,
+    artifactDescription: validatedArtifactDescription,
+  } = validatedData;
 
   const supabase = await createClient();
 
@@ -36,10 +129,10 @@ export const achieveMissionAction = async (formData: FormData) => {
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  if (!authUser || authUser.id !== userId) {
+  if (!authUser || authUser.id !== validatedUserId) {
     return encodedRedirect(
       "error",
-      `/missions/${missionId}`,
+      `/missions/${validatedMissionId}`,
       "認証エラーが発生しました。",
     );
   }
@@ -48,14 +141,14 @@ export const achieveMissionAction = async (formData: FormData) => {
   const { data: missionData, error: missionFetchError } = await supabase
     .from("missions")
     .select("max_achievement_count")
-    .eq("id", missionId)
+    .eq("id", validatedMissionId)
     .single();
 
   if (missionFetchError) {
     console.error(`Mission fetch error: ${missionFetchError.message}`);
     return encodedRedirect(
       "error",
-      `/missions/${missionId}`,
+      `/missions/${validatedMissionId}`,
       "ミッション情報の取得に失敗しました。",
     );
   }
@@ -66,8 +159,8 @@ export const achieveMissionAction = async (formData: FormData) => {
       await supabase
         .from("achievements")
         .select("id", { count: "exact" })
-        .eq("user_id", userId)
-        .eq("mission_id", missionId);
+        .eq("user_id", validatedUserId)
+        .eq("mission_id", validatedMissionId);
 
     if (userAchievementError) {
       console.error(
@@ -75,7 +168,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       );
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         "ユーザーの達成回数の取得に失敗しました。",
       );
     }
@@ -88,7 +181,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     ) {
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         "あなたはこのミッションの達成回数の上限に達しています。",
       );
     }
@@ -97,14 +190,14 @@ export const achieveMissionAction = async (formData: FormData) => {
     const { data: countData, error: countError } = await supabase
       .from("mission_achievement_count_view")
       .select("achievement_count")
-      .eq("mission_id", missionId)
+      .eq("mission_id", validatedMissionId)
       .single();
 
     if (countError) {
       console.error(`Achievement count fetch error: ${countError.message}`);
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         "達成回数の取得に失敗しました。",
       );
     }
@@ -118,7 +211,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     ) {
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         "このミッションは全体の達成回数の上限に達しています。",
       );
     }
@@ -126,8 +219,8 @@ export const achieveMissionAction = async (formData: FormData) => {
 
   // ミッション達成を記録
   const achievementPayload = {
-    user_id: userId,
-    mission_id: missionId,
+    user_id: validatedUserId,
+    mission_id: validatedMissionId,
   };
 
   const { data: achievement, error: achievementError } = await supabase
@@ -142,7 +235,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     );
     return encodedRedirect(
       "error",
-      `/missions/${missionId}`,
+      `/missions/${validatedMissionId}`,
       `ミッション達成の記録に失敗しました: ${achievementError.message}`,
     );
   }
@@ -150,21 +243,21 @@ export const achieveMissionAction = async (formData: FormData) => {
   if (!achievement) {
     return encodedRedirect(
       "error",
-      `/missions/${missionId}`,
+      `/missions/${validatedMissionId}`,
       "達成記録の作成に失敗しました。",
     );
   }
 
   // 成果物がある場合は mission_artifacts に記録
   if (
-    requiredArtifactType &&
-    requiredArtifactType !== ARTIFACT_TYPES.NONE.key
+    validatedRequiredArtifactType &&
+    validatedRequiredArtifactType !== ARTIFACT_TYPES.NONE.key
   ) {
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,
-      user_id: userId,
-      artifact_type: requiredArtifactType,
-      description: artifactDescription || null,
+      user_id: validatedUserId,
+      artifact_type: validatedRequiredArtifactType,
+      description: validatedArtifactDescription || null,
     };
 
     let artifactTypeLabel = "OTHER";
@@ -177,33 +270,32 @@ export const achieveMissionAction = async (formData: FormData) => {
     });
     console.log("[achieveMissionAction] formData:", formDataObj);
 
-    if (requiredArtifactType === ARTIFACT_TYPES.LINK.key) {
+    if (validatedRequiredArtifactType === ARTIFACT_TYPES.LINK.key) {
       artifactTypeLabel = "LINK";
-      if (!artifactLink) {
-        validationError = "リンクURLが入力されていません。";
-      } else {
-        artifactPayload.link_url = artifactLink;
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key) {
+        artifactPayload.link_url = validatedData.artifactLink;
+        // CHECK制約: link_url必須、image_storage_pathはnull
+        artifactPayload.image_storage_path = null;
       }
-      // CHECK制約: link_url必須、image_storage_pathはnull
-      artifactPayload.image_storage_path = null;
-    } else if (requiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
       artifactTypeLabel = "IMAGE";
-      // image_storage_pathはnull許容だが、UIで必須ならここでチェック
-      if (!artifactImagePath) {
-        validationError = "画像がアップロードされていません。";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
+        artifactPayload.image_storage_path = validatedData.artifactImagePath;
+        // CHECK制約: link_urlはnull
+        artifactPayload.link_url = null;
       }
-      artifactPayload.image_storage_path = artifactImagePath || null;
-      // CHECK制約: link_urlはnull
-      artifactPayload.link_url = null;
     } else if (
-      requiredArtifactType === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
+      validatedRequiredArtifactType ===
+      ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
     ) {
       artifactTypeLabel = "IMAGE_WITH_GEOLOCATION";
-      if (!artifactImagePath) {
-        validationError = "画像がアップロードされていません。";
+      if (
+        validatedData.requiredArtifactType ===
+        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
+      ) {
+        artifactPayload.image_storage_path = validatedData.artifactImagePath;
+        artifactPayload.link_url = null;
       }
-      artifactPayload.image_storage_path = artifactImagePath || null;
-      artifactPayload.link_url = null;
     } else {
       // その他のタイプは両方nullに
       artifactPayload.link_url = null;
@@ -229,7 +321,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       );
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         validationError,
       );
     }
@@ -253,7 +345,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       );
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         `成果物の保存に失敗しました: ${artifactError.message}`,
       );
     }
@@ -261,24 +353,29 @@ export const achieveMissionAction = async (formData: FormData) => {
     if (!newArtifact) {
       return encodedRedirect(
         "error",
-        `/missions/${missionId}`,
+        `/missions/${validatedMissionId}`,
         "成果物レコードの作成に失敗しました。",
       );
     }
 
     // 位置情報がある場合は mission_artifact_geolocations に記録
     if (
-      requiredArtifactType === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key &&
-      latitude &&
-      longitude
+      validatedRequiredArtifactType ===
+        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key &&
+      validatedData.requiredArtifactType ===
+        ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key
     ) {
       const geolocationPayload: TablesInsert<"mission_artifact_geolocations"> =
         {
           mission_artifact_id: newArtifact.id,
-          lat: Number.parseFloat(latitude),
-          lon: Number.parseFloat(longitude),
-          accuracy: accuracy ? Number.parseFloat(accuracy) : null,
-          altitude: altitude ? Number.parseFloat(altitude) : null,
+          lat: Number.parseFloat(validatedData.latitude),
+          lon: Number.parseFloat(validatedData.longitude),
+          accuracy: validatedData.accuracy
+            ? Number.parseFloat(validatedData.accuracy)
+            : null,
+          altitude: validatedData.altitude
+            ? Number.parseFloat(validatedData.altitude)
+            : null,
         };
       const { error: geoError } = await supabase
         .from("mission_artifact_geolocations")
@@ -292,7 +389,7 @@ export const achieveMissionAction = async (formData: FormData) => {
         // ここではエラーメッセージを出すに留めるが、より丁寧なエラー処理も検討可能
         return encodedRedirect(
           "error",
-          `/missions/${missionId}`,
+          `/missions/${validatedMissionId}`,
           `位置情報の保存に失敗しました: ${geoError.message}`,
         );
       }
@@ -301,7 +398,7 @@ export const achieveMissionAction = async (formData: FormData) => {
 
   return encodedRedirect(
     "success",
-    `/missions/${missionId}/complete`,
+    `/missions/${validatedMissionId}/complete`,
     "ミッションを達成しました！",
   );
 };
@@ -310,12 +407,25 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   const achievementId = formData.get("achievementId")?.toString();
   const missionId = formData.get("missionId")?.toString();
 
-  if (!achievementId) {
-    return { success: false, error: "達成IDがありません。" };
+  // zodによるバリデーション
+  const validatedFields = cancelSubmissionFormSchema.safeParse({
+    achievementId,
+    missionId,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      error: validatedFields.error.errors
+        .map((error) => error.message)
+        .join("\n"),
+    };
   }
-  if (!missionId) {
-    return { success: false, error: "ミッションIDがありません。" };
-  }
+
+  const {
+    achievementId: validatedAchievementId,
+    missionId: validatedMissionId,
+  } = validatedFields.data;
 
   const supabase = await createClient();
 
@@ -331,7 +441,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   const { data: achievement, error: achievementFetchError } = await supabase
     .from("achievements")
     .select("id, user_id")
-    .eq("id", achievementId)
+    .eq("id", validatedAchievementId)
     .eq("user_id", authUser.id)
     .single();
 
@@ -347,7 +457,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   const { error: deleteError } = await supabase
     .from("achievements")
     .delete()
-    .eq("id", achievementId);
+    .eq("id", validatedAchievementId);
 
   if (deleteError) {
     console.error(`Delete Error: ${deleteError.code} ${deleteError.message}`);
