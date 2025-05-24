@@ -43,7 +43,7 @@ const updateProfileFormSchema = z.object({
 });
 
 export async function updateProfile(
-  state: UpdateProfileResult | null,
+  previousState: UpdateProfileResult | null,
   formData: FormData,
 ): Promise<UpdateProfileResult | null> {
   const supabaseServiceClient = await createServiceClient();
@@ -73,11 +73,12 @@ export async function updateProfile(
   });
 
   if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/settings/profile",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
-    );
+    return {
+      success: false,
+      error: validatedFields.error.errors
+        .map((error) => error.message)
+        .join("\n"),
+    };
   }
 
   // バリデーション済みのデータを使用
@@ -109,21 +110,19 @@ export async function updateProfile(
   if (avatar_file && avatar_file.size > 0) {
     // ファイルサイズのチェック
     if (avatar_file.size > AVATAR_MAX_FILE_SIZE) {
-      return encodedRedirect(
-        "error",
-        "/settings/profile",
-        "画像ファイルのサイズは5MB以下にしてください",
-      );
+      return {
+        success: false,
+        error: "画像ファイルのサイズは5MB以下にしてください",
+      };
     }
 
     // ファイルタイプのチェック
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(avatar_file.type)) {
-      return encodedRedirect(
-        "error",
-        "/settings/profile",
-        "対応している画像形式はJPEG、PNG、WebPです",
-      );
+      return {
+        success: false,
+        error: "対応している画像形式はJPEG、PNG、WebPです",
+      };
     }
   }
 
@@ -230,11 +229,10 @@ export async function updateProfile(
       .eq("id", user.id);
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
-      return encodedRedirect(
-        "error",
-        "/settings/profile",
-        "ユーザー情報の更新に失敗しました",
-      );
+      return {
+        success: false,
+        error: "ユーザー情報の更新に失敗しました",
+      };
     }
   }
 

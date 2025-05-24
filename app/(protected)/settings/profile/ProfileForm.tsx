@@ -228,6 +228,9 @@ export default function ProfileForm({
                 : "プロフィールを更新しました。"}
             </p>
           )}
+          {state?.error && (
+            <p className="text-center text-sm text-red-600">{state.error}</p>
+          )}
         </CardContent>
         <CardFooter>
           <SubmitButton className="w-full" disabled={isPending}>
