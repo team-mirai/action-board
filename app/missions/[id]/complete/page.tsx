@@ -47,11 +47,15 @@ export default async function MissionPage({ params }: Props) {
         Facebookでシェア
       </ShareFacebookButton>
       {/* 内部で判定しておりモバイルのみ表示 */}
-      <ShareLineButton className="mt-4" missionId={id}>
+      <ShareLineButton className="mt-4 md:hidden" missionId={id}>
         Lineでシェア
       </ShareLineButton>
       {/* navigator.share()を使っているのでモバイルのみ表示 */}
-      <ShareButton className="mt-4" message={shareMessage} missionId={id}>
+      <ShareButton
+        className="mt-4 md:hidden"
+        message={shareMessage}
+        missionId={id}
+      >
         その他のサービスにシェア
       </ShareButton>
     </div>
