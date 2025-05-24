@@ -43,7 +43,8 @@ export default async function MissionPage({ params }: Props) {
       >
         Xでシェア
       </ShareTwitterButton>
-      <ShareFacebookButton className="mt-4" missionId={id}>
+      {/* PCでURLが投稿に表示されないため現時点ではモバイルのみで表示 */}
+      <ShareFacebookButton className="mt-4 md:hidden" missionId={id}>
         Facebookでシェア
       </ShareFacebookButton>
       {/* 内部で判定しておりモバイルのみ表示 */}
