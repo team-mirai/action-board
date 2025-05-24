@@ -1,12 +1,12 @@
 # Cloud Run Service Account
 resource "google_service_account" "cloud_run" {
-  account_id   = "${var.service_name}-sa-cr"
-  display_name = "Service Account for ${var.service_name} Cloud Run"
+  account_id   = "${var.service_name}-${var.environment}-sa-cr"
+  display_name = "Service Account for ${var.service_name} ${var.environment} Cloud Run"
 }
 
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
-  name     = var.service_name
+  name     = "${var.service_name}-${var.environment}"
   location = var.region
 
   # Public access (no IAP)
@@ -15,7 +15,7 @@ resource "google_cloud_run_v2_service" "default" {
   template {
     containers {
       ports {
-        container_port = 3000  # Next.jsのデフォルトポート
+        container_port = 3000 # Next.jsのデフォルトポート
       }
       # Initial dummy image
       image = "gcr.io/cloudrun/hello"
@@ -89,3 +89,4 @@ output "service_url" {
   description = "The URL of the Cloud Run service"
   value       = google_cloud_run_v2_service.default.uri
 }
+

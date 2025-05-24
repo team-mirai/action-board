@@ -70,6 +70,12 @@ variable "trigger_branch" {
   default     = "^main$"
 }
 
+variable "environment" {
+  description = "Environment name (staging, production, etc.)"
+  type        = string
+  default     = "dev"
+}
+
 # Supabase関連の変数
 variable "NEXT_PUBLIC_SUPABASE_URL" {
   description = "Supabase URL (public)"

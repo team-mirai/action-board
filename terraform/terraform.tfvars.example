@@ -5,6 +5,7 @@ region         = "asia-northeast1"
 
 # アプリケーション設定
 app_name               = "action-board"
+environment            = "staging"  # または "production"
 application_domain_name = "app.example.com"
 min_instance_count     = 0
 max_instance_count     = 2
