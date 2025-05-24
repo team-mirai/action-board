@@ -1,4 +1,4 @@
-import type { Database } from "@/lib/utils/types/supabase";
+import type { Database } from "@/lib/types/supabase";
 import { createBrowserClient } from "@supabase/ssr";
 
 export const createClient = () =>

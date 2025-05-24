@@ -1,6 +1,6 @@
 "use client";
 
-import type { Tables } from "@/lib/utils/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 
 type MissionDetailsProps = {
   mission: Tables<"missions">;

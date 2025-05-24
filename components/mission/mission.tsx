@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import type { Tables } from "@/lib/utils/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
 import Link from "next/link";
 import { Button } from "../ui/button";

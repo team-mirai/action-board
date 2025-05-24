@@ -3,7 +3,7 @@
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
-import type { Tables } from "@/lib/utils/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import type { Achievement } from "../_lib/types";
