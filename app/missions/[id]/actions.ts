@@ -9,7 +9,6 @@ import { z } from "zod";
 // 基本スキーマ（共通項目）
 const baseMissionFormSchema = z.object({
   missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
-  userId: z.string().nonempty({ message: "ユーザーIDが必要です" }),
   requiredArtifactType: z
     .string()
     .nonempty({ message: "提出タイプが必要です" }),
@@ -82,7 +81,6 @@ const cancelSubmissionFormSchema = z.object({
 
 export const achieveMissionAction = async (formData: FormData) => {
   const missionId = formData.get("missionId")?.toString();
-  const userId = formData.get("userId")?.toString(); // private_users.id ではなく auth.uid() を使うべきだが、現状のフォームに合わせる
   const requiredArtifactType = formData.get("requiredArtifactType")?.toString();
   const artifactLink = formData.get("artifactLink")?.toString();
   const artifactImagePath = formData.get("artifactImagePath")?.toString();
@@ -96,7 +94,6 @@ export const achieveMissionAction = async (formData: FormData) => {
   // zodによるバリデーション
   const validatedFields = achieveMissionFormSchema.safeParse({
     missionId,
-    userId,
     requiredArtifactType,
     artifactLink,
     artifactImagePath,
@@ -118,7 +115,6 @@ export const achieveMissionAction = async (formData: FormData) => {
   const validatedData = validatedFields.data;
   const {
     missionId: validatedMissionId,
-    userId: validatedUserId,
     requiredArtifactType: validatedRequiredArtifactType,
     artifactDescription: validatedArtifactDescription,
   } = validatedData;
@@ -129,7 +125,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  if (!authUser || authUser.id !== validatedUserId) {
+  if (!authUser) {
     return encodedRedirect(
       "error",
       `/missions/${validatedMissionId}`,
@@ -159,7 +155,7 @@ export const achieveMissionAction = async (formData: FormData) => {
       await supabase
         .from("achievements")
         .select("id", { count: "exact" })
-        .eq("user_id", validatedUserId)
+        .eq("user_id", authUser.id)
         .eq("mission_id", validatedMissionId);
 
     if (userAchievementError) {
@@ -219,7 +215,7 @@ export const achieveMissionAction = async (formData: FormData) => {
 
   // ミッション達成を記録
   const achievementPayload = {
-    user_id: validatedUserId,
+    user_id: authUser.id,
     mission_id: validatedMissionId,
   };
 
@@ -255,7 +251,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   ) {
     const artifactPayload: TablesInsert<"mission_artifacts"> = {
       achievement_id: achievement.id,
-      user_id: validatedUserId,
+      user_id: authUser.id,
       artifact_type: validatedRequiredArtifactType,
       description: validatedArtifactDescription || null,
     };

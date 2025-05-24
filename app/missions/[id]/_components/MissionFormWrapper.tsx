@@ -28,7 +28,6 @@ export function MissionFormWrapper({
   return (
     <form action={achieveMissionAction} className="flex flex-col gap-4">
       <input type="hidden" name="missionId" value={mission.id} />
-      <input type="hidden" name="userId" value={authUser?.id ?? ""} />
       <input
         type="hidden"
         name="requiredArtifactType"
