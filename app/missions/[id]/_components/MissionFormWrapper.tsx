@@ -43,7 +43,7 @@ export function MissionFormWrapper({
 
       {hasReachedUserMaxAchievements &&
         mission?.max_achievement_count !== null && (
-          <p className="text-sm text-red-600 font-semibold text-center">
+          <p className="text-sm font-semibold text-center">
             あなたはこのミッションの達成回数の上限 (
             {mission.max_achievement_count}回) に達しました。
           </p>
