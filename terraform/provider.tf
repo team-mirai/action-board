@@ -15,7 +15,7 @@ terraform {
   cloud {
     organization = "gamification"
     workspaces {
-      name = "${var.tfc_workspace}"
+      tags = ["action-board"]
     }
   }
 }
