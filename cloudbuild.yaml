@@ -46,15 +46,7 @@ steps:
       '--image', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:${COMMIT_SHA}',
       '--region', '${_REGION}',
       '--platform', 'managed',
-      '--allow-unauthenticated',
-      '--set-env-vars', 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}',
-      '--set-secrets', 'SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest',
-      '--memory', '1Gi',
-      '--cpu', '1',
-      '--min-instances', '0',
-      '--max-instances', '10',
-      '--port', '3000',
-      '--timeout', '300'
+      '--allow-unauthenticated'
     ]
 
 # 代入変数（Cloud Build トリガー設定で必須設定）
