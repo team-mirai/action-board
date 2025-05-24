@@ -13,9 +13,12 @@ steps:
     args:
       - '-c'
       - |
-        npx supabase migration up --db-url "postgresql://postgres:$$SUPABASE_DB_PASSWORD@db.${_SUPABASE_PROJECT_ID}.supabase.co:5432/postgres"
+        npx supabase link --project-ref ${_SUPABASE_PROJECT_ID} -p $$SUPABASE_DB_PASSWORD
+
+        npx supabase db push
+        npx supabase config push
     env:
-      - 'SUPABASE_PROJECT_ID=${_SUPABASE_PROJECT_ID}'
+      - 'CI=1'
     secretEnv:
       - SUPABASE_ACCESS_TOKEN
       - SUPABASE_DB_PASSWORD
@@ -74,7 +77,7 @@ images:
 
 availableSecrets:
   secretManager:
-    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest'
+    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_ACCESS_TOKEN/versions/latest'
       env: SUPABASE_ACCESS_TOKEN
     - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_DB_PASSWORD/versions/latest'
       env: SUPABASE_DB_PASSWORD
