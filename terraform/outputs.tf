@@ -17,6 +17,9 @@ module "nextjs_app" {
   NEXT_PUBLIC_SUPABASE_URL     = var.NEXT_PUBLIC_SUPABASE_URL
   NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
   SUPABASE_SERVICE_ROLE_KEY    = var.SUPABASE_SERVICE_ROLE_KEY
+  
+  # Cloud Build Service Account
+  cloud_build_service_account_email = google_service_account.cloud_build.email
 }
 
 # Outputs

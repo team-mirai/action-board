@@ -1,6 +1,1 @@
-# Cloud Build Service Account data source
-data "google_service_account" "cloud_build" {
-  account_id = "${var.app_name}-${var.environment}-sa-cb"
-  project    = var.project_id
-}
-
+# データソースは削除し、親モジュールから変数として受け取るように変更
