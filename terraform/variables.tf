@@ -92,6 +92,11 @@ variable "SUPABASE_SERVICE_ROLE_KEY" {
   type        = string
   sensitive   = true
 }
+variable "SUPABASE_ACCESS_TOKEN" {
+  description = "Supabase Access Token (sensitive)"
+  type        = string
+  sensitive   = true
+}
 
 # Supabase デプロイ関連の変数
 variable "SUPABASE_PROJECT_ID" {

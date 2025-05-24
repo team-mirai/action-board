@@ -12,12 +12,29 @@ resource "google_secret_manager_secret" "supabase_service_role_key" {
     auto {}
   }
 }
+resource "google_secret_manager_secret" "supabase_access_token" {
+  secret_id = "${var.app_name}-${var.environment}-supabase-access-token"
+
+  replication {
+    auto {}
+  }
+}
+
 resource "google_secret_manager_secret_version" "supabase_service_role_key" {
   secret      = google_secret_manager_secret.supabase_service_role_key.id
   secret_data = var.SUPABASE_SERVICE_ROLE_KEY
 }
 resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_access" {
   secret_id = google_secret_manager_secret.supabase_service_role_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
+resource "google_secret_manager_secret_version" "supabase_access_token" {
+  secret      = google_secret_manager_secret.supabase_access_token.id
+  secret_data = var.SUPABASE_ACCESS_TOKEN
+}
+resource "google_secret_manager_secret_iam_member" "supabase_access_token_access" {
+  secret_id = google_secret_manager_secret.supabase_access_token.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
@@ -62,6 +79,15 @@ resource "google_cloud_run_v2_service" "default" {
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.supabase_service_role_key.id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "SUPABASE_ACCESS_TOKEN"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.supabase_access_token.id
             version = "latest"
           }
         }

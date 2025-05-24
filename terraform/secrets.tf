@@ -25,6 +25,19 @@ resource "google_secret_manager_secret_version" "supabase_service_role_key" {
   secret_data = var.SUPABASE_SERVICE_ROLE_KEY
 }
 
+resource "google_secret_manager_secret" "supabase_access_token" {
+  secret_id = "SUPABASE_ACCESS_TOKEN"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "supabase_access_token" {
+  secret      = google_secret_manager_secret.supabase_access_token.id
+  secret_data = var.SUPABASE_ACCESS_TOKEN
+}
+
 # Cloud Build サービスアカウントにシークレットアクセス権限を付与
 resource "google_secret_manager_secret_iam_member" "supabase_db_password_accessor" {
   secret_id = google_secret_manager_secret.supabase_db_password.secret_id
@@ -34,6 +47,12 @@ resource "google_secret_manager_secret_iam_member" "supabase_db_password_accesso
 
 resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_accessor" {
   secret_id = google_secret_manager_secret.supabase_service_role_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "supabase_access_token_accessor" {
+  secret_id = google_secret_manager_secret.supabase_access_token.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }

@@ -69,6 +69,12 @@ variable "SUPABASE_SERVICE_ROLE_KEY" {
   sensitive   = true
 }
 
+variable "SUPABASE_ACCESS_TOKEN" {
+  description = "Supabase Access Token (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
 variable "SUPABASE_PROJECT_ID" {
   description = "Supabase Project ID"
   type        = string
