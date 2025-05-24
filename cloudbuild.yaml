@@ -7,9 +7,6 @@ steps:
       - |
         npm ci
         npm run build
-    env:
-      - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
-      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
 
   - name: 'node:22-slim'
     entrypoint: "bash"
@@ -31,10 +28,6 @@ steps:
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:${COMMIT_SHA}'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
       - '.'
 
   # Artifact Registryへのプッシュ
@@ -60,14 +53,6 @@ steps:
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
-
-# 代入変数（Cloud Build トリガー設定で必須設定）
-# 以下の変数は実行時に必ず指定する必要があります：
-# _REGION: デプロイ先のリージョン（例: asia-northeast1）
-# _SERVICE_NAME: Cloud Run サービス名（例: action-board）
-# _REPOSITORY_NAME: Artifact Registry リポジトリ名（例: app）
-# _NEXT_PUBLIC_SUPABASE_URL: Supabase プロジェクトURL
-# _NEXT_PUBLIC_SUPABASE_ANON_KEY: Supabase 匿名キー
 
 # オプション設定
 options:
