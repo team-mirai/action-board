@@ -12,12 +12,8 @@ steps:
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
 
   - name: 'node:22-slim'
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        npm install -g supabase
-        supabase migration up
+    entrypoint: "npx"
+    args: ["supabase", "migration", "up"]
     env:
       - 'SUPABASE_PROJECT_ID=${_SUPABASE_PROJECT_ID}'
     secretEnv:
