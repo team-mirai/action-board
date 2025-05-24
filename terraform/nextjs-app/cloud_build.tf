@@ -1,0 +1,40 @@
+# Cloud Build trigger
+resource "google_cloudbuild_trigger" "build_and_deploy" {
+  name            = "build-and-deploy-${var.service_name}"
+  description     = "Build and deploy ${var.service_name} to Cloud Run"
+  location        = var.region
+  service_account = data.google_service_account.cloud_build.id
+
+  repository_event_config {
+    repository = var.github_repository_id
+    push {
+      branch = var.trigger_branch
+    }
+  }
+
+  # team-mirai/action-boardリポジトリのファイル構成に合わせて設定
+  included_files = [
+    "Dockerfile",
+    "package.json",
+    "package-lock.json",
+    "next.config.js",
+    "tsconfig.json",
+    "src/**",
+    "public/**",
+    "components/**",
+    "pages/**",
+    "styles/**",
+    "lib/**"
+  ]
+
+  # cloudbuild.yamlファイルを使用
+  filename = "cloudbuild.yaml"
+
+  substitutions = {
+    _REGION          = var.region
+    _SERVICE_NAME    = var.service_name
+    _REPOSITORY_NAME = var.repository_name
+    _NEXT_PUBLIC_SUPABASE_URL = var.NEXT_PUBLIC_SUPABASE_URL
+    _NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  }
+}

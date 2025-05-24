@@ -1,0 +1,26 @@
+# GCPプロジェクト設定
+project_id     = "your-project-id"
+project_number = "your-project-number"
+region         = "asia-northeast1"
+
+# アプリケーション設定
+app_name               = "action-board"
+application_domain_name = "app.example.com"
+min_instance_count     = 0
+max_instance_count     = 2
+
+# GitHub設定
+github_app_installation_id       = 12345678
+github_oauth_token_secret_version = "projects/your-project-id/secrets/github-token/versions/1"
+github_repository_remote_uri     = "https://github.com/team-mirai/action-board.git"
+
+# Artifact Registry設定
+repository_name = "app"
+
+# CI/CD設定
+trigger_branch = "^release/infra/staging$"  # または "^release/infra/production$"
+
+# Supabase設定
+NEXT_PUBLIC_SUPABASE_URL     = "https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "your-supabase-anon-key"
+SUPABASE_SERVICE_ROLE_KEY    = "your-supabase-service-role-key"

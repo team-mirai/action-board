@@ -1,0 +1,49 @@
+# ビルドステージ
+FROM node:18-alpine AS builder
+
+# ビルド時の環境変数
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# 環境変数を設定
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+WORKDIR /app
+
+# 依存関係のインストール
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# ソースコードのコピー
+COPY . .
+
+# Next.jsアプリケーションのビルド
+RUN npm run build
+
+# 実行ステージ
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# 本番環境用の設定
+ENV NODE_ENV=production
+
+# ビルド時の環境変数を実行時にも渡す
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# 必要なファイルのみをコピー
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# ポート3000を公開
+EXPOSE 3000
+
+# アプリケーションの起動
+CMD ["npm", "start"]
