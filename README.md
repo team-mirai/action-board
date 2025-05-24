@@ -27,6 +27,9 @@
 
    # ローカル開発時は http://localhost:54323/ にアクセスして Cmd+K でコマンドメニューから 「Copy service API key」 で取得できます。
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+   # SentryのDSNを指定します。開発時は空でもかまいません。
+   NEXT_PUBLIC_SENTRY_DSN=
    ```
 
 3. ローカルデータベースの初期化:

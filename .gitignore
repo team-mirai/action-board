@@ -49,3 +49,5 @@ playwright-report/
 *storybook.log
 
 copilot-instructions.md
+# Sentry Config File
+.env.sentry-build-plugin
