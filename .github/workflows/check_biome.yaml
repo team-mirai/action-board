@@ -1,7 +1,6 @@
 name: Check code with Biome
 
 on:
-  push:
   pull_request:
 
 jobs:

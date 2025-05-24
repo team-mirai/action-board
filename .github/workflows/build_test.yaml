@@ -1,10 +1,10 @@
-name: Test E2E & RLS
+name: Build & Test E2E/RLS
 on:
   pull_request:
 
 jobs:
   test:
-    name: E2E Tests
+    name: Build & Tests
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -25,27 +25,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Dockerキャッシュを設定
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # Dockerキャッシュを復元
-      - name: Cache Docker layers
+      # Supabase Dockerイメージのキャッシュを設定
+      - name: Cache Supabase Docker images
+        id: cache-supabase
         uses: actions/cache@v4
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          path: /tmp/supabase-docker-cache
+          key: ${{ runner.os }}-supabase-docker-${{ hashFiles('supabase/**') }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-supabase-docker-
 
-      # Dockerイメージのキャッシュをロードする
+      # キャッシュされたDockerイメージをロードする
       - name: Load cached Docker images
         if: steps.cache-supabase.outputs.cache-hit == 'true'
         run: |
-          for img in /tmp/supabase-docker-cache/*.tar; do
-            docker load < $img
-          done
-          docker images
+          echo "Loading cached Supabase Docker images..."
+          if [ -d "/tmp/supabase-docker-cache" ] && [ "$(ls -A /tmp/supabase-docker-cache/*.tar 2>/dev/null)" ]; then
+            for img in /tmp/supabase-docker-cache/*.tar; do
+              echo "Loading $img..."
+              docker load < $img
+            done
+            echo "Cached images loaded successfully"
+            docker images | grep supabase
+          else
+            echo "No cached images found"
+          fi
 
       # Supabase CLIのセットアップと起動
       - name: Setup Supabase CLI
@@ -55,21 +59,34 @@ jobs:
 
       - name: Start Supabase
         run: |
+          echo "Starting Supabase..."
           supabase start -x studio,postgres-meta,imgproxy
         env:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
 
-      # Dockerイメージのキャッシュを保存する
+      # Dockerイメージのキャッシュを保存する（キャッシュヒットしなかった場合のみ）
       - name: Save Docker images to cache
         if: steps.cache-supabase.outputs.cache-hit != 'true'
         run: |
+          echo "Saving Supabase Docker images to cache..."
           mkdir -p /tmp/supabase-docker-cache
-          docker images | grep supabase | awk '{print $1":"$2}' | xargs -I {} sh -c 'docker save {} > /tmp/supabase-docker-cache/$(echo {} | tr "/" "_" | tr ":" "_").tar'
+          # Supabaseに関連するイメージのみをキャッシュ
+          docker images --format "table {{.Repository}}:{{.Tag}}" | grep -E "(supabase|postgres)" | grep -v "<none>" | while read image; do
+            if [ "$image" != "REPOSITORY:TAG" ]; then
+              filename=$(echo "$image" | tr "/" "_" | tr ":" "_")
+              echo "Saving $image as $filename.tar"
+              docker save "$image" > "/tmp/supabase-docker-cache/$filename.tar"
+            fi
+          done
+          echo "Cache contents:"
           ls -la /tmp/supabase-docker-cache/
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build
+        run: npm run build
 
       # Supabaseの起動を待機
       - name: Wait for Supabase
@@ -86,11 +103,28 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
 
-      - name: Reset DB
-        run: supabase db reset
+      - name: Get Playwright Version For Browser Cache Key
+        id: get-playwright-version
+        run: |
+          echo "playwright-version=$(npx playwright --version | sed 's/ //g')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Restore Cache Playwright Browser
+        id: restore-cache-playwright-chromium
+        uses: actions/cache/restore@v4
+        with:
+          path: /home/runner/.cache/ms-playwright
+          key: playwright-chromium-${{ steps.get-playwright-version.outputs.playwright-version }}
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Save Cache – Playwright Browser
+        uses: actions/cache@v4
+        id: save-cache-playwright-chromium
+        with:
+          path: /home/runner/.cache/ms-playwright
+          key: ${{ steps.restore-cache-playwright-chromium.outputs.cache-primary-key }}
 
       - name: Run CI Tests
         run: npm run test:ci

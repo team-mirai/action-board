@@ -1,5 +1,5 @@
 import { MissionDetails } from "@/components/mission/MissionDetails";
-import { createClient as createServerClient } from "@/utils/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import { MissionFormWrapper } from "./_components/MissionFormWrapper";
 import { SubmissionHistoryWrapper } from "./_components/SubmissionHistoryWrapper";
 import { getMissionPageData } from "./_lib/data";

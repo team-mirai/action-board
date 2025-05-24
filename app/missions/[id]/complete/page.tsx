@@ -1,12 +1,13 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { ShareButton } from "./ShareButton";
 import { ShareTwitterButton } from "./ShareTwitterButton";
+
 type Params = {
   id: string;
 };
 
 type Props = {
-  params: Params;
+  params: Promise<Params>;
 };
 
 export default async function MissionPage({ params }: Props) {

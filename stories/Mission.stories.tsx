@@ -1,5 +1,6 @@
+import Mission from "@/components/mission/mission";
+import type { Tables } from "@/lib/utils/types/supabase";
 import type { Meta, StoryObj } from "@storybook/react";
-import Mission from "../components/mission";
 
 const meta = {
   title: "Mission",
@@ -13,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const dummyMission = {
+const dummyMission: Tables<"missions"> = {
   id: "mission-1",
   title:
     "ミッションタイトルです。ミッションタイトルです。ミッションタイトルです。",
@@ -23,6 +24,8 @@ const dummyMission = {
   icon_url: null,
   difficulty: 1,
   event_date: null,
+  max_achievement_count: null,
+  required_artifact_type: "NONE",
 };
 
 export const Default: Story = {
