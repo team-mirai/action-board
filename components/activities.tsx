@@ -1,13 +1,12 @@
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
 import { dateTimeFormatter } from "@/lib/formatter";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { toZonedTime } from "date-fns-tz";
 import Link from "next/link";
 
 export default async function Activities() {
   const supabase = await createClient();
-  const supabaseAdmin = await createServiceClient();
 
   const { data: dailyActionSummary } = await supabase
     .from("daily_action_summary")
@@ -16,7 +15,7 @@ export default async function Activities() {
     .limit(2);
 
   // count achievements
-  const { count: achievementCount } = await supabaseAdmin
+  const { count: achievementCount } = await supabase
     .from("achievements")
     .select("*", { count: "exact", head: true });
 
@@ -25,7 +24,7 @@ export default async function Activities() {
   const date = toZonedTime(new Date(), timeZone);
   date.setHours(0, 0, 0, 0);
 
-  const { count: todayAchievementCount } = await supabaseAdmin
+  const { count: todayAchievementCount } = await supabase
     .from("achievements")
     .select("*", { count: "exact", head: true })
     .gte("created_at", date.toISOString());
