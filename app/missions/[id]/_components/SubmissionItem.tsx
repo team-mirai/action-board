@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { dateTimeFormatter } from "@/lib/formatter";
 import type React from "react";
 import ArtifactDisplay from "./ArtifactDisplay";
 import type { Submission } from "./types";
@@ -24,7 +25,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
     <li className="border p-4 rounded-lg shadow">
       <div className="flex justify-between items-center">
         <p className="text-sm text-gray-500">
-          提出日時: {new Date(submission.created_at).toLocaleString()}
+          提出日時: {dateTimeFormatter(new Date(submission.created_at))}
           {isLatest && (
             <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
               最新
