@@ -70,9 +70,6 @@ export default async function Missions({
     <div className="flex flex-col bg-emerald-50 px-5 py-6 gap-2">
       <div className="flex flex-row justify-between items-center">
         <h2 className="text-lg font-bold">ミッション</h2>
-        <Link href="/missions" className="text-sm">
-          もっと見る
-        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">

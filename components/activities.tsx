@@ -55,7 +55,7 @@ export default async function Activities() {
     <div className="flex flex-col bg-emerald-50 px-5 py-6 gap-2">
       <div className="flex flex-row justify-between items-center">
         <h2 className="text-lg font-bold">これまでのチームみらいの活動</h2>
-        <div className="text-xs text-gray-500">{currentDate}更新</div>
+        {/* <div className="text-xs text-gray-500">{currentDate}更新</div> */}
       </div>
 
       <Card className="flex justify-between items-center border-0 rounded-lg px-5 py-3">
@@ -76,9 +76,6 @@ export default async function Activities() {
       <Card className="flex flex-col border-0 rounded-lg gap-2 px-5 py-6">
         <div className="flex flex-row justify-between">
           <div className="text-lg font-bold">活動タイムライン</div>
-          <Link href="/" className="text-sm">
-            もっと見る
-          </Link>
         </div>
 
         <div className="flex flex-col gap-2">
