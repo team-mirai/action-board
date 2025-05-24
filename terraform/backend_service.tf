@@ -1,11 +1,11 @@
 # Global IP address
 resource "google_compute_global_address" "default" {
-  name = "${var.app_name}-address"
+  name = "${var.app_name}-${var.environment}-address"
 }
 
 # SSL Certificate
 resource "google_compute_managed_ssl_certificate" "default" {
-  name = "${var.app_name}-cert"
+  name = "${var.app_name}-${var.environment}-cert"
   managed {
     domains = [var.application_domain_name]
   }
@@ -13,7 +13,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
 
 # Serverless NEG for Cloud Run
 resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {
-  name                  = "${var.app_name}-cloud-run-neg"
+  name                  = "${var.app_name}-${var.environment}-cloud-run-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
   cloud_run {
@@ -23,7 +23,7 @@ resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {
 
 # Backend Service (without IAP)
 resource "google_compute_backend_service" "cloud_run" {
-  name = "${var.app_name}-backend"
+  name = "${var.app_name}-${var.environment}-backend"
 
   protocol              = "HTTP"
   port_name             = "http"
@@ -45,7 +45,7 @@ resource "google_compute_backend_service" "cloud_run" {
 
 # URL Map - すべてのトラフィックをCloud Runに転送
 resource "google_compute_url_map" "default" {
-  name            = "${var.app_name}-url-map"
+  name            = "${var.app_name}-${var.environment}-url-map"
   default_service = google_compute_backend_service.cloud_run.id
 
   depends_on = [
@@ -55,14 +55,14 @@ resource "google_compute_url_map" "default" {
 
 # HTTPS Proxy
 resource "google_compute_target_https_proxy" "default" {
-  name             = "${var.app_name}-https-proxy"
+  name             = "${var.app_name}-${var.environment}-https-proxy"
   url_map          = google_compute_url_map.default.id
   ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
 }
 
 # Forwarding Rule
 resource "google_compute_global_forwarding_rule" "https" {
-  name       = "${var.app_name}-https-rule"
+  name       = "${var.app_name}-${var.environment}-https-rule"
   target     = google_compute_target_https_proxy.default.id
   port_range = "443"
   ip_address = google_compute_global_address.default.address
@@ -70,7 +70,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 
 # HTTP to HTTPS redirect
 resource "google_compute_url_map" "https_redirect" {
-  name = "${var.app_name}-https-redirect"
+  name = "${var.app_name}-${var.environment}-https-redirect"
 
   default_url_redirect {
     https_redirect         = true
@@ -80,12 +80,12 @@ resource "google_compute_url_map" "https_redirect" {
 }
 
 resource "google_compute_target_http_proxy" "https_redirect" {
-  name    = "${var.app_name}-http-proxy"
+  name    = "${var.app_name}-${var.environment}-http-proxy"
   url_map = google_compute_url_map.https_redirect.id
 }
 
 resource "google_compute_global_forwarding_rule" "https_redirect" {
-  name       = "${var.app_name}-http-rule"
+  name       = "${var.app_name}-${var.environment}-http-rule"
   target     = google_compute_target_http_proxy.https_redirect.id
   port_range = "80"
   ip_address = google_compute_global_address.default.address

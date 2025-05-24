@@ -6,7 +6,7 @@ resource "google_service_account" "cloud_run" {
 
 # Secret Manager secret
 resource "google_secret_manager_secret" "supabase_service_role_key" {
-  secret_id = "supabase-service-role-key"
+  secret_id = "${var.app_name}-${var.environment}-supabase-service-role-key"
 
   replication {
     auto {}
