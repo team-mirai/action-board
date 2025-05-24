@@ -39,8 +39,13 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
-        name  = "SUPABASE_SERVICE_ROLE_KEY"
-        value = var.SUPABASE_SERVICE_ROLE_KEY
+        name = "SUPABASE_SERVICE_ROLE_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "supabase-service-role-key"
+            version = "latest"
+          }
+        }
       }
 
       env {
@@ -88,4 +93,9 @@ output "service_location" {
 output "service_url" {
   description = "The URL of the Cloud Run service"
   value       = google_cloud_run_v2_service.default.uri
+}
+
+output "service_account_email" {
+  description = "The email of the Cloud Run service account"
+  value       = google_service_account.cloud_run.email
 }
