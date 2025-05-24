@@ -1,6 +1,6 @@
 # Cloud Build Service Account
 resource "google_service_account" "cloud_build" {
-  account_id   = "${var.app_name}-sa-cloud-build"
+  account_id   = "${var.app_name}-sa-cb"
   display_name = "Service Account for ${var.app_name} Cloud Build"
 }
 
@@ -39,3 +39,4 @@ resource "google_cloudbuildv2_repository" "github_repository" {
   parent_connection = google_cloudbuildv2_connection.github_connection.id
   remote_uri        = var.github_repository_remote_uri
 }
+
