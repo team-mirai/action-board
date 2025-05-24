@@ -62,7 +62,7 @@
 * 「Table Editor」メニューを開く
 * `private_users` テーブルを選択
 * 「Insert」ボタンをクリックし、「Insert row」を選択
-* 「id」欄に先ほど作成したsupabase認証ユーザーの ID を入力
+* 「auth_id」欄に先ほど作成したsupabase認証ユーザーの ID を入力
 * その他の欄はよしなに入力する
 
 
