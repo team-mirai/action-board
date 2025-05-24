@@ -1,8 +1,7 @@
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Progress() {
   const supabase = await createClient();
-  const supabaseAdmin = await createServiceClient();
 
   /*
   const { data: dailyDashboardRegistrationSummary } = await supabase
@@ -21,9 +20,9 @@ export default async function Progress() {
   const eventNum = weeklyEventCountSummary?.[0]?.count ?? 0;
   */
 
-  // count private_users
-  const { count } = await supabaseAdmin
-    .from("private_users")
+  // ユーザー数を数える
+  const { count } = await supabase
+    .from("public_user_profiles")
     .select("*", { count: "exact", head: true });
 
   const registrationNum = count ?? "エラー";
