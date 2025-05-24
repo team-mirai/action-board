@@ -61,8 +61,9 @@ export async function createTestUser(
     .from("private_users")
     .insert({
       id: authId,
-      name: "テストユーザー",
+      name: "安野たかひろ",
       address_prefecture: "東京都",
+      date_of_birth: "1990-12-01",
       postcode: "1000001",
     });
 

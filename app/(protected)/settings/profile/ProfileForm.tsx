@@ -31,6 +31,7 @@ interface ProfileFormProps {
   initialProfile: {
     name?: string;
     address_prefecture?: string;
+    date_of_birth?: string;
     x_username?: string | null;
     avatar_url?: string | null;
   } | null;
@@ -182,6 +183,18 @@ export default function ProfileForm({
               disabled={isPending}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="date_of_birth">生年月日</Label>
+            <Input
+              type="date"
+              name="date_of_birth"
+              required
+              readOnly
+              value={initialProfile?.date_of_birth || ""}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="address_prefecture">都道府県</Label>
             <PrefectureSelect

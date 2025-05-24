@@ -30,6 +30,12 @@ const updateProfileFormSchema = z.object({
     .refine((val) => PREFECTURES.includes(val), {
       message: "有効な都道府県を選択してください",
     }),
+  date_of_birth: z
+    .string()
+    .nonempty({ message: "生年月日を入力してください" })
+    .regex(/^\d{4}-\d{2}-\d{2}$/, {
+      message: "生年月日はYYYY-MM-DD形式で入力してください",
+    }),
   postcode: z
     .string()
     .nonempty({ message: "郵便番号を入力してください" })
@@ -61,6 +67,7 @@ export async function updateProfile(
   // フォームデータの取得
   const name = formData.get("name")?.toString();
   const address_prefecture = formData.get("address_prefecture")?.toString();
+  const date_of_birth = formData.get("date_of_birth")?.toString();
   const postcode = formData.get("postcode")?.toString();
   const x_username = formData.get("x_username")?.toString() || "";
 
@@ -68,6 +75,7 @@ export async function updateProfile(
   const validatedFields = updateProfileFormSchema.safeParse({
     name,
     address_prefecture,
+    date_of_birth,
     postcode,
     x_username,
   });
@@ -203,6 +211,7 @@ export async function updateProfile(
         id: user.id,
         name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
+        date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
         x_username: validatedData.x_username || null,
         avatar_url: avatar_path,
@@ -221,6 +230,7 @@ export async function updateProfile(
       .update({
         name: validatedData.name,
         address_prefecture: validatedData.address_prefecture,
+        date_of_birth: validatedData.date_of_birth,
         postcode: validatedData.postcode,
         x_username: validatedData.x_username || null,
         avatar_url: avatar_path,

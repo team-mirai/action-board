@@ -3,6 +3,7 @@ CREATE TABLE private_users (
     id UUID PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     address_prefecture VARCHAR(4) NOT NULL,
+    date_of_birth DATE NOT NULL,
     x_username VARCHAR(200),
     avatar_url VARCHAR(500),
     postcode VARCHAR(7) NOT NULL,
@@ -15,6 +16,7 @@ COMMENT ON TABLE private_users IS '認証済みユーザーが登録・更新す
 COMMENT ON COLUMN private_users.id IS 'ユーザーのUUID。主キー';
 COMMENT ON COLUMN private_users.name IS 'ユーザーの氏名';
 COMMENT ON COLUMN private_users.address_prefecture IS '都道府県(例：東京都)';
+COMMENT ON COLUMN private_users.date_of_birth IS '生年月日。年齢確認のために必要';
 COMMENT ON COLUMN private_users.x_username IS 'X(旧Twitter)のユーザー名。NULL可能';
 COMMENT ON COLUMN private_users.avatar_url IS 'ユーザープロフィール画像のURL。NULL可能';
 COMMENT ON COLUMN private_users.postcode IS '郵便番号。ハイフンなしの7桁(例:1000001) サービス上に露出させない';

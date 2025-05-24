@@ -1,8 +1,8 @@
 -- ユーザー
-INSERT INTO private_users (id, name, address_prefecture, x_username, postcode)
+INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '山田太郎', '東京都', 'yamada_x', '1000001'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', NULL, '5300001');
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001'),
+  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', '1995-05-05', NULL, '5300001');
 
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count)
