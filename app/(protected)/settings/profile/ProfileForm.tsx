@@ -1,5 +1,6 @@
 "use client";
 
+import { FormMessage, type Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getAvatarUrl } from "@/lib/avatar";
+import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -24,6 +26,7 @@ import { updateProfile } from "./actions";
 // AvatarUploadコンポーネントを削除し、メインのフォームに統合
 
 interface ProfileFormProps {
+  message?: Message;
   isNew: boolean;
   initialProfile: {
     name?: string;
@@ -38,11 +41,15 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({
+  message,
   isNew,
   initialProfile,
   initialPrivateUser,
 }: ProfileFormProps) {
   const supabase = createClient();
+  const [queryMessage, setQueryMessage] = useState<Message | undefined>(
+    message,
+  );
   const [state, formAction, isPending] = useActionState(updateProfile, null);
   const [avatarPath, setAvatarPath] = useState<string | null>(
     initialProfile?.avatar_url || null,
@@ -61,6 +68,9 @@ export default function ProfileForm({
     if (state?.success && isNew) {
       router.push("/");
     }
+    if (state?.success) {
+      setQueryMessage(undefined);
+    }
   }, [state?.success, isNew, router]);
 
   // ファイル選択時のプレビュー処理
@@ -69,7 +79,7 @@ export default function ProfileForm({
     if (!file) return;
 
     // ファイルサイズチェック (5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > AVATAR_MAX_FILE_SIZE) {
       alert("画像サイズは5MB以下にしてください");
       e.target.value = "";
       return;
@@ -93,6 +103,11 @@ export default function ProfileForm({
             : "公開されるプロフィール情報を編集します。"}
         </CardDescription>
       </CardHeader>
+      {queryMessage && (
+        <div className="p-2 mb-4">
+          <FormMessage message={queryMessage} />
+        </div>
+      )}
       <form action={formAction}>
         <CardContent className="space-y-4">
           {/* アバターアップロード - 名前の上に配置 */}
@@ -161,6 +176,8 @@ export default function ProfileForm({
               name="name"
               type="text"
               defaultValue={initialProfile?.name || ""}
+              placeholder="あなたの名前"
+              maxLength={100}
               required
               disabled={isPending}
             />
@@ -176,27 +193,32 @@ export default function ProfileForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="postcode">郵便番号(ハイフンなし7桁)</Label>
+            <Label htmlFor="postcode">郵便番号(ハイフンなし半角7桁)</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
             <Input
               id="postcode"
               name="postcode"
               type="text"
               defaultValue={initialPrivateUser?.postcode || ""}
+              placeholder="郵便番号(ハイフンなし半角7桁)"
+              pattern="[0-9]{7}"
+              maxLength={7}
               required
               disabled={isPending}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="x_username">
-              X (旧Twitter) ユーザー名(オプション)
+              X(旧Twitter)のアカウント名(オプション)
             </Label>
             <Input
               id="x_username"
               name="x_username"
               type="text"
               defaultValue={initialProfile?.x_username || ""}
+              placeholder="Xのアカウント名(オプション)"
               disabled={isPending}
+              maxLength={50}
             />
           </div>
           {state?.success && (

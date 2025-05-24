@@ -1,9 +1,12 @@
-// filepath: /home/seiichi3141/apps/team-mirai/action-board/app/(protected)/settings/profile/actions.ts
 "use server";
 
+import { PREFECTURES } from "@/lib/address";
+import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { encodedRedirect } from "@/lib/utils/utils";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 export type UpdateProfileResult = {
   success: boolean;
@@ -15,6 +18,29 @@ export type UploadAvatarResult = {
   avatarPath?: string;
   error?: string;
 };
+
+const updateProfileFormSchema = z.object({
+  name: z
+    .string()
+    .nonempty({ message: "名前を入力してください" })
+    .max(100, { message: "名前は100文字以内で入力してください" }),
+  address_prefecture: z
+    .string()
+    .nonempty({ message: "都道府県を選択してください" })
+    .refine((val) => PREFECTURES.includes(val), {
+      message: "有効な都道府県を選択してください",
+    }),
+  postcode: z
+    .string()
+    .nonempty({ message: "郵便番号を入力してください" })
+    .regex(/^\d{7}$/, {
+      message: "郵便番号はハイフンなし7桁で入力してください",
+    }),
+  x_username: z
+    .string()
+    .max(50, { message: "Xユーザー名は50文字以内で入力してください" })
+    .optional(),
+});
 
 export async function updateProfile(
   state: UpdateProfileResult | null,
@@ -32,6 +58,31 @@ export async function updateProfile(
     return redirect("/sign-in");
   }
 
+  // フォームデータの取得
+  const name = formData.get("name")?.toString();
+  const address_prefecture = formData.get("address_prefecture")?.toString();
+  const postcode = formData.get("postcode")?.toString();
+  const x_username = formData.get("x_username")?.toString() || "";
+
+  // バリデーション
+  const validatedFields = updateProfileFormSchema.safeParse({
+    name,
+    address_prefecture,
+    postcode,
+    x_username,
+  });
+
+  if (!validatedFields.success) {
+    return encodedRedirect(
+      "error",
+      "/settings/profile",
+      validatedFields.error.errors.map((error) => error.message).join("\n"),
+    );
+  }
+
+  // バリデーション済みのデータを使用
+  const validatedData = validatedFields.data;
+
   // 先にユーザー情報を取得
   const { data: authUser } = await supabaseClient.auth.getUser();
   const { data: privateUser } = await supabaseClient
@@ -42,13 +93,8 @@ export async function updateProfile(
 
   if (!authUser) {
     console.error("Public user not found");
-    return redirect("/sign-in");
+    return encodedRedirect("error", "/sign-in", "ユーザーが見つかりません");
   }
-
-  const name = formData.get("name") as string;
-  const address_prefecture = formData.get("address_prefecture") as string;
-  const postcode = formData.get("postcode") as string;
-  const x_username = formData.get("x_username") as string | null;
 
   // フォームから送信されたavatar_url
   let avatar_path = formData.get("avatar_path") as string | null;
@@ -58,6 +104,28 @@ export async function updateProfile(
 
   // 画像ファイルが送信されているか確認
   const avatar_file = formData.get("avatar") as File | null;
+
+  // 画像ファイルのバリデーション
+  if (avatar_file && avatar_file.size > 0) {
+    // ファイルサイズのチェック
+    if (avatar_file.size > AVATAR_MAX_FILE_SIZE) {
+      return encodedRedirect(
+        "error",
+        "/settings/profile",
+        "画像ファイルのサイズは5MB以下にしてください",
+      );
+    }
+
+    // ファイルタイプのチェック
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(avatar_file.type)) {
+      return encodedRedirect(
+        "error",
+        "/settings/profile",
+        "対応している画像形式はJPEG、PNG、WebPです",
+      );
+    }
+  }
 
   // 古い画像を削除するかチェック:
   // 1. 画像が削除された場合（avatar_urlがnullになった）
@@ -134,10 +202,10 @@ export async function updateProfile(
       .from("private_users")
       .insert({
         id: user.id,
-        name,
-        address_prefecture,
-        postcode,
-        x_username,
+        name: validatedData.name,
+        address_prefecture: validatedData.address_prefecture,
+        postcode: validatedData.postcode,
+        x_username: validatedData.x_username || null,
         avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       });
@@ -152,20 +220,21 @@ export async function updateProfile(
     const { error: privateUserError } = await supabaseClient
       .from("private_users")
       .update({
-        name,
-        address_prefecture,
-        postcode,
-        x_username,
+        name: validatedData.name,
+        address_prefecture: validatedData.address_prefecture,
+        postcode: validatedData.postcode,
+        x_username: validatedData.x_username || null,
         avatar_url: avatar_path,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
     if (privateUserError) {
       console.error("Error updating private_users:", privateUserError);
-      return {
-        success: false,
-        error: "ユーザー情報の更新に失敗しました",
-      };
+      return encodedRedirect(
+        "error",
+        "/settings/profile",
+        "ユーザー情報の更新に失敗しました",
+      );
     }
   }
 
@@ -173,73 +242,4 @@ export async function updateProfile(
   return {
     success: true,
   };
-}
-
-export async function uploadAvatar(
-  _: unknown,
-  formData: FormData,
-): Promise<UploadAvatarResult> {
-  try {
-    const supabase = await createServiceClient();
-    const supabaseClient = await createClient();
-
-    // ユーザー情報の取得
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-    if (!user) {
-      return { success: false, error: "ユーザーが見つかりません" };
-    }
-
-    // ユーザーのプライベート情報を取得(UUIDを特定するため)
-    const { data: privateUser } = await supabaseClient
-      .from("private_users")
-      .select("id")
-      .eq("id", user.id)
-      .single();
-
-    if (!privateUser) {
-      return { success: false, error: "ユーザープロフィールが未登録です" };
-    }
-
-    // フォームからファイルを取得
-    const file = formData.get("avatar") as File;
-    if (!file) {
-      return { success: false, error: "ファイルが選択されていません" };
-    }
-
-    // ファイル名の生成
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${privateUser.id}/${Date.now()}.${fileExt}`;
-
-    // ファイルのバイナリデータを取得
-    const fileBuffer = await file.arrayBuffer();
-
-    // Supabase Storageにアップロード
-    const { error } = await supabase.storage
-      .from("avatars")
-      .upload(fileName, fileBuffer, {
-        contentType: file.type,
-        upsert: true,
-      });
-
-    if (error) {
-      console.error("Upload error:", error);
-      return { success: false, error: "アップロードに失敗しました" };
-    }
-
-    // 公開URLを取得
-    const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
-
-    return {
-      success: true,
-      avatarPath: fileName,
-    };
-  } catch (error) {
-    console.error("Avatar upload error:", error);
-    return {
-      success: false,
-      error: "画像のアップロード中にエラーが発生しました",
-    };
-  }
 }

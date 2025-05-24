@@ -1,11 +1,16 @@
+import type { Message } from "@/components/form-message";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ProfileForm from "./ProfileForm";
 
+type ProfileSettingsPageSearchParams = {
+  new: string;
+} & Message;
+
 export default async function ProfileSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<ProfileSettingsPageSearchParams | undefined>;
 }) {
   const params = await searchParams;
   const supabase = await createClient();
@@ -26,11 +31,12 @@ export default async function ProfileSettingsPage({
     .single();
 
   // 新規ユーザーかどうか判定
-  const isNew = Boolean(params.new);
+  const isNew = Boolean(params?.new);
 
   return (
     <div className="flex flex-col items-center justify-center py-2">
       <ProfileForm
+        message={params}
         isNew={isNew}
         initialProfile={{
           name: privateUser?.name || "",
