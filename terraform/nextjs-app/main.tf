@@ -4,6 +4,25 @@ resource "google_service_account" "cloud_run" {
   display_name = "Service Account for ${var.app_name} ${var.environment} Cloud Run"
 }
 
+# Secret Manager secret
+resource "google_secret_manager_secret" "supabase_service_role_key" {
+  secret_id = "supabase-service-role-key"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "supabase_service_role_key" {
+  secret      = google_secret_manager_secret.supabase_service_role_key.id
+  secret_data = var.SUPABASE_SERVICE_ROLE_KEY
+}
+resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_access" {
+  secret_id = google_secret_manager_secret.supabase_service_role_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
+
+
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
   name     = "${var.app_name}-${var.environment}"
@@ -42,7 +61,7 @@ resource "google_cloud_run_v2_service" "default" {
         name = "SUPABASE_SERVICE_ROLE_KEY"
         value_source {
           secret_key_ref {
-            secret  = "supabase-service-role-key"
+            secret  = google_secret_manager_secret.supabase_service_role_key.id
             version = "latest"
           }
         }
@@ -77,6 +96,13 @@ resource "google_cloud_run_service_iam_member" "public_access" {
   service  = google_cloud_run_v2_service.default.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+# Grant Secret Manager access to the Cloud Run service account
+resource "google_project_iam_member" "secret_manager_access" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${google_service_account.cloud_run.email}"
 }
 
 # Output values
