@@ -35,12 +35,6 @@ variable "repository_name" {
   type        = string
 }
 
-variable "app_path" {
-  description = "Path to the application in the repository"
-  type        = string
-  default     = "."
-}
-
 variable "use_inline_build" {
   description = "Whether to use inline build steps instead of cloudbuild.yaml"
   type        = bool
@@ -50,7 +44,6 @@ variable "use_inline_build" {
 variable "trigger_branch" {
   description = "Git branch pattern to trigger the build"
   type        = string
-  default     = "^main$"
 }
 
 variable "environment" {
@@ -76,7 +69,8 @@ variable "SUPABASE_SERVICE_ROLE_KEY" {
   sensitive   = true
 }
 
-variable "cloud_build_service_account_email" {
+variable "service_account" {
   description = "Cloud Build service account email"
   type        = string
 }
+

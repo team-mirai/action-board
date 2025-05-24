@@ -3,7 +3,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   name            = "build-and-deploy-${var.app_name}-${var.environment}"
   description     = "Build and deploy ${var.app_name} ${var.environment} to Cloud Run"
   location        = var.region
-  service_account = var.cloud_build_service_account_email
+  service_account = var.service_account
 
   repository_event_config {
     repository = var.github_repository_id
