@@ -23,7 +23,7 @@ resource "google_project_iam_member" "cloudbuild_iam" {
 # GitHub Connection
 resource "google_cloudbuildv2_connection" "github_connection" {
   location = var.region
-  name     = "${var.app_name}-${var.environment}-github-connection"
+  name     = "github-connection"
 
   github_config {
     app_installation_id = var.github_app_installation_id
