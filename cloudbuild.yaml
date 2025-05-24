@@ -1,6 +1,6 @@
 steps:
   # Node.js依存関係のインストールとビルド
-  - name: 'node:22-slim'
+  - name: 'node:22'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -8,7 +8,7 @@ steps:
         npm ci
         npm run build
 
-  - name: 'node:22-slim'
+  - name: 'node:22'
     entrypoint: "bash"
     args:
       - '-c'
