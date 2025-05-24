@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { dateTimeFormatter } from "@/lib/formatter";
 import type React from "react";
@@ -27,14 +28,14 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
         <p className="text-sm text-gray-500">
           提出日時: {dateTimeFormatter(new Date(submission.created_at))}
           {isLatest && (
-            <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            <Badge variant="outline" className="mx-4">
               最新
-            </span>
+            </Badge>
           )}
         </p>
         {canCancel && (
           <Button
-            variant="secondary"
+            variant="outline"
             size="xs"
             onClick={() => onCancelClick(submission.id)}
           >

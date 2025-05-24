@@ -19,14 +19,14 @@ export default function MissionAchievementStatus({
 
   if (maxAchievementCount !== null) {
     return (
-      <div className="flex text-xs text-blue-500 items-center justify-center mt-1">
+      <div className="flex text-xs items-center justify-center mt-1">
         {userAchievementCount}/{maxAchievementCount}回達成
       </div>
     );
   }
 
   return (
-    <div className="flex text-xs text-blue-500 items-center justify-center mt-1">
+    <div className="flex text-xs items-center justify-center mt-1">
       {userAchievementCount}回達成
     </div>
   );

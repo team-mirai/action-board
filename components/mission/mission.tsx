@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import type { Tables } from "@/lib/utils/types/supabase";
 import clsx from "clsx";
 import Link from "next/link";
+import { Button } from "../ui/button";
 import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
@@ -75,12 +76,12 @@ export default function Mission({
       </div>
       <div className="flex justify-center mt-1">
         <Link href={`/missions/${mission.id}`} className="w-full">
-          <button
-            type="button"
-            className="w-full bg-[#101828] text-white rounded-lg py-2 text-sm hover:bg-[#1a2533] hover:opacity-50 transition"
+          <Button
+            variant="default"
+            className="w-full rounded-lg py-2 text-sm transition"
           >
             詳細を見る
-          </button>
+          </Button>
         </Link>
       </div>
     </Card>
