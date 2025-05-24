@@ -69,6 +69,11 @@ variable "SUPABASE_SERVICE_ROLE_KEY" {
   sensitive   = true
 }
 
+variable "SUPABASE_PROJECT_ID" {
+  description = "Supabase Project ID"
+  type        = string
+}
+
 variable "service_account" {
   description = "Cloud Build service account email"
   type        = string

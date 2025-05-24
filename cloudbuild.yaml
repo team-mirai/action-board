@@ -1,6 +1,6 @@
 steps:
   # Node.js依存関係のインストールとビルド
-  - name: 'node:22-alpine'
+  - name: 'node:22-slim'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -10,6 +10,19 @@ steps:
     env:
       - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
       - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
+
+  - name: 'node:22-slim'
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        npm install -g supabase
+        supabase migration up
+    env:
+      - 'SUPABASE_PROJECT_ID=${_SUPABASE_PROJECT_ID}'
+    secretEnv:
+      - SUPABASE_ACCESS_TOKEN
+      - SUPABASE_DB_PASSWORD
 
   # Dockerイメージのビルド
   - name: 'gcr.io/cloud-builders/docker'
@@ -73,3 +86,11 @@ timeout: 1800s
 images:
   - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:${COMMIT_SHA}'
   - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest'
+
+
+availableSecrets:
+  secretManager:
+    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest'
+      env: SUPABASE_ACCESS_TOKEN
+    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_DB_PASSWORD/versions/latest'
+      env: SUPABASE_DB_PASSWORD

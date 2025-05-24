@@ -26,7 +26,8 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     "components/**",
     "lib/**",
     "utils/**",
-    "public/**"
+    "public/**",
+    "supabase/**"
   ]
 
   ignored_files = [
@@ -55,5 +56,6 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _REPOSITORY_NAME               = var.repository_name
     _NEXT_PUBLIC_SUPABASE_URL      = var.NEXT_PUBLIC_SUPABASE_URL
     _NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    _SUPABASE_PROJECT_ID           = var.SUPABASE_PROJECT_ID
   }
 }
