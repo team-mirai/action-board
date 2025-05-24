@@ -12,7 +12,14 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     }
   }
 
-  # cloudbuild.yamlファイルを使用
+  included_files = [
+    "cloudbuild.yaml",
+    "Dockerfile",
+    "app/**",
+    "package.json",
+    "package-lock.json"
+  ]
+
   filename = "cloudbuild.yaml"
 
   substitutions = {
