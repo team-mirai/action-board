@@ -1,4 +1,4 @@
-import type { Tables } from "@/lib/utils/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export type MissionArtifact = Tables<"mission_artifacts"> & {

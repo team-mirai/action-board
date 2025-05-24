@@ -2,7 +2,7 @@
 
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { createClient } from "@/lib/supabase/client";
-import type { Tables } from "@/lib/utils/types/supabase";
+import type { Tables } from "@/lib/types/supabase";
 import { useState } from "react";
 
 interface UserDetailActivitiesProps {
