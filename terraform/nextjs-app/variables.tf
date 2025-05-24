@@ -74,6 +74,11 @@ variable "SUPABASE_PROJECT_ID" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_SENTRY_DSN" {
+  description = "Sentry DSN for error tracking (public)"
+  type        = string
+}
+
 variable "service_account" {
   description = "Cloud Build service account email"
   type        = string

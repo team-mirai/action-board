@@ -104,3 +104,9 @@ variable "SUPABASE_DB_PASSWORD" {
   type        = string
   sensitive   = true
 }
+
+variable "NEXT_PUBLIC_SENTRY_DSN" {
+  description = "Sentry DSN for error tracking (public)"
+  type        = string
+}
+

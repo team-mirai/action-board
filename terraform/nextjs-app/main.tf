@@ -68,6 +68,11 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "NEXT_PUBLIC_SENTRY_DSN"
+        value = var.NEXT_PUBLIC_SENTRY_DSN
+      }
+
+      env {
         name  = "NODE_ENV"
         value = "production"
       }

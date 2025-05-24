@@ -40,12 +40,12 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     ".git/**",
     ".github/**",
     "tests/**",
-     "playwright.config.ts",
-     "reviewrules.toml",
-     "terraform/**",
-     "stories/**",
-     "vitest.config.ts",
-     "biome.json",
+    "playwright.config.ts",
+    "reviewrules.toml",
+    "terraform/**",
+    "stories/**",
+    "vitest.config.ts",
+    "biome.json",
   ]
 
   filename = "cloudbuild.yaml"
@@ -56,6 +56,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _REPOSITORY_NAME               = var.repository_name
     _NEXT_PUBLIC_SUPABASE_URL      = var.NEXT_PUBLIC_SUPABASE_URL
     _NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    _NEXT_PUBLIC_SENTRY_DSN        = var.NEXT_PUBLIC_SENTRY_DSN
     _SUPABASE_PROJECT_ID           = var.SUPABASE_PROJECT_ID
   }
 }
