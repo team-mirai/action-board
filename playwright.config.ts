@@ -16,6 +16,8 @@ export default defineConfig({
   },
   /* 並列実行の設定 */
   fullyParallel: true,
+  /* ワーカー数 */
+  workers: 2,
   /* CI環境での失敗時のリトライ回数 */
   retries: process.env.CI ? 2 : 0,
   /* テスト結果のレポーター設定 */
