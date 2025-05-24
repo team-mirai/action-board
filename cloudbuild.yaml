@@ -16,8 +16,7 @@ steps:
     args:
       - '-c'
       - |
-        export SUPABASE_DB_URL="postgresql://postgres:${SUPABASE_DB_PASSWORD}@db.${SUPABASE_PROJECT_ID}.supabase.co:5432/postgres"
-        npx supabase migration up --db-url "$SUPABASE_DB_URL"
+        npx supabase migration up --db-url "postgresql://postgres:$$SUPABASE_DB_PASSWORD@db.${_SUPABASE_PROJECT_ID}.supabase.co:5432/postgres"
     env:
       - 'SUPABASE_PROJECT_ID=${_SUPABASE_PROJECT_ID}'
     secretEnv:
