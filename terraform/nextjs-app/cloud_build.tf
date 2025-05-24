@@ -13,6 +13,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   }
 
   included_files = [
+    "cloudbuild.yaml",
     "Dockerfile",
     "package.json",
     "package-lock.json",
@@ -26,6 +27,24 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     "lib/**",
     "utils/**",
     "public/**"
+  ]
+
+  ignored_files = [
+    "README.md",
+    "LICENSE",
+    ".dockerignore",
+    ".gitignore",
+    ".env",
+    ".env.*",
+    ".git/**",
+    ".github/**",
+    "tests/**",
+     "playwright.config.ts",
+     "reviewrules.toml",
+     "terraform/**",
+     "stories/**",
+     "vitest.config.ts",
+     "biome.json",
   ]
 
   filename = "cloudbuild.yaml"
