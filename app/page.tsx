@@ -1,6 +1,5 @@
 import Activities from "@/components/activities";
 import Missions from "@/components/mission/missions";
-import Progress from "@/components/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -71,11 +70,6 @@ export default async function Home() {
       {/* アクティビティセクション */}
       <section className="py-12 md:py-16 bg-white">
         <Activities />
-      </section>
-
-      {/* プログレスセクション */}
-      <section className="py-12 md:py-16">
-        <Progress />
       </section>
 
       {/* ミッションセクション */}

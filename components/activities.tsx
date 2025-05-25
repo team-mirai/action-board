@@ -66,44 +66,77 @@ export default async function Activities() {
       <div className="flex flex-col gap-6">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
-            📊 これまでのチームみらいの活動
+            📊 チームみらいの活動状況
           </h2>
           <p className="text-gray-600 font-medium">
             みんなの力で、政治を変えていく
           </p>
         </div>
 
-        <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
-          <div className="relative flex justify-between items-center">
-            <div>
-              <div className="text-xl font-bold text-gray-700 mb-2">
-                アクション数
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
+            <div className="relative flex justify-between items-center">
+              <div>
+                <div className="text-xl font-bold text-gray-700 mb-2">
+                  アクション数
+                </div>
+                <p className="text-sm text-gray-600">みんなで達成した成果</p>
               </div>
-              <p className="text-sm text-gray-600">みんなで達成した成果</p>
-            </div>
-            <div className="flex flex-col items-end">
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
-                  {achievementCount || "0"}
-                </span>
-                <span className="text-2xl font-bold text-gray-700">件</span>
-              </div>
-              <div className="flex items-center gap-1 mt-2">
-                <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
-                  今日{" "}
-                  <span>
-                    {todayAchievementCount && todayAchievementCount > 0
-                      ? "+"
-                      : ""}
-                    {todayAchievementCount || "0"}
+              <div className="flex flex-col items-end">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                    {achievementCount || "0"}
                   </span>
-                  <span>件</span>
+                  <span className="text-2xl font-bold text-gray-700">件</span>
+                </div>
+                <div className="flex items-center gap-1 mt-2">
+                  <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
+                    今日{" "}
+                    <span>
+                      {todayAchievementCount && todayAchievementCount > 0
+                        ? "+"
+                        : ""}
+                      {todayAchievementCount || "0"}
+                    </span>
+                    <span>件</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+          <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
+            <div className="relative flex justify-between items-center">
+              <div>
+                <div className="text-xl font-bold text-gray-700 mb-2">
+                  登録人数
+                </div>
+                <p className="text-sm text-gray-600">アクションボード参加者</p>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                    {totalRegistrationCount || "0"}
+                  </span>
+                  <span className="text-2xl font-bold text-gray-700">人</span>
+                </div>
+                <div className="flex items-center gap-1 mt-2">
+                  <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
+                    今日{" "}
+                    <span>
+                      {todayRegistrationCount && todayRegistrationCount > 0
+                        ? "+"
+                        : ""}
+                      {todayRegistrationCount || "0"}
+                    </span>
+                    <span>人</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         <Card className="border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-white">
           <div className="flex flex-col gap-6">
