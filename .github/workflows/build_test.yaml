@@ -56,6 +56,13 @@ jobs:
         uses: supabase/setup-cli@v1
         with:
           version: latest
+          
+      # CI環境で認証メール確認を無効化
+      - name: Disable email confirmations for CI
+        run: |
+          echo "Disabling email confirmations in config.toml for CI environment..."
+          sed -i -e 's/enable_confirmations = true/enable_confirmations = false/' ./supabase/config.toml
+          grep "enable_confirmations" ./supabase/config.toml
 
       - name: Start Supabase
         run: |
@@ -119,7 +126,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
-      - name: Save Cache – Playwright Browser
+      - name: Save Cache - Playwright Browser
         uses: actions/cache@v4
         id: save-cache-playwright-chromium
         with:
