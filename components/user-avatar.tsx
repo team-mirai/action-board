@@ -13,7 +13,7 @@ interface UserAvatarProps {
   className?: HTMLProps<HTMLElement>["className"];
 }
 
-export default async function UserAvatar({
+export default function UserAvatar({
   className,
   userProfile,
 }: UserAvatarProps) {

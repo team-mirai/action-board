@@ -1,39 +1,9 @@
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { Card } from "@/components/ui/card";
-import { dateTimeFormatter } from "@/lib/formatter";
 import { createClient } from "@/lib/supabase/server";
-import { toZonedTime } from "date-fns-tz";
-import Link from "next/link";
 
 export default async function Activities() {
   const supabase = await createClient();
-
-  const { data: dailyActionSummary } = await supabase
-    .from("daily_action_summary")
-    .select()
-    .order("date", { ascending: false })
-    .limit(2);
-
-  // count achievements
-  const { count: achievementCount } = await supabase
-    .from("achievements")
-    .select("*", { count: "exact", head: true });
-
-  // count today's achievements
-  const timeZone = "Asia/Tokyo";
-  const date = toZonedTime(new Date(), timeZone);
-  date.setHours(0, 0, 0, 0);
-
-  const { count: todayAchievementCount } = await supabase
-    .from("achievements")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", date.toISOString());
-
-  const { data: dailyDashboardRegistrationSummary } = await supabase
-    .from("daily_dashboard_registration_summary")
-    .select()
-    .order("date", { ascending: false })
-    .limit(1);
 
   const { data: activityTimelines } = await supabase
     .from("activity_timeline_view")
@@ -41,50 +11,28 @@ export default async function Activities() {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  const currentDate = dailyDashboardRegistrationSummary?.[0]?.date
-    ? dateTimeFormatter(new Date(dailyDashboardRegistrationSummary[0].date))
-    : "データなし";
-
-  const actionNum = dailyActionSummary?.[0]?.count ?? 0;
-  const actionNumDiff =
-    dailyActionSummary?.length === 2
-      ? dailyActionSummary[0].count - dailyActionSummary[1].count
-      : 0;
-
   return (
-    <div className="flex flex-col bg-emerald-50 px-5 py-6 gap-2">
-      <div className="flex flex-row justify-between items-center">
-        <h2 className="text-lg font-bold">これまでのチームみらいの活動</h2>
-        {/* <div className="text-xs text-gray-500">{currentDate}更新</div> */}
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex flex-col gap-6">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl text-gray-900 mb-2">
+            ⏰ 活動タイムライン
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            リアルタイムで更新される活動記録
+          </p>
+        </div>
+        <Card className="border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-white">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <ActivityTimeline
+                timeline={activityTimelines ?? []}
+                hasNext={false}
+              />
+            </div>
+          </div>
+        </Card>
       </div>
-
-      <Card className="flex justify-between items-center border-0 rounded-lg px-5 py-3">
-        <div className="text-lg font-bold">アクション数</div>
-        <div className="flex flex-col items-end">
-          <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-emerald-400">
-              {achievementCount || "エラー"}
-            </span>
-            <span className="text-lg font-bold ml-1">件</span>
-          </div>
-          <div className="text-sm text-gray-500">
-            昨日から + {todayAchievementCount || "エラー"}
-          </div>
-        </div>
-      </Card>
-
-      <Card className="flex flex-col border-0 rounded-lg gap-2 px-5 py-6">
-        <div className="flex flex-row justify-between">
-          <div className="text-lg font-bold">活動タイムライン</div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <ActivityTimeline
-            timeline={activityTimelines ?? []}
-            hasNext={false}
-          />
-        </div>
-      </Card>
     </div>
   );
 }

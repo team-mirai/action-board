@@ -25,14 +25,14 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
   return (
     <li className="border p-4 rounded-lg shadow">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500">
           提出日時: {dateTimeFormatter(new Date(submission.created_at))}
           {isLatest && (
             <Badge variant="outline" className="mx-4">
               最新
             </Badge>
           )}
-        </p>
+        </div>
         {canCancel && (
           <Button
             variant="outline"

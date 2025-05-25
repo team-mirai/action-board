@@ -67,29 +67,38 @@ export default async function Missions({
   const { data: missions } = maxSize ? await query.limit(maxSize) : await query;
 
   return (
-    <div className="flex flex-col bg-emerald-50 px-5 py-6 gap-2">
-      <div className="flex flex-row justify-between items-center">
-        <h2 className="text-lg font-bold">ミッション</h2>
-      </div>
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex flex-col gap-6">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+            📈 ミッション
+          </h2>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        {missions && missions.length > 0 ? (
-          missions.map((mission) => (
-            <Mission
-              key={mission.id}
-              mission={mission}
-              achieved={achievedMissionIds.includes(mission.id)}
-              achievementsCount={achievement_count_map.get(mission.id) ?? 0}
-              userAchievementCount={
-                userAchievementCountMap.get(mission.id) ?? 0
-              }
-            />
-          ))
-        ) : (
-          <div className="text-center text-sm">
-            未達成のミッションはありません
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {missions && missions.length > 0 ? (
+            missions.map((mission) => (
+              <Mission
+                key={mission.id}
+                mission={mission}
+                achieved={achievedMissionIds.includes(mission.id)}
+                achievementsCount={achievement_count_map.get(mission.id) ?? 0}
+                userAchievementCount={
+                  userAchievementCountMap.get(mission.id) ?? 0
+                }
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500 text-lg">
+                未達成のミッションはありません
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                新しいミッションが追加されるまでお待ちください
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

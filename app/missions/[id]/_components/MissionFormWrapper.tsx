@@ -43,19 +43,23 @@ export function MissionFormWrapper({
 
       {hasReachedUserMaxAchievements &&
         mission?.max_achievement_count !== null && (
-          <p className="text-sm font-semibold text-center">
-            あなたはこのミッションの達成回数の上限 (
-            {mission.max_achievement_count}回) に達しました。
-          </p>
+          <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 text-center">
+            <p className="text-sm font-medium text-orange-800">
+              あなたはこのミッションの達成回数の上限 (
+              {mission.max_achievement_count}回) に達しました。
+            </p>
+          </div>
         )}
 
       {!hasReachedUserMaxAchievements &&
         userAchievementCount > 0 &&
         mission?.max_achievement_count !== null && (
-          <p className="text-sm font-semibold text-center">
-            あなたの達成回数: {userAchievementCount} /{" "}
-            {mission.max_achievement_count}回
-          </p>
+          <div className="rounded-lg border bg-muted/50 p-4 text-center">
+            <p className="text-sm font-medium text-muted-foreground">
+              あなたの達成回数: {userAchievementCount} /{" "}
+              {mission.max_achievement_count}回
+            </p>
+          </div>
         )}
 
       <SubmitButton pendingText="登録中..." disabled={isButtonDisabled}>

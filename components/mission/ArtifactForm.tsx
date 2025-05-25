@@ -47,10 +47,12 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>提出フォーム - {artifactConfig.displayName}</CardTitle>
+        <CardTitle className="text-lg">
+          提出フォーム - {artifactConfig.displayName}
+        </CardTitle>
         <p className="text-sm text-muted-foreground">{artifactConfig.prompt}</p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
