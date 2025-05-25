@@ -14,7 +14,7 @@ export default defineConfig({
   timeout: 30 * 1000,
   expect: {
     /* テストアサーションのタイムアウト時間 */
-    timeout: 10000,
+    timeout: 5000,
   },
   /* ワーカー数 */
   workers: 1,
