@@ -64,12 +64,12 @@ export default async function Activities() {
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-2">
             <span className="text-3xl font-bold text-emerald-400">
-              {achievementCount || "エラー"}
+              {achievementCount?.toLocaleString() || "エラー"}
             </span>
             <span className="text-lg font-bold ml-1">件</span>
           </div>
           <div className="text-sm text-gray-500">
-            昨日から + {todayAchievementCount || "エラー"}
+            昨日から + {todayAchievementCount?.toLocaleString() || "エラー"}
           </div>
         </div>
       </Card>

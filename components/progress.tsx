@@ -26,7 +26,7 @@ export default async function Progress() {
     .from("private_users")
     .select("*", { count: "exact", head: true });
 
-  const registrationNum = count ?? "エラー";
+  const registrationNum = count?.toLocaleString() ?? "エラー";
 
   return (
     <div className="flex flex-col px-5 py-6 gap-2">
