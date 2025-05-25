@@ -30,11 +30,11 @@ export function DifficultyBadge({
   };
 
   const difficultyLabels = {
-    1: "かんたん",
-    2: "ふつう",
-    3: "むずかしい",
-    4: "とてもむずかしい",
-    5: "超むずかしい",
+    1: "とてもかんたん",
+    2: "かんたん",
+    3: "ふつう",
+    4: "むずかしい",
+    5: "とてもむずかしい",
   };
 
   const label =

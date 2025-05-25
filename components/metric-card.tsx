@@ -40,7 +40,7 @@ export function MetricCard({
             )}
           >
             <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
-              今日{" "}
+              1日で{" "}
               <span>
                 {todayValue && todayValue > 0 ? "+" : ""}
                 {todayValue || "0"}

@@ -19,10 +19,9 @@ export default async function Activities() {
     .from("achievements")
     .select("*", { count: "exact", head: true });
 
-  // count today's achievements
-  const timeZone = "Asia/Tokyo";
-  const date = toZonedTime(new Date(), timeZone);
-  date.setHours(0, 0, 0, 0);
+  // 24 hours ago
+  const date = new Date();
+  date.setHours(date.getHours() - 24);
 
   const { count: todayAchievementCount } = await supabase
     .from("achievements")
@@ -69,9 +68,6 @@ export default async function Activities() {
           <h2 className="text-3xl md:text-4xl text-gray-900 mb-2">
             📊 チームみらいの活動状況
           </h2>
-          <p className="text-gray-600 font-medium">
-            みんなの力で、政治を変えていく
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -88,6 +84,8 @@ export default async function Activities() {
             description="アクションボード参加者"
             value={totalRegistrationCount}
             unit="人"
+            todayValue={todayRegistrationCount}
+            todayUnit="人"
           />
         </div>
 
