@@ -1,5 +1,6 @@
 "use client";
 
+import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";
 
 type MissionDetailsProps = {
@@ -21,7 +22,7 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       <p className="text-sm text-gray-500">難易度: {mission.difficulty}</p>
       {mission.event_date && (
         <p className="text-sm text-gray-500">
-          イベント日: {new Date(mission.event_date).toLocaleDateString()}
+          イベント日: {dateFormatter(new Date(mission.event_date))}
         </p>
       )}
     </div>
