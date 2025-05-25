@@ -19,7 +19,7 @@ export function MetricCard({
   todayUnit,
 }: MetricCardProps) {
   return (
-    <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
+    <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
       <div className="relative flex justify-between items-center align-middle">
         <div>

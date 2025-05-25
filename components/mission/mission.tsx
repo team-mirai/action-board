@@ -36,17 +36,17 @@ export default function Mission({
   return (
     <Card
       className={clsx(
-        "relative overflow-hidden border-2 rounded-2xl p-6 w-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+        "relative overflow-hidden border-2 rounded-2xl p-6 w-full shadow-lg",
         hasReachedMaxAchievements
           ? "bg-gray-50 border-gray-300 opacity-75"
-          : "border-gray-200 hover:border-gray-300",
+          : "border-gray-200",
       )}
     >
       <div className="flex items-start gap-4">
         <div className="flex-col items-center justify-center">
           <Avatar
             className={clsx(
-              "h-16 w-16 shadow-md transition-all duration-300",
+              "h-16 w-16 shadow-md",
               hasReachedMaxAchievements && "grayscale",
             )}
           >
@@ -119,7 +119,7 @@ export default function Mission({
           <Button
             variant="default"
             className={clsx(
-              "w-full rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg transform transition-all duration-200",
+              "w-full rounded-full py-6 text-base font-bold text-white shadow-md hover:shadow-lg",
               hasReachedMaxAchievements
                 ? "bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600"
                 : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700",
