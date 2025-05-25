@@ -6,24 +6,21 @@ import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
-import type { Achievement } from "../_lib/types";
 import { achieveMissionAction } from "../actions";
 
 type Props = {
   mission: Tables<"missions">;
-  authUser: User | null;
+  authUser: User;
   userAchievementCount: number;
-  userAchievements: Achievement[];
 };
 
 export function MissionFormWrapper({
   mission,
   authUser,
   userAchievementCount,
-  userAchievements,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
-    useMissionSubmission(mission, authUser, userAchievementCount);
+    useMissionSubmission(mission, userAchievementCount);
 
   return (
     <form action={achieveMissionAction} className="flex flex-col gap-4">
