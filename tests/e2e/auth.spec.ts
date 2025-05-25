@@ -36,6 +36,12 @@ test.describe("認証フロー", () => {
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
 
+    await page.fill(
+      'input[name="date_of_birth"]',
+      "2000-01-01", // 18歳以上の日付を入力
+      { force: true },
+    );
+
     // 利用規約に同意する
     await page.locator("#terms").click();
     // プライバシーポリシーに同意する
@@ -97,28 +103,39 @@ test.describe("認証フロー", () => {
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
 
+    await page.fill(
+      'input[name="date_of_birth"]',
+      "2000-01-01", // 18歳以上の日付を入力
+      { force: true },
+    );
+
     // 利用規約に同意する
     await page.locator("#terms").click();
     // プライバシーポリシーに同意する
     await page.locator("#privacy").click();
 
-    // 2. 空の入力で送信するとエラーになることを確認
-    await page.getByRole("button", { name: "サインアップ" }).click();
-    // HTML5のバリデーションによりサブミットされないことを確認
-    await expect(page).toHaveURL("/sign-up");
+    // 2. 空の入力ではサインアップボタンが無効化されていることを確認
+    await expect(
+      page.getByRole("button", { name: "サインアップ" }),
+    ).toBeDisabled();
 
-    // 3. メールのみを入力してエラーになることを確認
+    // 3. メールのみを入力して無効化されていることを確認
     await page.fill('input[name="email"]', "test@example.com");
-    await page.getByRole("button", { name: "サインアップ" }).click();
-    // HTML5のバリデーションによりサブミットされないことを確認
-    await expect(page).toHaveURL("/sign-up");
+    await expect(
+      page.getByRole("button", { name: "サインアップ" }),
+    ).toBeDisabled();
 
-    // 4. パスワードのみを入力してエラーになることを確認
+    // 4. パスワードのみを入力して無効化されていることを確認
     await page.fill('input[name="email"]', "");
     await page.fill('input[name="password"]', "password123");
-    await page.getByRole("button", { name: "サインアップ" }).click();
-    // HTML5のバリデーションによりサブミットされないことを確認
-    await expect(page).toHaveURL("/sign-up");
+    await expect(
+      page.getByRole("button", { name: "サインアップ" }),
+    ).toBeDisabled();
+
+    await page.fill('input[name="email"]', "test@example.com");
+    await expect(
+      page.getByRole("button", { name: "サインアップ" }),
+    ).toBeEnabled();
   });
 
   test("サインインページの表示と入力検証", async ({ page }) => {

@@ -20,3 +20,21 @@ export function encodedRedirect(
 ) {
   return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
 }
+
+// 年齢計算関数：生年月日から現在の年齢を計算
+export function calculateAge(birthdate: string): number {
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  // 誕生月がまだ来ていない、または誕生月だけど誕生日がまだの場合は年齢を1つ減らす
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}

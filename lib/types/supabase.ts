@@ -315,6 +315,7 @@ export type Database = {
           address_prefecture: string;
           avatar_url: string | null;
           created_at: string;
+          date_of_birth: string;
           id: string;
           name: string;
           postcode: string;
@@ -326,6 +327,7 @@ export type Database = {
           address_prefecture: string;
           avatar_url?: string | null;
           created_at?: string;
+          date_of_birth: string;
           id: string;
           name: string;
           postcode: string;
@@ -337,6 +339,7 @@ export type Database = {
           address_prefecture?: string;
           avatar_url?: string | null;
           created_at?: string;
+          date_of_birth?: string;
           id?: string;
           name?: string;
           postcode?: string;

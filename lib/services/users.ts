@@ -1,0 +1,44 @@
+import { createClient } from "@/lib/supabase/server";
+import type { Tables } from "@/lib/types/supabase";
+
+export async function updateProfile(
+  user: Tables<"private_users">,
+): Promise<Tables<"private_users"> | null> {
+  const supabaseClient = await createClient();
+
+  // 先にユーザー情報を取得
+  const { data: authUser } = await supabaseClient.auth.getUser();
+  if (!authUser) {
+    console.error("User not found");
+    throw new Error("ユーザー（認証）が見つかりません");
+  }
+
+  const { data: privateUser } = await supabaseClient
+    .from("private_users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  // private_users テーブルを更新
+  if (!privateUser) {
+    const { data: updated, error: privateUserError } = await supabaseClient
+      .from("private_users")
+      .insert(user);
+
+    if (privateUserError) {
+      console.error("Error updating private_users:", privateUserError);
+      throw new Error("ユーザー情報の更新に失敗しました");
+    }
+    return updated;
+  }
+
+  const { data: updated, error: privateUserError } = await supabaseClient
+    .from("private_users")
+    .update(user)
+    .eq("id", user.id);
+  if (privateUserError) {
+    console.error("Error updating private_users:", privateUserError);
+    throw new Error("ユーザー情報の更新に失敗しました");
+  }
+  return updated;
+}

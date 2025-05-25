@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { encodedRedirect } from "@/lib/utils/utils";
+import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -16,15 +16,41 @@ const signUpAndLoginFormSchema = z.object({
     .string()
     .nonempty({ message: "パスワードを入力してください" })
     .min(6, { message: "パスワードは8文字以上で入力してください" }),
+  date_of_birth: z
+    .string()
+    .nonempty({ message: "生年月日を入力してください" })
+    .refine(
+      (value) => {
+        const age = calculateAge(value);
+        return age >= 18;
+      },
+      {
+        message: "18歳未満の方は登録できません",
+      },
+    )
+    .transform((value) => new Date(value).toISOString()), // ISO形式に変換
+});
+
+const signInAndLoginFormSchema = z.object({
+  email: z
+    .string()
+    .nonempty({ message: "メールアドレスを入力してください" })
+    .email({ message: "有効なメールアドレスを入力してください" }),
+  password: z
+    .string()
+    .nonempty({ message: "パスワードを入力してください" })
+    .min(6, { message: "パスワードは8文字以上で入力してください" }),
 });
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const date_of_birth = formData.get("date_of_birth")?.toString();
 
   const validatedFields = signUpAndLoginFormSchema.safeParse({
     email,
     password,
+    date_of_birth,
   });
   if (!validatedFields.success) {
     return encodedRedirect(
@@ -49,6 +75,9 @@ export const signUpAction = async (formData: FormData) => {
     email,
     password,
     options: {
+      data: {
+        date_of_birth, // 生年月日をユーザーデータに保存。プロフィール作成時に固定で設定される
+      },
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
@@ -71,7 +100,7 @@ export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const validatedFields = signUpAndLoginFormSchema.safeParse({
+  const validatedFields = signInAndLoginFormSchema.safeParse({
     email,
     password,
   });
@@ -89,6 +118,8 @@ export const signInAction = async (formData: FormData) => {
     email,
     password,
   });
+
+  console.log(error);
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
