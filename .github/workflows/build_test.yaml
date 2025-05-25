@@ -15,47 +15,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      # npmのキャッシュを設定
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # Supabase Dockerイメージのキャッシュを設定
-      - name: Cache Supabase Docker images
-        id: cache-supabase
-        uses: actions/cache@v4
-        with:
-          path: /tmp/supabase-docker-cache
-          key: ${{ runner.os }}-supabase-docker-${{ hashFiles('supabase/**') }}
-          restore-keys: |
-            ${{ runner.os }}-supabase-docker-
-
-      # キャッシュされたDockerイメージをロードする
-      - name: Load cached Docker images
-        if: steps.cache-supabase.outputs.cache-hit == 'true'
-        run: |
-          echo "Loading cached Supabase Docker images..."
-          if [ -d "/tmp/supabase-docker-cache" ] && [ "$(ls -A /tmp/supabase-docker-cache/*.tar 2>/dev/null)" ]; then
-            for img in /tmp/supabase-docker-cache/*.tar; do
-              echo "Loading $img..."
-              docker load < $img
-            done
-            echo "Cached images loaded successfully"
-            docker images | grep supabase
-          else
-            echo "No cached images found"
-          fi
-
-      # Supabase CLIのセットアップと起動
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
           
       # CI環境で認証メール確認を無効化
       - name: Disable email confirmations for CI
@@ -64,6 +23,12 @@ jobs:
           sed -i -e 's/enable_confirmations = true/enable_confirmations = false/' ./supabase/config.toml
           grep "enable_confirmations" ./supabase/config.toml
 
+      # Supabase CLIのセットアップと起動
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
       - name: Start Supabase
         run: |
           echo "Starting Supabase..."
@@ -71,23 +36,6 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
-
-      # Dockerイメージのキャッシュを保存する（キャッシュヒットしなかった場合のみ）
-      - name: Save Docker images to cache
-        if: steps.cache-supabase.outputs.cache-hit != 'true'
-        run: |
-          echo "Saving Supabase Docker images to cache..."
-          mkdir -p /tmp/supabase-docker-cache
-          # Supabaseに関連するイメージのみをキャッシュ
-          docker images --format "table {{.Repository}}:{{.Tag}}" | grep -E "(supabase|postgres)" | grep -v "<none>" | while read image; do
-            if [ "$image" != "REPOSITORY:TAG" ]; then
-              filename=$(echo "$image" | tr "/" "_" | tr ":" "_")
-              echo "Saving $image as $filename.tar"
-              docker save "$image" > "/tmp/supabase-docker-cache/$filename.tar"
-            fi
-          done
-          echo "Cache contents:"
-          ls -la /tmp/supabase-docker-cache/
 
       - name: Install dependencies
         run: npm ci
@@ -102,6 +50,13 @@ jobs:
           timeout 30 bash -c 'until curl -s http://localhost:54321/rest/v1/ > /dev/null; do sleep 1; done'
           echo "Supabase is ready!"
 
+      # Supabaseのデータベースをリセット
+      - name: Reset Supabase database
+        run: |
+          echo "Resetting Supabase database..."
+          supabase db reset
+          echo "Supabase database reset completed."
+
       # 環境変数を設定（ローカルSupabaseの接続情報）
       - name: Set Supabase environment variables
         run: |
@@ -110,28 +65,8 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
 
-      - name: Get Playwright Version For Browser Cache Key
-        id: get-playwright-version
-        run: |
-          echo "playwright-version=$(npx playwright --version | sed 's/ //g')" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Restore Cache Playwright Browser
-        id: restore-cache-playwright-chromium
-        uses: actions/cache/restore@v4
-        with:
-          path: /home/runner/.cache/ms-playwright
-          key: playwright-chromium-${{ steps.get-playwright-version.outputs.playwright-version }}
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
-
-      - name: Save Cache - Playwright Browser
-        uses: actions/cache@v4
-        id: save-cache-playwright-chromium
-        with:
-          path: /home/runner/.cache/ms-playwright
-          key: ${{ steps.restore-cache-playwright-chromium.outputs.cache-primary-key }}
 
       - name: Run CI Tests
         run: npm run test:ci
