@@ -65,7 +65,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Noto Sans JP", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
+      "Yu Gothic", Meiryo, sans-serif;
   }
 
   h1,
@@ -74,7 +75,7 @@
   h4,
   h5,
   h6 {
-    @apply font-black;
+    @apply font-extrabold;
   }
 }
 
@@ -89,6 +90,11 @@
 
   .bg-gradient-secondary {
     @apply bg-gradient-to-r from-teal-600 to-emerald-600;
+  }
+
+  /* 放射状グラデーション */
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
   }
 
   .shadow-soft {

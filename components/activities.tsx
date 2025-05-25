@@ -66,7 +66,7 @@ export default async function Activities() {
     <div className="max-w-6xl mx-auto px-4">
       <div className="flex flex-col gap-6">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+          <h2 className="text-3xl md:text-4xl text-gray-900 mb-2">
             📊 チームみらいの活動状況
           </h2>
           <p className="text-gray-600 font-medium">
@@ -97,9 +97,7 @@ export default async function Activities() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-row justify-between items-center">
               <div>
-                <h3 className="text-2xl font-black text-gray-900">
-                  ⏰ 活動タイムライン
-                </h3>
+                <h3 className="text-2xl text-gray-900">⏰ 活動タイムライン</h3>
                 <p className="text-sm text-gray-600 mt-1">
                   リアルタイムで更新される活動記録
                 </p>

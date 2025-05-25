@@ -27,7 +27,7 @@ export function MetricCard({
         </div>
         <div className="flex flex-col items-end">
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+            <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
               {value || "0"}
             </span>
             <span className="text-2xl font-bold text-gray-700">{unit}</span>

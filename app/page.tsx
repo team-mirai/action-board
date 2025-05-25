@@ -28,6 +28,12 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
       {/* ヒーローセクション */}
       <section className="relative bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 overflow-hidden">
+        {/* 背景グラデーションオーバーレイ */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-100/50 via-transparent to-teal-100/40" />
+
+        {/* 放射状グラデーション */}
+        <div className="absolute inset-0 bg-gradient-radial from-emerald-200/30 via-transparent to-transparent" />
+
         {/* パターン背景 */}
         <div className="absolute inset-0 opacity-5">
           <div
@@ -40,10 +46,10 @@ export default async function Home() {
 
         <div className="relative px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-4 leading-tight">
               チームみらい
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700">
                 アクションボード
               </span>
             </h1>
@@ -56,7 +62,7 @@ export default async function Home() {
                 <Link href="/sign-up">
                   <Button
                     size="lg"
-                    className="min-w-72 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-6 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                    className="min-w-72 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:via-teal-700 hover:to-emerald-800 text-white font-bold py-6 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
                   >
                     <span className="text-lg">🚀 チームみらいに参画する</span>
                   </Button>
