@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
 import Link from "next/link";
@@ -31,23 +32,6 @@ export default function Mission({
   const dateStr = eventDate
     ? `${eventDate.getMonth() + 1}月${eventDate.getDate()}日（${["日", "月", "火", "水", "木", "金", "土"][eventDate.getDay()]}）開催`
     : null;
-
-  // 難易度に応じたバッジカラー
-  const difficultyColors = {
-    1: "border-green-400 text-green-700",
-    2: "border-yellow-400 text-yellow-700",
-    3: "border-orange-400 text-orange-700",
-    4: "border-red-400 text-red-700",
-    5: "border-purple-400 text-purple-700",
-  };
-
-  const difficultyLabels = {
-    1: "かんたん",
-    2: "ふつう",
-    3: "むずかしい",
-    4: "とてもむずかしい",
-    5: "超むずかしい",
-  };
 
   return (
     <Card
@@ -122,19 +106,10 @@ export default function Mission({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span
-              className={clsx(
-                "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border-2 bg-white",
-                difficultyColors[
-                  mission.difficulty as keyof typeof difficultyColors
-                ] || "border-gray-400 text-gray-700",
-              )}
-            >
-              難易度:{" "}
-              {difficultyLabels[
-                mission.difficulty as keyof typeof difficultyLabels
-              ] || mission.difficulty}
-            </span>
+            <DifficultyBadge
+              difficulty={mission.difficulty}
+              className={clsx(hasReachedMaxAchievements && "opacity-60")}
+            />
           </div>
         </div>
       </div>

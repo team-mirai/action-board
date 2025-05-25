@@ -25,24 +25,26 @@ export default async function MissionPage({ params }: Props) {
     pageData;
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-screen-md w-full">
-      <MissionDetails mission={mission} />
+    <div className="container mx-auto max-w-4xl p-4">
+      <div className="flex flex-col gap-6">
+        <MissionDetails mission={mission} />
 
-      <MissionFormWrapper
-        mission={mission}
-        authUser={user}
-        userAchievementCount={userAchievementCount}
-        userAchievements={userAchievements}
-      />
-
-      {submissions.length > 0 && (
-        <SubmissionHistoryWrapper
-          submissions={submissions}
-          missionId={id}
-          userId={user?.id}
-          maxAchievementCount={mission.max_achievement_count || 0}
+        <MissionFormWrapper
+          mission={mission}
+          authUser={user}
+          userAchievementCount={userAchievementCount}
+          userAchievements={userAchievements}
         />
-      )}
+
+        {submissions.length > 0 && (
+          <SubmissionHistoryWrapper
+            submissions={submissions}
+            missionId={id}
+            userId={user?.id}
+            maxAchievementCount={mission.max_achievement_count || 0}
+          />
+        )}
+      </div>
     </div>
   );
 }
