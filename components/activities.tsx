@@ -88,8 +88,6 @@ export default async function Activities() {
             description="アクションボード参加者"
             value={totalRegistrationCount}
             unit="人"
-            todayValue={todayRegistrationCount}
-            todayUnit="人"
           />
         </div>
 

@@ -1,12 +1,13 @@
 import { Card } from "@/components/ui/card";
+import clsx from "clsx";
 
 interface MetricCardProps {
   title: string;
   description: string;
   value: number | null;
   unit: string;
-  todayValue: number | null;
-  todayUnit: string;
+  todayValue?: number | null;
+  todayUnit?: string;
 }
 
 export function MetricCard({
@@ -20,7 +21,7 @@ export function MetricCard({
   return (
     <Card className="relative overflow-hidden border-2 border-emerald-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-emerald-50">
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-full opacity-20 -mr-16 -mt-16" />
-      <div className="relative flex justify-between items-center">
+      <div className="relative flex justify-between items-center align-middle">
         <div>
           <div className="text-xl font-bold text-gray-700 mb-2">{title}</div>
           <p className="text-sm text-gray-600">{description}</p>
@@ -32,7 +33,12 @@ export function MetricCard({
             </span>
             <span className="text-2xl font-bold text-gray-700">{unit}</span>
           </div>
-          <div className="flex items-center gap-1 mt-2">
+          <div
+            className={clsx(
+              "flex items-center gap-1 mt-2",
+              !todayValue && "opacity-0",
+            )}
+          >
             <div className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
               今日{" "}
               <span>
