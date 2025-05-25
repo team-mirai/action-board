@@ -96,8 +96,10 @@ test.describe("認証フロー", () => {
     await expect(
       page.getByRole("heading", { name: "チームみらいに参画する" }),
     ).toBeVisible();
-    await expect(page.getByText("Email", { exact: true })).toBeVisible();
-    await expect(page.getByText("Password", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("メールアドレス", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText("パスワード", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "サインアップ" }),
     ).toBeVisible();
@@ -144,8 +146,10 @@ test.describe("認証フロー", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(page.getByRole("heading", { name: "ログイン" })).toBeVisible();
-    await expect(page.getByText("Email", { exact: true })).toBeVisible();
-    await expect(page.getByText("Password", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("メールアドレス", { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText("パスワード", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "ログイン" })).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
     await expect(
