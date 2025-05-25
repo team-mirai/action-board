@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
+import Footer from "./footer";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -36,6 +37,7 @@ export default function RootLayout({
           <main className="md:container md:mx-auto flex flex-col items-center">
             {children}
           </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
