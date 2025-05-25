@@ -30,7 +30,7 @@ export default async function MissionPage({ params }: Props) {
   }
 
   const message = `ミッション「${mission.title}」が完了しました！`;
-  const shareMessage = `チームみらい Action Board で${message}\n`;
+  const shareMessage = `チームみらい Action Board で${message} #チームみらい\n`;
 
   return (
     <div className="flex flex-col">
