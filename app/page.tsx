@@ -1,4 +1,5 @@
 import Activities from "@/components/activities";
+import Metrics from "@/components/metrics";
 import Missions from "@/components/mission/missions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -73,14 +74,19 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* アクティビティセクション */}
+      {/* メトリクスセクション */}
       <section className="py-12 md:py-16 bg-white">
-        <Activities />
+        <Metrics />
       </section>
 
       {/* ミッションセクション */}
       <section className="py-12 md:py-16 bg-white">
         <Missions userId={user?.id} showAchievedMissions={true} />
+      </section>
+
+      {/* アクティビティセクション */}
+      <section className="py-12 md:py-16 bg-white">
+        <Activities />
       </section>
 
       {/* <Events /> */}
