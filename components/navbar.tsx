@@ -21,8 +21,8 @@ export default async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <nav className="sticky top-0 z-50 w-full flex justify-center bg-white border-b border-b-foreground/10 h-16">
-      <div className="px-4 md:container md:mx-auto w-full flex justify-between items-center text-sm">
+    <nav className="sticky top-0 z-50 max-w-3xl mx-auto flex justify-center bg-white h-16">
+      <div className="px-2 md:px-0 w-full flex justify-between items-center text-sm border-b border-b-foreground/10 ">
         <div className="flex gap-5 items-center font-semibold min-w-[60px]">
           <Link href="/">
             <Image src="/img/logo.png" alt="logo" width={57} height={48} />
