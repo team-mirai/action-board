@@ -30,6 +30,7 @@ export default async function UserDetailPage({ params }: Props) {
   const { data: timeline } = await supabase
     .from("activity_timeline_view")
     .select("*")
+    .eq("user_id", id)
     .order("created_at", { ascending: false })
     .limit(PAGE_SIZE);
 
@@ -58,6 +59,7 @@ export default async function UserDetailPage({ params }: Props) {
           <span className="text-lg font-bold">活動タイムライン</span>
         </div>
         <UserDetailActivities
+          userId={id}
           initialTimeline={timeline || []}
           pageSize={PAGE_SIZE}
           totalCount={count || 0}
