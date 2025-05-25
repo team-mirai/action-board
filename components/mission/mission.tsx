@@ -32,18 +32,37 @@ export default function Mission({
     ? `${eventDate.getMonth() + 1}月${eventDate.getDate()}日（${["日", "月", "火", "水", "木", "金", "土"][eventDate.getDay()]}）開催`
     : null;
 
+  // 難易度に応じたバッジカラー
+  const difficultyColors = {
+    1: "border-green-400 text-green-700",
+    2: "border-yellow-400 text-yellow-700",
+    3: "border-orange-400 text-orange-700",
+    4: "border-red-400 text-red-700",
+    5: "border-purple-400 text-purple-700",
+  };
+
+  const difficultyLabels = {
+    1: "かんたん",
+    2: "ふつう",
+    3: "むずかしい",
+    4: "とてもむずかしい",
+    5: "超むずかしい",
+  };
+
   return (
     <Card
       className={clsx(
-        "border border-[#C7F5EF] rounded-xl p-4 w-[320px] mx-auto",
-        hasReachedMaxAchievements && "bg-[#F0F0F0]",
+        "relative overflow-hidden border-2 border-gray-200 rounded-2xl p-6 w-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+        hasReachedMaxAchievements && "bg-gray-50 opacity-75",
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
         <div className="flex-col items-center justify-center">
-          <Avatar className="h-14 w-14">
+          <Avatar className="h-16 w-16 shadow-md">
             <AvatarImage src={iconUrl} alt={mission.title} />
-            <AvatarFallback>ミッション</AvatarFallback>
+            <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-400 text-white font-bold">
+              M
+            </AvatarFallback>
           </Avatar>
           <MissionAchievementStatus
             hasReachedMaxAchievements={hasReachedMaxAchievements}
@@ -51,36 +70,51 @@ export default function Mission({
             maxAchievementCount={mission.max_achievement_count}
           />
         </div>
-        <div className="flex-1 p-1">
-          <div className="text-xs font-bold leading-tight">{mission.title}</div>
+        <div className="flex-1">
+          <h3 className="text-lg font-black text-gray-900 leading-tight mb-2">
+            {mission.title}
+          </h3>
           {dateStr && (
-            <div className="text-xs text-gray-500 mt-1">{dateStr}</div>
+            <div className="text-sm text-gray-600 font-medium">{dateStr}</div>
           )}
         </div>
       </div>
-      <div className="flex justify-start mt-1">
-        <div className="flex items-center gap-4 my-2">
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-700">
+
+      <div className="mt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center align-middle gap-2">
+            <span className="text-xl pb-1">👥</span>
+            <span className="text-sm font-medium text-gray-700">
               {achievementsCount !== undefined
-                ? `みんなで${achievementsCount.toLocaleString()}回達成`
-                : "-回達成"}
+                ? `${achievementsCount.toLocaleString()}回達成`
+                : "0回達成"}
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-700">
-              難易度{mission.difficulty}
+          <div className="flex items-center gap-2">
+            <span
+              className={clsx(
+                "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border-2 bg-white",
+                difficultyColors[
+                  mission.difficulty as keyof typeof difficultyColors
+                ] || "border-gray-400 text-gray-700",
+              )}
+            >
+              難易度:{" "}
+              {difficultyLabels[
+                mission.difficulty as keyof typeof difficultyLabels
+              ] || mission.difficulty}
             </span>
           </div>
         </div>
       </div>
-      <div className="flex justify-center mt-1">
-        <Link href={`/missions/${mission.id}`} className="w-full">
+
+      <div className="mt-6">
+        <Link href={`/missions/${mission.id}`} className="block">
           <Button
             variant="default"
-            className="w-full rounded-lg py-2 text-sm transition"
+            className="w-full rounded-full py-6 text-base font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md hover:shadow-lg transform transition-all duration-200"
           >
-            詳細を見る
+            詳細を見る →
           </Button>
         </Link>
       </div>

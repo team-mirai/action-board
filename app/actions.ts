@@ -67,7 +67,7 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/sign-up",
-      "Email and password are required",
+      "メールアドレスとパスワードが必要です",
     );
   }
 

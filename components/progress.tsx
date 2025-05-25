@@ -1,75 +1,65 @@
+import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
+import { toZonedTime } from "date-fns-tz";
 
 export default async function Progress() {
   const supabase = await createClient();
 
-  /*
-  const { data: dailyDashboardRegistrationSummary } = await supabase
-    .from("daily_dashboard_registration_summary")
-    .select()
-    .order("date", { ascending: false })
-    .limit(1);
+  const timeZone = "Asia/Tokyo";
+  const date = toZonedTime(new Date(), timeZone);
+  date.setHours(0, 0, 0, 0);
 
-  const { data: weeklyEventCountSummary } = await supabase
-    .from("weekly_event_count_summary")
-    .select()
-    .order("date", { ascending: false })
-    .limit(1);
-
-  const registrationNum = dailyDashboardRegistrationSummary?.[0]?.count ?? 0;
-  const eventNum = weeklyEventCountSummary?.[0]?.count ?? 0;
-  */
-
-  // ユーザー数を数える
-  const { count } = await supabase
+  // count total registrations
+  const { count: totalRegistrationCount } = await supabase
     .from("public_user_profiles")
     .select("*", { count: "exact", head: true });
 
-  const registrationNum = count ?? "エラー";
+  // count today's registrations
+  const { count: todayRegistrationCount } = await supabase
+    .from("public_user_profiles")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", date.toISOString());
 
   return (
-    <div className="flex flex-col px-5 py-6 gap-2">
-      <div className="flex flex-row justify-between items-center">
-        <h2 className="text-lg font-bold">今日までの活動</h2>
-        {/*<div className="text-xs text-gray-500">2025/xx/xx xx:xx更新</div>*/}
-      </div>
-
-      <div className="flex flex-row gap-2">
-        <p>アクションボード登録人数</p>
-        <p>
-          {registrationNum}
-          <span>人</span>
-        </p>
-      </div>
-      {/*
-      <Accordion type="single" collapsible>
-        <AccordionItem value="registration">
-          <AccordionTrigger>
-            <div className="flex flex-row gap-2">
-              <p>アクションボード登録人数</p>
-              <p>
-                {registrationNum}
-                <span>人</span>
-              </p>
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex flex-col gap-6">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+            📊 今日までの活動
+          </h2>
+        </div>
+        <Card className="relative overflow-hidden border-2 border-blue-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-gradient-to-br from-white to-blue-50">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full opacity-20 -mr-16 -mt-16" />
+          <div className="relative flex justify-between items-center">
+            <div>
+              <div className="text-xl font-bold text-gray-700 mb-2">
+                登録人数
+              </div>
+              <p className="text-sm text-gray-600">アクションボード参加者</p>
             </div>
-          </AccordionTrigger>
-          <AccordionContent>本当はここに日本地図が入る</AccordionContent>
-        </AccordionItem>
-        */}
-      {/*
-        <AccordionItem value="event">
-          <AccordionTrigger>
-            <div className="flex flex-row gap-2">
-              <p>イベント開催数</p>
-              <p>
-                {eventNum}
-                <span>回</span>
-              </p>
+            <div className="flex flex-col items-end">
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                  {totalRegistrationCount || "0"}
+                </span>
+                <span className="text-2xl font-bold text-gray-700">人</span>
+              </div>
+              <div className="flex items-center gap-1 mt-2">
+                <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-200">
+                  今日{" "}
+                  <span>
+                    {todayRegistrationCount && todayRegistrationCount > 0
+                      ? "+"
+                      : ""}
+                    {todayRegistrationCount || "0"}
+                  </span>
+                  <span>人</span>
+                </div>
+              </div>
             </div>
-          </AccordionTrigger>
-          <AccordionContent>本当はここに日本地図が入る</AccordionContent>
-        </AccordionItem>
-        */}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

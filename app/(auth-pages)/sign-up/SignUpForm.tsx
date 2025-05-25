@@ -66,7 +66,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
         </Link>
       </p>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">メールアドレス</Label>
         <Input
           name="email"
           placeholder="you@example.com"
@@ -76,11 +76,11 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">パスワード</Label>
         <Input
           type="password"
           name="password"
-          placeholder="Your password"
+          placeholder="パスワード"
           minLength={6}
           required
           disabled={isSuccess}
