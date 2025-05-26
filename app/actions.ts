@@ -39,7 +39,7 @@ const signInAndLoginFormSchema = z.object({
   password: z
     .string()
     .nonempty({ message: "パスワードを入力してください" })
-    .min(6, { message: "パスワードは8文字以上で入力してください" }),
+    .min(8, { message: "パスワードは8文字以上で入力してください" }),
 });
 
 export const signUpAction = async (formData: FormData) => {
@@ -119,10 +119,12 @@ export const signInAction = async (formData: FormData) => {
     password,
   });
 
-  console.log(error);
-
   if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "メールアドレスまたはパスワードが間違っています",
+    );
   }
 
   return redirect("/");
