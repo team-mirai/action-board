@@ -1,5 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import UserAvatar from "@/components/user-avatar";
+import { getAvatarUrl } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { MapPin } from "lucide-react";
 import UserDetailActivities from "./user-detail-activities";
@@ -42,10 +44,7 @@ export default async function UserDetailPage({ params }: Props) {
   return (
     <div className="flex flex-col items-center p-4 gap-4">
       <div className="flex flex-col items-center">
-        <Avatar className="w-16 h-16">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-          <AvatarFallback>アイコン</AvatarFallback>
-        </Avatar>
+        <UserAvatar userProfile={user} size="2xl" />
         <div className="text-xl font-bold mt-2">
           {user.x_username || user.name}
         </div>
