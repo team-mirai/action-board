@@ -105,11 +105,12 @@ export const achieveMissionAction = async (formData: FormData) => {
   });
 
   if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      missionId ? `/missions/${missionId}` : "/missions",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
-    );
+    return {
+      success: false,
+      error: validatedFields.error.errors
+        .map((error) => error.message)
+        .join("\n"),
+    };
   }
 
   const validatedData = validatedFields.data;
@@ -126,11 +127,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   if (!authUser) {
-    return encodedRedirect(
-      "error",
-      `/missions/${validatedMissionId}`,
-      "認証エラーが発生しました。",
-    );
+    return {
+      success: false,
+      error: "認証エラーが発生しました。",
+    };
   }
 
   // ミッション情報を取得して、max_achievement_count を確認
@@ -142,11 +142,10 @@ export const achieveMissionAction = async (formData: FormData) => {
 
   if (missionFetchError) {
     console.error(`Mission fetch error: ${missionFetchError.message}`);
-    return encodedRedirect(
-      "error",
-      `/missions/${validatedMissionId}`,
-      "ミッション情報の取得に失敗しました。",
-    );
+    return {
+      success: false,
+      error: "ミッション情報の取得に失敗しました。",
+    };
   }
 
   if (missionData?.max_achievement_count !== null) {
@@ -162,11 +161,10 @@ export const achieveMissionAction = async (formData: FormData) => {
       console.error(
         `User achievement count fetch error: ${userAchievementError.message}`,
       );
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        "ユーザーの達成回数の取得に失敗しました。",
-      );
+      return {
+        success: false,
+        error: "ユーザーの達成回数の取得に失敗しました。",
+      };
     }
 
     // ユーザーの達成回数が最大達成回数に達しているかチェック
@@ -175,11 +173,10 @@ export const achieveMissionAction = async (formData: FormData) => {
       typeof missionData.max_achievement_count === "number" &&
       userAchievements.length >= missionData.max_achievement_count
     ) {
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        "あなたはこのミッションの達成回数の上限に達しています。",
-      );
+      return {
+        success: false,
+        error: "あなたはこのミッションの達成回数の上限に達しています。",
+      };
     }
 
     // ミッション全体の達成回数を取得（全体の上限がある場合）
@@ -191,11 +188,10 @@ export const achieveMissionAction = async (formData: FormData) => {
 
     if (countError) {
       console.error(`Achievement count fetch error: ${countError.message}`);
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        "達成回数の取得に失敗しました。",
-      );
+      return {
+        success: false,
+        error: "達成回数の取得に失敗しました。",
+      };
     }
 
     // ミッション全体の達成回数が上限に達しているかチェック
@@ -205,11 +201,10 @@ export const achieveMissionAction = async (formData: FormData) => {
       typeof missionData.max_achievement_count === "number" &&
       countData.achievement_count >= missionData.max_achievement_count
     ) {
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        "このミッションは全体の達成回数の上限に達しています。",
-      );
+      return {
+        success: false,
+        error: "このミッションは全体の達成回数の上限に達しています。",
+      };
     }
   }
 
@@ -229,19 +224,17 @@ export const achieveMissionAction = async (formData: FormData) => {
     console.error(
       `Achievement Error: ${achievementError.code} ${achievementError.message}`,
     );
-    return encodedRedirect(
-      "error",
-      `/missions/${validatedMissionId}`,
-      `ミッション達成の記録に失敗しました: ${achievementError.message}`,
-    );
+    return {
+      success: false,
+      error: `ミッション達成の記録に失敗しました: ${achievementError.message}`,
+    };
   }
 
   if (!achievement) {
-    return encodedRedirect(
-      "error",
-      `/missions/${validatedMissionId}`,
-      "達成記録の作成に失敗しました。",
-    );
+    return {
+      success: false,
+      error: "達成記録の作成に失敗しました。",
+    };
   }
 
   // 成果物がある場合は mission_artifacts に記録
@@ -314,11 +307,10 @@ export const achieveMissionAction = async (formData: FormData) => {
         "error:",
         validationError,
       );
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        validationError,
-      );
+      return {
+        success: false,
+        error: validationError,
+      };
     }
 
     // insert前にpayloadと分岐情報を出力
@@ -338,19 +330,17 @@ export const achieveMissionAction = async (formData: FormData) => {
         formDataObj,
         `error= ${artifactError.code} ${artifactError.message}`,
       );
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        `成果物の保存に失敗しました: ${artifactError.message}`,
-      );
+      return {
+        success: false,
+        error: `成果物の保存に失敗しました: ${artifactError.message}`,
+      };
     }
 
     if (!newArtifact) {
-      return encodedRedirect(
-        "error",
-        `/missions/${validatedMissionId}`,
-        "成果物レコードの作成に失敗しました。",
-      );
+      return {
+        success: false,
+        error: "成果物レコードの作成に失敗しました。",
+      };
     }
 
     // 位置情報がある場合は mission_artifact_geolocations に記録
@@ -382,20 +372,18 @@ export const achieveMissionAction = async (formData: FormData) => {
         );
         // 成果物レコードは作成済みだが、位置情報保存に失敗した場合のハンドリング
         // ここではエラーメッセージを出すに留めるが、より丁寧なエラー処理も検討可能
-        return encodedRedirect(
-          "error",
-          `/missions/${validatedMissionId}`,
-          `位置情報の保存に失敗しました: ${geoError.message}`,
-        );
+        return {
+          success: false,
+          error: `位置情報の保存に失敗しました: ${geoError.message}`,
+        };
       }
     }
   }
 
-  return encodedRedirect(
-    "success",
-    `/missions/${validatedMissionId}/complete`,
-    "ミッションを達成しました！",
-  );
+  return {
+    success: true,
+    message: "ミッションを達成しました！",
+  };
 };
 
 export const cancelSubmissionAction = async (formData: FormData) => {
