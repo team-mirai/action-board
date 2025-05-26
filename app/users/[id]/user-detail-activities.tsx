@@ -9,6 +9,7 @@ interface UserDetailActivitiesProps {
   initialTimeline: Tables<"activity_timeline_view">[];
   totalCount: number;
   pageSize: number;
+  userId: string;
 }
 
 export default function UserDetailActivities(props: UserDetailActivitiesProps) {
@@ -24,6 +25,7 @@ export default function UserDetailActivities(props: UserDetailActivitiesProps) {
     const { data: takeTimeline } = await supabase
       .from("activity_timeline_view")
       .select("*")
+      .eq("user_id", props.userId)
       .order("created_at", { ascending: false })
       .range(timeline.length, timeline.length + props.pageSize - 1);
     if (takeTimeline) {
