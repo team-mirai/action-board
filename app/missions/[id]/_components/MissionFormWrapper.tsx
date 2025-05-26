@@ -15,12 +15,14 @@ type Props = {
   mission: Tables<"missions">;
   authUser: User;
   userAchievementCount: number;
+  onSubmissionSuccess?: () => void;
 };
 
 export function MissionFormWrapper({
   mission,
   authUser,
   userAchievementCount,
+  onSubmissionSuccess,
 }: Props) {
   const { buttonLabel, isButtonDisabled, hasReachedUserMaxAchievements } =
     useMissionSubmission(mission, userAchievementCount);
@@ -59,8 +61,10 @@ export function MissionFormWrapper({
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    // ページをリロードして最新の達成状況を反映
-    window.location.reload();
+    // 提出履歴を更新
+    if (onSubmissionSuccess) {
+      onSubmissionSuccess();
+    }
   };
 
   return (
