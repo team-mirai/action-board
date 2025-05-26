@@ -5,42 +5,11 @@ import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { z } from "zod";
-
-const signUpAndLoginFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-  password: z
-    .string()
-    .nonempty({ message: "パスワードを入力してください" })
-    .min(6, { message: "パスワードは8文字以上で入力してください" }),
-  date_of_birth: z
-    .string()
-    .nonempty({ message: "生年月日を入力してください" })
-    .refine(
-      (value) => {
-        const age = calculateAge(value);
-        return age >= 18;
-      },
-      {
-        message: "18歳未満の方は登録できません",
-      },
-    )
-    .transform((value) => new Date(value).toISOString()), // ISO形式に変換
-});
-
-const signInAndLoginFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-  password: z
-    .string()
-    .nonempty({ message: "パスワードを入力してください" })
-    .min(8, { message: "パスワードは8文字以上で入力してください" }),
-});
+import {
+  forgotPasswordFormSchema,
+  signInAndLoginFormSchema,
+  signUpAndLoginFormSchema,
+} from "@/lib/validation/auth";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -129,13 +98,6 @@ export const signInAction = async (formData: FormData) => {
 
   return redirect("/");
 };
-
-const forgotPasswordFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-});
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();

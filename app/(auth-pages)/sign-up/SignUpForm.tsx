@@ -82,13 +82,16 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           type="password"
           name="password"
           placeholder="パスワード"
-          minLength={6}
+          minLength={8}
           required
           disabled={isSuccess}
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <p className="text-sm text-muted-foreground mb-2">
+          ※ 8文字以上32文字以下で英数が含まれること。英数と一部記号が使えます。
+        </p>
 
         <Label htmlFor="date_of_birth">
           生年月日（満18歳以上である必要があります）
