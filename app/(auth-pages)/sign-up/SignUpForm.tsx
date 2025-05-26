@@ -65,6 +65,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
           こちら
         </Link>
       </p>
+      <FormMessage className="mt-8" message={searchParams} />
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
         <Label htmlFor="email">メールアドレス</Label>
         <Input
@@ -166,7 +167,6 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
         >
           サインアップ
         </SubmitButton>
-        <FormMessage message={searchParams} />
       </div>
     </form>
   );
