@@ -6,6 +6,7 @@ export function getAvatarUrl(
   client: SupabaseClient,
   avatarPath: string,
 ): string {
+  if (!avatarPath) return "";
   const { data } = client.storage.from("avatars").getPublicUrl(avatarPath, {
     transform: {
       width: 240,
