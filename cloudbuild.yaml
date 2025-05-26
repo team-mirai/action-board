@@ -16,6 +16,7 @@ steps:
         npx supabase link --project-ref ${_SUPABASE_PROJECT_ID} -p $$SUPABASE_DB_PASSWORD
 
         npx supabase db push
+        npx supabase config push
     env:
       - 'CI=1'
     secretEnv:
