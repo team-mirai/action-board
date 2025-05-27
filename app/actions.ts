@@ -98,6 +98,61 @@ export const signUpActionWithState = async (
   );
 };
 
+// useActionState用のサインインアクション
+export const signInActionWithState = async (
+  prevState: {
+    error?: string;
+    success?: string;
+    message?: string;
+    formData?: {
+      email: string;
+    };
+  } | null,
+  formData: FormData,
+) => {
+  const email = formData.get("email")?.toString();
+  const password = formData.get("password")?.toString();
+
+  // フォームデータを保存（エラー時の状態復元用、メールアドレスのみ）
+  const currentFormData = {
+    email: email || "",
+  };
+
+  const validatedFields = signInAndLoginFormSchema.safeParse({
+    email,
+    password,
+  });
+  if (!validatedFields.success) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  if (!email || !password) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  return redirect("/");
+};
+
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -110,7 +165,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/sign-in",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
+      "メールアドレスまたはパスワードが間違っています",
     );
   }
 
