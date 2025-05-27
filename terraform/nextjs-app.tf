@@ -17,9 +17,7 @@ module "nextjs_app" {
   NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
   NEXT_PUBLIC_SENTRY_DSN        = var.NEXT_PUBLIC_SENTRY_DSN
   SUPABASE_SERVICE_ROLE_KEY     = var.SUPABASE_SERVICE_ROLE_KEY
+  SUPABASE_DB_PASSWORD          = var.SUPABASE_DB_PASSWORD
   SUPABASE_ACCESS_TOKEN         = var.SUPABASE_ACCESS_TOKEN
   SUPABASE_PROJECT_ID           = var.SUPABASE_PROJECT_ID
-
-  # Cloud Build Service Account
-  service_account = google_service_account.cloud_build.id
 }
