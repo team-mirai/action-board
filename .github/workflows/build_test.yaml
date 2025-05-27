@@ -70,6 +70,8 @@ jobs:
 
       - name: Run CI Tests
         run: npm run test:ci
+        env:
+          CI: 'true'
 
       - name: Upload Jest test results
         if: always()
