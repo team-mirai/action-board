@@ -11,7 +11,13 @@ VALUES
   ('2246205f-933f-4a86-83af-dbf6bb6cde90', '活動ブログを書こう (リンク提出)', '/img/mission_fallback_icon.png', 'あなたの活動についてブログ記事を書き、URLを提出してください。', 2, NULL, 'LINK', 10),
   ('3346205f-933f-4a86-83af-dbf6bb6cde91', '今日のベストショット (画像提出)', '/img/mission_fallback_icon.png', '今日の活動で見つけた素晴らしい瞬間を写真で共有してください。', 3, '2025-06-01', 'IMAGE', NULL),
   ('4446205f-933f-4a86-83af-dbf6bb6cde92', '発見！地域の宝 (位置情報付き画像)', '/img/mission_fallback_icon.png', 'あなたの地域で見つけた素敵な場所や物を、位置情報付きの写真で教えてください。', 4, NULL, 'IMAGE_WITH_GEOLOCATION', 5),
-  ('5546205f-933f-4a86-83af-dbf6bb6cde93', '日付付きミッション１ (成果物不要, 上限1回)', '/img/mission_fallback_icon.png', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01', 'NONE', 1);
+  ('5546205f-933f-4a86-83af-dbf6bb6cde93', '日付付きミッション１ (成果物不要, 上限1回)', '/img/mission_fallback_icon.png', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01', 'NONE', 1),
+  ('05814416-9cd8-4582-a940-ced9a832efee', '動画を切り抜いてYoutubeショートにアップロードしよう', '/img/mission_fallback_icon.png', '動画を切り抜いてYoutubeショートにアップロードしてください。そのURLを教えてください。', 2, NULL, 'LINK', NULL),  
+  ('41dedf9a-2290-4609-bb73-5469ee8dd909', 'いどばた政策サイトからマニフェストに提案しよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>サイトにアクセスし、マニフェストについて提案してみてください。提案できたURLを教えてください。', 3, NULL, 'LINK', NULL),
+  ('56c03661-8243-42c6-bf81-9dba56c5abfe', 'マニフェストの感想をSNSでシェアしよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>にアクセスし、マニフェストを読んだ感想をSNSでシェアしてください。シェアしたURLを教えてください。', 3, NULL, 'LINK', NULL),
+  ('2c5f7173-48be-4989-9d1b-c749fd56ae44', '公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/team_mirai_jp">チームみらい</a>と、<a href="https://x.com/takahiroanno">安野たかひろ</a>の公式Xをフォローしてください。', 1, NULL, 'NONE', NULL),
+  ('9071a1eb-e272-43be-9c6b-e08b258a41c3', '公式Youtubeチャンネルを登録しよう', '/img/mission_fallback_icon.png', '<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw">チームみらいの公式Youtubeチャンネル</a>をチャンネル登録してください。', 1, NULL, 'NONE', NULL),
+  ('e7a03d8b-ef29-406f-b2fb-065285855997', '公式LINEアカウントを友達申請しよう', '/img/mission_fallback_icon.png', '<a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204">チームみらいのLINEアカウント</a>に友達申請してください。', 1, NULL, 'NONE', NULL);
 
 -- ミッション達成
 INSERT INTO achievements (id, mission_id, user_id)
