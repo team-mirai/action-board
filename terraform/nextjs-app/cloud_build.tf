@@ -1,3 +1,86 @@
+# Cloud Build Service Account
+resource "google_service_account" "cloud_build" {
+  account_id   = "${var.app_name}-${var.environment}-sa-cb"
+  display_name = "Service Account for ${var.app_name} ${var.environment} Cloud Build"
+}
+
+# Grant Cloud Build roles
+resource "google_project_iam_member" "cloudbuild_iam" {
+  for_each = toset([
+    "roles/run.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/secretmanager.secretAccessor",
+    "roles/secretmanager.secretVersionManager",
+    "roles/logging.logWriter",
+    "roles/artifactregistry.writer",
+  ])
+  role   = each.key
+  member = "serviceAccount:${google_service_account.cloud_build.email}"
+
+  project = var.project_id
+}
+
+
+# Supabase Database Password Secret
+resource "google_secret_manager_secret" "supabase_db_password" {
+  secret_id = "${var.app_name}-${var.environment}-SUPABASE_DB_PASSWORD"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "supabase_db_password" {
+  secret      = google_secret_manager_secret.supabase_db_password.id
+  secret_data = var.SUPABASE_DB_PASSWORD
+}
+
+resource "google_secret_manager_secret" "supabase_service_role_key" {
+  secret_id = "${var.app_name}-${var.environment}-SUPABASE_SERVICE_ROLE_KEY"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "supabase_service_role_key" {
+  secret      = google_secret_manager_secret.supabase_service_role_key.id
+  secret_data = var.SUPABASE_SERVICE_ROLE_KEY
+}
+
+resource "google_secret_manager_secret" "supabase_access_token" {
+  secret_id = "${var.app_name}-${var.environment}-SUPABASE_ACCESS_TOKEN"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "supabase_access_token" {
+  secret      = google_secret_manager_secret.supabase_access_token.id
+  secret_data = var.SUPABASE_ACCESS_TOKEN
+}
+
+# Cloud Build サービスアカウントにシークレットアクセス権限を付与
+resource "google_secret_manager_secret_iam_member" "supabase_db_password_accessor" {
+  secret_id = google_secret_manager_secret.supabase_db_password.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_accessor" {
+  secret_id = google_secret_manager_secret.supabase_service_role_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "supabase_access_token_accessor" {
+  secret_id = google_secret_manager_secret.supabase_access_token.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
+
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
   name            = "build-and-deploy-${var.app_name}-${var.environment}"
@@ -51,9 +134,9 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   filename = "cloudbuild.yaml"
 
   substitutions = {
-    _REGION                        = var.region
-    _SERVICE_NAME                  = "${var.app_name}-${var.environment}"
-    _REPOSITORY_NAME               = var.repository_name
-    _SUPABASE_PROJECT_ID           = var.SUPABASE_PROJECT_ID
+    _REGION              = var.region
+    _SERVICE_NAME        = "${var.app_name}-${var.environment}"
+    _REPOSITORY_NAME     = var.repository_name
+    _SUPABASE_PROJECT_ID = var.SUPABASE_PROJECT_ID
   }
 }

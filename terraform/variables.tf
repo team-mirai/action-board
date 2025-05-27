@@ -22,7 +22,6 @@ variable "tfc_workspace" {
 variable "app_name" {
   description = "The name of the application"
   type        = string
-  default     = "nextjs-supabase-app"
 }
 
 variable "min_instance_count" {
