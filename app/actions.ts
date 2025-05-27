@@ -11,10 +11,36 @@ import {
   signUpAndLoginFormSchema,
 } from "@/lib/validation/auth";
 
-export const signUpAction = async (formData: FormData) => {
+// useActionState用のサインアップアクション
+export const signUpActionWithState = async (
+  prevState: {
+    error?: string;
+    success?: string;
+    message?: string;
+    formData?: {
+      email: string;
+      password: string;
+      date_of_birth: string;
+      terms_agreed: boolean;
+      privacy_agreed: boolean;
+    };
+  } | null,
+  formData: FormData,
+) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const date_of_birth = formData.get("date_of_birth")?.toString();
+  const terms_agreed = formData.get("terms_agreed")?.toString();
+  const privacy_agreed = formData.get("privacy_agreed")?.toString();
+
+  // フォームデータを保存（エラー時の状態復元用）
+  const currentFormData = {
+    email: email || "",
+    password: password || "",
+    date_of_birth: date_of_birth || "",
+    terms_agreed: terms_agreed === "true",
+    privacy_agreed: privacy_agreed === "true",
+  };
 
   const validatedFields = signUpAndLoginFormSchema.safeParse({
     email,
@@ -22,22 +48,22 @@ export const signUpAction = async (formData: FormData) => {
     date_of_birth,
   });
   if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
-    );
+    return {
+      error: validatedFields.error.errors
+        .map((error) => error.message)
+        .join("\n"),
+      formData: currentFormData,
+    };
   }
 
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      "メールアドレスとパスワードが必要です",
-    );
+    return {
+      error: "メールアドレスとパスワードが必要です",
+      formData: currentFormData,
+    };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -52,10 +78,17 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (error) {
-    console.error(`${error.code} ${error.message}`);
-    return encodedRedirect("error", "/sign-up", error.message);
+    let message = error.message;
+    if (error.code === "user_already_exists") {
+      message = "このメールアドレスはすでに使用されています。";
+    }
+    return {
+      error: message,
+      formData: currentFormData,
+    };
   }
 
+  // 成功時はリダイレクトする
   return encodedRedirect(
     "success",
     "/sign-up",
