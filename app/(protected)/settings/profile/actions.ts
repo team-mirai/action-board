@@ -22,8 +22,8 @@ export type UploadAvatarResult = {
 const updateProfileFormSchema = z.object({
   name: z
     .string()
-    .nonempty({ message: "名前を入力してください" })
-    .max(100, { message: "名前は100文字以内で入力してください" }),
+    .nonempty({ message: "ニックネームを入力してください" })
+    .max(100, { message: "ニックネームは100文字以内で入力してください" }),
   address_prefecture: z
     .string()
     .nonempty({ message: "都道府県を選択してください" })

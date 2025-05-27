@@ -179,7 +179,7 @@ export default function ProfileForm({
       )}
       <form action={formAction}>
         <CardContent className="space-y-4">
-          {/* アバターアップロード - 名前の上に配置 */}
+          {/* アバターアップロード - ニックネームの上に配置 */}
           <div className="flex flex-col items-center space-y-4 mb-4">
             <div className="relative">
               <Avatar
@@ -239,13 +239,13 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">名前</Label>
+            <Label htmlFor="name">ニックネーム</Label>
             <Input
               id="name"
               name="name"
               type="text"
               defaultValue={initialProfile?.name || ""}
-              placeholder="あなたの名前"
+              placeholder="あなたのニックネーム"
               maxLength={100}
               required
               disabled={isPending}
