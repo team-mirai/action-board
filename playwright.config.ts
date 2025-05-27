@@ -16,8 +16,6 @@ export default defineConfig({
     /* テストアサーションのタイムアウト時間 */
     timeout: 5000,
   },
-  /* ワーカー数 */
-  workers: 1,
   /* CI環境での失敗時のリトライ回数 */
   retries: 2,
   /* テスト結果のレポーター設定 */
@@ -58,9 +56,9 @@ export default defineConfig({
 
   /* Webサーバーの設定 */
   webServer: {
-    command: process.env.CI ? "npm run start" : "npm run dev",
+    command: process.env.CI ? "npm run build && npm run start" : "npm run dev",
     url: baseURL,
-    timeout: 120 * 1000,
+    timeout: 180 * 1000,
     reuseExistingServer: !process.env.CI,
   },
 });
