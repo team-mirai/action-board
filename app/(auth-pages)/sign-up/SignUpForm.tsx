@@ -62,7 +62,7 @@ function SignUpFormContent({
         />
         <Label htmlFor="password">パスワード</Label>
         <p className="text-xs text-muted-foreground mb-2">
-          ※8文字以上で英数を含めてください。英数と一部記号が使えます。
+          ※8文字以上で半角英数を含めてください。英数と一部記号が使えます。
         </p>
         <Input
           type="password"
