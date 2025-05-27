@@ -5,47 +5,42 @@ import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { z } from "zod";
+import {
+  forgotPasswordFormSchema,
+  signInAndLoginFormSchema,
+  signUpAndLoginFormSchema,
+} from "@/lib/validation/auth";
 
-const signUpAndLoginFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-  password: z
-    .string()
-    .nonempty({ message: "パスワードを入力してください" })
-    .min(6, { message: "パスワードは8文字以上で入力してください" }),
-  date_of_birth: z
-    .string()
-    .nonempty({ message: "生年月日を入力してください" })
-    .refine(
-      (value) => {
-        const age = calculateAge(value);
-        return age >= 18;
-      },
-      {
-        message: "18歳未満の方は登録できません",
-      },
-    )
-    .transform((value) => new Date(value).toISOString()), // ISO形式に変換
-});
-
-const signInAndLoginFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-  password: z
-    .string()
-    .nonempty({ message: "パスワードを入力してください" })
-    .min(8, { message: "パスワードは8文字以上で入力してください" }),
-});
-
-export const signUpAction = async (formData: FormData) => {
+// useActionState用のサインアップアクション
+export const signUpActionWithState = async (
+  prevState: {
+    error?: string;
+    success?: string;
+    message?: string;
+    formData?: {
+      email: string;
+      password: string;
+      date_of_birth: string;
+      terms_agreed: boolean;
+      privacy_agreed: boolean;
+    };
+  } | null,
+  formData: FormData,
+) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const date_of_birth = formData.get("date_of_birth")?.toString();
+  const terms_agreed = formData.get("terms_agreed")?.toString();
+  const privacy_agreed = formData.get("privacy_agreed")?.toString();
+
+  // フォームデータを保存（エラー時の状態復元用）
+  const currentFormData = {
+    email: email || "",
+    password: password || "",
+    date_of_birth: date_of_birth || "",
+    terms_agreed: terms_agreed === "true",
+    privacy_agreed: privacy_agreed === "true",
+  };
 
   const validatedFields = signUpAndLoginFormSchema.safeParse({
     email,
@@ -53,22 +48,22 @@ export const signUpAction = async (formData: FormData) => {
     date_of_birth,
   });
   if (!validatedFields.success) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
-    );
+    return {
+      error: validatedFields.error.errors
+        .map((error) => error.message)
+        .join("\n"),
+      formData: currentFormData,
+    };
   }
 
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
-    return encodedRedirect(
-      "error",
-      "/sign-up",
-      "メールアドレスとパスワードが必要です",
-    );
+    return {
+      error: "メールアドレスとパスワードが必要です",
+      formData: currentFormData,
+    };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -83,10 +78,17 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (error) {
-    console.error(`${error.code} ${error.message}`);
-    return encodedRedirect("error", "/sign-up", error.message);
+    let message = error.message;
+    if (error.code === "user_already_exists") {
+      message = "このメールアドレスはすでに使用されています。";
+    }
+    return {
+      error: message,
+      formData: currentFormData,
+    };
   }
 
+  // 成功時はリダイレクトする
   return encodedRedirect(
     "success",
     "/sign-up",
@@ -94,6 +96,61 @@ export const signUpAction = async (formData: FormData) => {
       "認証メールをお送りしました。\n" +
       "メールに記載のURLをクリックして、アカウントを有効化してください。",
   );
+};
+
+// useActionState用のサインインアクション
+export const signInActionWithState = async (
+  prevState: {
+    error?: string;
+    success?: string;
+    message?: string;
+    formData?: {
+      email: string;
+    };
+  } | null,
+  formData: FormData,
+) => {
+  const email = formData.get("email")?.toString();
+  const password = formData.get("password")?.toString();
+
+  // フォームデータを保存（エラー時の状態復元用、メールアドレスのみ）
+  const currentFormData = {
+    email: email || "",
+  };
+
+  const validatedFields = signInAndLoginFormSchema.safeParse({
+    email,
+    password,
+  });
+  if (!validatedFields.success) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  if (!email || !password) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return {
+      error: "メールアドレスまたはパスワードが間違っています",
+      formData: currentFormData,
+    };
+  }
+
+  return redirect("/");
 };
 
 export const signInAction = async (formData: FormData) => {
@@ -108,7 +165,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/sign-in",
-      validatedFields.error.errors.map((error) => error.message).join("\n"),
+      "メールアドレスまたはパスワードが間違っています",
     );
   }
 
@@ -129,13 +186,6 @@ export const signInAction = async (formData: FormData) => {
 
   return redirect("/");
 };
-
-const forgotPasswordFormSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "メールアドレスを入力してください" })
-    .email({ message: "有効なメールアドレスを入力してください" }),
-});
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
