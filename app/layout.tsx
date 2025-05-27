@@ -12,6 +12,32 @@ export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "チームみらい アクションボード",
   description: "チームみらいのアクションボードです。",
+  openGraph: {
+    title: "チームみらい アクションボード",
+    description: "チームみらいのアクションボードです。",
+    images: [
+      {
+        url: "/img/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "チームみらい アクションボード",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "チームみらい アクションボード",
+    description: "チームみらいのアクションボードです。",
+    images: ["/img/logo.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 const geistSans = Geist({
