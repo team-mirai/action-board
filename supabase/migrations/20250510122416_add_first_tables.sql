@@ -497,3 +497,14 @@ CREATE POLICY "Users can delete their own mission artifact files"
     bucket_id = 'mission_artifact_files' AND -- 変更
     (storage.foldername(name))[1] = auth.uid()::text
   );
+
+
+-- 本番データ
+INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count)
+VALUES
+  ('05814416-9cd8-4582-a940-ced9a832efee', '動画を切り抜いてYoutubeショートにアップロードしよう', '/img/mission_fallback_icon.png', '動画を切り抜いてYoutubeショートにアップロードしてください。そのURLを教えてください。', 2, NULL, 'LINK', NULL),
+  ('41dedf9a-2290-4609-bb73-5469ee8dd909', 'いどばた政策サイトからマニフェストに提案しよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>サイトにアクセスし、マニフェストについて提案してみてください。提案できたURLを教えてください。', 3, NULL, 'LINK', NULL),
+  ('56c03661-8243-42c6-bf81-9dba56c5abfe', 'マニフェストの感想をSNSでシェアしよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>にアクセスし、マニフェストを読んだ感想をSNSでシェアしてください。シェアしたURLを教えてください。', 3, NULL, 'LINK', NULL),
+  ('2c5f7173-48be-4989-9d1b-c749fd56ae44', '公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/team_mirai_jp">チームみらい</a>と、<a href="https://x.com/takahiroanno">安野たかひろ</a>の公式Xをフォローしてください。', 1, NULL, 'NONE', NULL),
+  ('9071a1eb-e272-43be-9c6b-e08b258a41c3', '公式Youtubeチャンネルを登録しよう', '/img/mission_fallback_icon.png', '<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw">チームみらいの公式Youtubeチャンネル</a>をチャンネル登録してください。', 1, NULL, 'NONE', NULL),
+  ('e7a03d8b-ef29-406f-b2fb-065285855997', '公式LINEアカウントを友達申請しよう', '/img/mission_fallback_icon.png', '<a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204">チームみらいのLINEアカウント</a>に友達申請してください。', 1, NULL, 'NONE', NULL);
