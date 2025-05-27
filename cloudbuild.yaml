@@ -77,7 +77,7 @@ images:
 
 availableSecrets:
   secretManager:
-    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_ACCESS_TOKEN/versions/latest'
+    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-access-token/versions/latest'
       env: SUPABASE_ACCESS_TOKEN
-    - versionName: 'projects/${PROJECT_ID}/secrets/SUPABASE_DB_PASSWORD/versions/latest'
+    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-db-password/versions/latest'
       env: SUPABASE_DB_PASSWORD

@@ -24,7 +24,7 @@ resource "google_secret_manager_secret_version" "supabase_access_token" {
 }
 
 resource "google_secret_manager_secret" "supabase_db_password" {
-  secret_id = "${var.app_name}-${var.environment}-SUPABASE_DB_PASSWORD"
+  secret_id = "${var.app_name}-${var.environment}-supabase-db-password"
 
   replication {
     auto {}
