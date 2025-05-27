@@ -20,7 +20,4 @@ module "nextjs_app" {
   SUPABASE_DB_PASSWORD          = var.SUPABASE_DB_PASSWORD
   SUPABASE_ACCESS_TOKEN         = var.SUPABASE_ACCESS_TOKEN
   SUPABASE_PROJECT_ID           = var.SUPABASE_PROJECT_ID
-
-  # Cloud Build Service Account
-  service_account = google_service_account.cloud_build.id
 }
