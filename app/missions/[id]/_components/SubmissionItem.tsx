@@ -39,7 +39,7 @@ const SubmissionItem: React.FC<SubmissionItemProps> = ({
             size="xs"
             onClick={() => onCancelClick(submission.id)}
           >
-            提出をキャンセル
+            取り消す
           </Button>
         )}
       </div>

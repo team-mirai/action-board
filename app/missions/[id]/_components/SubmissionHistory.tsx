@@ -40,7 +40,7 @@ const SubmissionHistory: React.FC<SubmissionHistoryProps> = ({
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-semibold mb-4">あなたの提出履歴</h2>
+      <h2 className="text-xl font-semibold mb-4">あなたの達成履歴</h2>
       <ul className="space-y-4">
         {sortedSubmissions.map((submission, index) => (
           <SubmissionItem

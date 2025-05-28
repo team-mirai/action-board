@@ -5,6 +5,7 @@ import type { Tables } from "@/lib/types/supabase";
 import clsx from "clsx";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { MissionIcon } from "../ui/mission-icon";
 import MissionAchievementStatus from "./mission-achievement-status";
 
 interface MissionProps {
@@ -44,24 +45,7 @@ export default function Mission({
     >
       <div className="flex items-start gap-4">
         <div className="flex-col items-center justify-center">
-          <Avatar
-            className={clsx(
-              "h-16 w-16 shadow-md",
-              hasReachedMaxAchievements && "grayscale",
-            )}
-          >
-            <AvatarImage src={iconUrl} alt={mission.title} />
-            <AvatarFallback
-              className={clsx(
-                "font-bold text-white",
-                hasReachedMaxAchievements
-                  ? "bg-gradient-to-br from-gray-400 to-gray-500"
-                  : "bg-gradient-to-br from-emerald-400 to-teal-400",
-              )}
-            >
-              M
-            </AvatarFallback>
-          </Avatar>
+          <MissionIcon src={iconUrl} alt={mission.title} size="md" />
           <MissionAchievementStatus
             hasReachedMaxAchievements={hasReachedMaxAchievements}
             userAchievementCount={userAchievementCount}
