@@ -6,6 +6,13 @@ import { SubmitButton } from "@/components/submit-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { calculateAge } from "@/lib/utils/utils";
 import Link from "next/link";
 import { useActionState, useCallback, useEffect, useState } from "react";
@@ -21,29 +28,43 @@ function SignUpFormContent({
   isPrivacyAgreed,
   email,
   password,
-  dateOfBirth,
   ageError,
   isFormValid,
   setIsTermsAgreed,
   setIsPrivacyAgreed,
   setEmail,
   setPassword,
-  setDateOfBirth,
-  handleChangeBirth,
+  selectedYear,
+  selectedMonth,
+  selectedDay,
+  setSelectedYear,
+  setSelectedMonth,
+  setSelectedDay,
+  years,
+  months,
+  days,
+  formattedDate,
 }: {
   isTermsAgreed: boolean;
   isPrivacyAgreed: boolean;
   email: string;
   password: string;
-  dateOfBirth: string;
   ageError: string | null;
   isFormValid: boolean;
   setIsTermsAgreed: (value: boolean) => void;
   setIsPrivacyAgreed: (value: boolean) => void;
   setEmail: (value: string) => void;
   setPassword: (value: string) => void;
-  setDateOfBirth: (value: string) => void;
-  handleChangeBirth: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedYear: number;
+  selectedMonth: number;
+  selectedDay: number;
+  setSelectedYear: (value: number) => void;
+  setSelectedMonth: (value: number) => void;
+  setSelectedDay: (value: number) => void;
+  years: number[];
+  months: number[];
+  days: number[];
+  formattedDate: string;
 }) {
   const { pending } = useFormStatus();
 
@@ -79,15 +100,82 @@ function SignUpFormContent({
         <Label htmlFor="date_of_birth">
           生年月日（満18歳以上である必要があります）
         </Label>
-        <Input
-          type="date"
-          name="date_of_birth"
-          required
-          disabled={pending}
-          autoComplete="bday"
-          value={dateOfBirth}
-          onChange={handleChangeBirth}
-        />
+        <fieldset
+          className="grid grid-cols-3 gap-2"
+          aria-labelledby="date_of_birth_year"
+        >
+          <legend className="sr-only">生年月日</legend>
+          <div>
+            <Label htmlFor="date_of_birth_year" className="sr-only">
+              年
+            </Label>
+            <Select
+              name="year_select"
+              value={selectedYear.toString()}
+              onValueChange={(value) => setSelectedYear(Number(value))}
+              required
+              disabled={pending}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="年" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}年
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="date_of_birth_month" className="sr-only">
+              月
+            </Label>
+            <Select
+              name="month_select"
+              value={selectedMonth.toString()}
+              onValueChange={(value) => setSelectedMonth(Number(value))}
+              disabled={pending}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="月" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month) => (
+                  <SelectItem key={month} value={month.toString()}>
+                    {month}月
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="date_of_birth_day" className="sr-only">
+              日
+            </Label>
+            <Select
+              name="day_select"
+              value={selectedDay.toString()}
+              onValueChange={(value) => setSelectedDay(Number(value))}
+              disabled={pending}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="日" />
+              </SelectTrigger>
+              <SelectContent>
+                {days.map((day) => (
+                  <SelectItem key={day} value={day.toString()}>
+                    {day}日
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </fieldset>
+        <input type="hidden" name="date_of_birth" value={formattedDate} />
         {ageError && (
           <p className="text-primary text-sm font-medium mb-2">{ageError}</p>
         )}
@@ -157,7 +245,7 @@ function SignUpFormContent({
             !isPrivacyAgreed ||
             !email ||
             !password ||
-            !dateOfBirth ||
+            !formattedDate ||
             !isFormValid ||
             pending
           }
@@ -178,9 +266,30 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [ageError, setAgeError] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState(1990);
+  const [selectedMonth, setSelectedMonth] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(1);
   const [isFormValid, setIsFormValid] = useState(true);
+
+  const birthYearThreshold = 2007;
+  const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const days = Array.from(
+    { length: new Date(selectedYear, selectedMonth, 0).getDate() },
+    (_, i) => i + 1,
+  );
+
+  const formatDate = useCallback(
+    (year: number | null, month: number | null, day: number | null): string => {
+      if (!year || !month || !day) return "";
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      return `${year}-${pad(month)}-${pad(day)}`;
+    },
+    [],
+  );
+
+  const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
 
   // 年齢チェック関数
   const verifyAge = useCallback((birthdate: string): boolean => {
@@ -202,6 +311,11 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
     return true;
   }, []);
 
+  // 生年月日が変更された際に年齢チェックを実行
+  useEffect(() => {
+    verifyAge(formattedDate);
+  }, [formattedDate, verifyAge]);
+
   // サーバーから返されたフォームデータで状態を復元
   useEffect(() => {
     if (state?.formData) {
@@ -209,23 +323,28 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       setIsPrivacyAgreed(state.formData.privacy_agreed);
       setEmail(state.formData.email);
       setPassword(state.formData.password);
-      setDateOfBirth(state.formData.date_of_birth);
 
-      // 生年月日が設定されている場合は年齢チェックを実行
       if (state.formData.date_of_birth) {
-        verifyAge(state.formData.date_of_birth);
+        const [year, month, day] = state.formData.date_of_birth
+          .split("-")
+          .map(Number);
+        if (!Number.isNaN(year) && !Number.isNaN(month) && !Number.isNaN(day)) {
+          setSelectedYear(year);
+          setSelectedMonth(month);
+          setSelectedDay(day);
+        }
       }
     }
-  }, [state, verifyAge]);
+  }, [state]);
 
-  const handleChangeBirth = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setDateOfBirth(newValue);
-    // 入力値が変更されたタイミングで年齢検証を実行
-    if (newValue) {
-      verifyAge(newValue);
+  // 月を変更した際、日付が月の日数を超えていたら1日に変更する
+  // ex. 12月31日 → 12月を11月に変更 → 11月1日
+  useEffect(() => {
+    const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    if (selectedDay > daysInMonth) {
+      setSelectedDay(1);
     }
-  };
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   return (
     <form
@@ -253,15 +372,22 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
         isPrivacyAgreed={isPrivacyAgreed}
         email={email}
         password={password}
-        dateOfBirth={dateOfBirth}
         ageError={ageError}
         isFormValid={isFormValid}
         setIsTermsAgreed={setIsTermsAgreed}
         setIsPrivacyAgreed={setIsPrivacyAgreed}
         setEmail={setEmail}
         setPassword={setPassword}
-        setDateOfBirth={setDateOfBirth}
-        handleChangeBirth={handleChangeBirth}
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        selectedDay={selectedDay}
+        setSelectedYear={setSelectedYear}
+        setSelectedMonth={setSelectedMonth}
+        setSelectedDay={setSelectedDay}
+        years={years}
+        months={months}
+        days={days}
+        formattedDate={formattedDate}
       />
     </form>
   );
