@@ -116,7 +116,7 @@ function SignUpFormContent({
               required
               disabled={pending}
             >
-              <SelectTrigger>
+              <SelectTrigger data-testid="year_select">
                 <SelectValue placeholder="年" />
               </SelectTrigger>
               <SelectContent>
@@ -139,7 +139,7 @@ function SignUpFormContent({
               disabled={pending}
               required
             >
-              <SelectTrigger>
+              <SelectTrigger data-testid="month_select">
                 <SelectValue placeholder="月" />
               </SelectTrigger>
               <SelectContent>
@@ -162,7 +162,7 @@ function SignUpFormContent({
               disabled={pending}
               required
             >
-              <SelectTrigger>
+              <SelectTrigger data-testid="day_select">
                 <SelectValue placeholder="日" />
               </SelectTrigger>
               <SelectContent>
