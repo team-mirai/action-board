@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
+import { MissionIcon } from "@/components/ui/mission-icon";
 import { dateFormatter } from "@/lib/formatter";
 import type { Tables } from "@/lib/types/supabase";
 
@@ -16,11 +17,7 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       <CardHeader>
         <div className="flex items-start gap-4">
           {mission.icon_url && (
-            <img
-              src={mission.icon_url}
-              alt={mission.title}
-              className="w-16 h-16 object-cover rounded-lg border"
-            />
+            <MissionIcon src={mission.icon_url} alt={mission.title} size="lg" />
           )}
           <div className="flex-1 space-y-2">
             <CardTitle className="text-xl">{mission.title}</CardTitle>

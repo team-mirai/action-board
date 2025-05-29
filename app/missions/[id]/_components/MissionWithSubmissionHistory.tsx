@@ -33,7 +33,7 @@ export function MissionWithSubmissionHistory({
     try {
       const supabase = createClient();
 
-      // ユーザーの提出履歴を取得
+      // ユーザーの達成履歴を取得
       const { data: achievementsData, error: achievementsError } =
         await supabase
           .from("achievements")

@@ -48,7 +48,7 @@ export function ArtifactForm({
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">
-          提出フォーム - {artifactConfig.displayName}
+          達成報告フォーム - {artifactConfig.displayName}
         </CardTitle>
         <p className="text-sm text-muted-foreground">{artifactConfig.prompt}</p>
       </CardHeader>
@@ -56,7 +56,7 @@ export function ArtifactForm({
         {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactLink">提出リンク</Label>
+            <Label htmlFor="artifactLink">成果物のリンク</Label>
             <Input
               type="url"
               name="artifactLink"
@@ -154,7 +154,7 @@ export function ArtifactForm({
           <Textarea
             name="artifactDescription"
             id="artifactDescription"
-            placeholder="提出内容に関する補足説明 (任意)"
+            placeholder="達成内容に関する補足説明 (任意)"
             rows={3}
             disabled={disabled}
           />

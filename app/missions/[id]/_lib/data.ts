@@ -75,7 +75,7 @@ export async function getSubmissionHistory(
 ): Promise<SubmissionData[]> {
   const supabase = await createServerClient();
 
-  // ユーザーの提出履歴を取得
+  // ユーザーの達成履歴を取得
   const { data: achievementsData, error: achievementsError } = await supabase
     .from("achievements")
     .select("id, created_at, mission_id, user_id")

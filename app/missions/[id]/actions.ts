@@ -446,9 +446,9 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     console.error(`Delete Error: ${deleteError.code} ${deleteError.message}`);
     return {
       success: false,
-      error: `提出のキャンセルに失敗しました: ${deleteError.message}`,
+      error: `達成の取り消しに失敗しました: ${deleteError.message}`,
     };
   }
 
-  return { success: true, message: "提出をキャンセルしました。" };
+  return { success: true, message: "達成を取り消しました。" };
 };

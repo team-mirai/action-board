@@ -2,27 +2,27 @@ export const ARTIFACT_TYPES = {
   LINK: {
     key: "LINK",
     displayName: "リンク",
-    prompt: "提出する成果物のURLを入力してください。",
+    prompt: "成果物のURLを入力してください。",
     validationRegex: /^https?:\/\/.+/,
   },
   IMAGE: {
     key: "IMAGE",
     displayName: "画像",
-    prompt: "画像を提出してください。",
+    prompt: "画像の添付が必要です。",
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
     maxFileSizeMB: 10,
   },
   IMAGE_WITH_GEOLOCATION: {
     key: "IMAGE_WITH_GEOLOCATION",
     displayName: "画像および位置情報",
-    prompt: "画像と位置情報を提出してください。",
+    prompt: "画像の添付と位置情報の設定が必要です。",
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
     maxFileSizeMB: 10,
   },
   NONE: {
     key: "NONE",
-    displayName: "提出物なし",
-    prompt: "このミッションでは提出物の投稿は不要です。",
+    displayName: "添付データ不要",
+    prompt: "このミッションでは添付データの投稿は不要です。",
   },
 } as const;
 
