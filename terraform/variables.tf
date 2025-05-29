@@ -90,6 +90,11 @@ variable "NEXT_PUBLIC_SENTRY_DSN" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_GA_ID" {
+  description = "Google Analytics ID (public)"
+  type        = string
+}
+
 variable "SUPABASE_SERVICE_ROLE_KEY" {
   description = "Supabase Service Role Key (sensitive)"
   type        = string
