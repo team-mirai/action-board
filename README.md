@@ -34,6 +34,7 @@
 
    # SentryのDSNを指定します。開発時は空でもかまいません。
    NEXT_PUBLIC_SENTRY_DSN=
+   NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
    ```
 
 3. ローカルデータベースの初期化:
