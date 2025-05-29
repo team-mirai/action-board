@@ -75,7 +75,6 @@ variable "environment" {
   default     = "dev"
 }
 
-# Supabase関連の変数
 variable "NEXT_PUBLIC_SUPABASE_URL" {
   description = "Supabase URL (public)"
   type        = string
@@ -83,6 +82,11 @@ variable "NEXT_PUBLIC_SUPABASE_URL" {
 
 variable "NEXT_PUBLIC_SUPABASE_ANON_KEY" {
   description = "Supabase Anonymous Key (public)"
+  type        = string
+}
+
+variable "NEXT_PUBLIC_SENTRY_DSN" {
+  description = "Sentry DSN for error tracking (public)"
   type        = string
 }
 
@@ -97,7 +101,6 @@ variable "SUPABASE_ACCESS_TOKEN" {
   sensitive   = true
 }
 
-# Supabase デプロイ関連の変数
 variable "SUPABASE_PROJECT_ID" {
   description = "Supabase Project ID"
   type        = string
@@ -109,8 +112,29 @@ variable "SUPABASE_DB_PASSWORD" {
   sensitive   = true
 }
 
-variable "NEXT_PUBLIC_SENTRY_DSN" {
-  description = "Sentry DSN for error tracking (public)"
+variable "SUPABASE_SMTP_HOST" {
+  description = "Supabase SMTP Host"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_USER" {
+  description = "Supabase SMTP User"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_PASS" {
+  description = "Supabase SMTP Password"
+  type        = string
+  sensitive   = true
+}
+
+variable "SUPABASE_SMTP_ADMIN_EMAIL" {
+  description = "Supabase SMTP Admin Email"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_SENDER_NAME" {
+  description = "Supabase SMTP Sender Name"
   type        = string
 }
 

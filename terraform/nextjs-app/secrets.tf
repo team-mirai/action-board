@@ -35,3 +35,15 @@ resource "google_secret_manager_secret_version" "supabase_db_password" {
   secret_data = var.SUPABASE_DB_PASSWORD
 }
 
+resource "google_secret_manager_secret" "supabase_smtp_pass" {
+  secret_id = "${var.app_name}-${var.environment}-supabase-smtp-password"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "supabase_smtp_pass" {
+  secret      = google_secret_manager_secret.supabase_smtp_pass.id
+  secret_data = var.SUPABASE_SMTP_PASS
+}
+
