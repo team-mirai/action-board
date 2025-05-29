@@ -84,6 +84,11 @@ variable "NEXT_PUBLIC_SENTRY_DSN" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_SENTRY_ENVIRONMENT" {
+  description = "Sentry environment (public)"
+  type        = string
+}
+
 variable "NEXT_PUBLIC_GA_ID" {
   description = "Google Analytics ID (public)"
   type        = string
