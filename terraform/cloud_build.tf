@@ -1,7 +1,7 @@
 # GitHub Connection
 resource "google_cloudbuildv2_connection" "github_connection" {
   location = var.region
-  name     = "github-connection"
+  name     = "github-connection-team-mirai-volunteer"
 
   github_config {
     app_installation_id = var.github_app_installation_id
