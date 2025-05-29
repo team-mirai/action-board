@@ -40,6 +40,12 @@ resource "google_secret_manager_secret_iam_member" "supabase_access_token_access
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "supabase_smtp_pass_accessor" {
+  secret_id = google_secret_manager_secret.supabase_smtp_pass.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
 
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
@@ -94,9 +100,13 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   filename = "cloudbuild.yaml"
 
   substitutions = {
-    _REGION              = var.region
-    _SERVICE_NAME        = "${var.app_name}-${var.environment}"
-    _REPOSITORY_NAME     = var.repository_name
-    _SUPABASE_PROJECT_ID = var.SUPABASE_PROJECT_ID
+    _REGION                    = var.region
+    _SERVICE_NAME              = "${var.app_name}-${var.environment}"
+    _REPOSITORY_NAME           = var.repository_name
+    _SUPABASE_PROJECT_ID       = var.SUPABASE_PROJECT_ID
+    _SUPABASE_SMTP_HOST        = var.SUPABASE_SMTP_HOST
+    _SUPABASE_SMTP_USER        = var.SUPABASE_SMTP_USER
+    _SUPABASE_SMTP_ADMIN_EMAIL = var.SUPABASE_SMTP_ADMIN_EMAIL
+    _SUPABASE_SMTP_SENDER_NAME = var.SUPABASE_SMTP_SENDER_NAME
   }
 }
