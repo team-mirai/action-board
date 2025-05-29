@@ -14,13 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { getAvatarUrl } from "@/lib/avatar";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
@@ -71,67 +64,6 @@ export default function ProfileForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // 生年月日関連のステート
-  const initialDate = initialProfile?.date_of_birth
-    ? new Date(initialProfile.date_of_birth)
-    : null;
-  const [selectedYear, setSelectedYear] = useState<number | null>(
-    initialDate ? initialDate.getFullYear() : null,
-  );
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(
-    initialDate ? initialDate.getMonth() + 1 : null,
-  );
-  const [selectedDay, setSelectedDay] = useState<number | null>(
-    initialDate ? initialDate.getDate() : null,
-  );
-
-  // 年の選択肢 (2007年から100年前まで)
-  // なぜ2007年かというと、18歳未満の選挙活動が禁止されており、それを満たす要件は2007年生まれ以前の必要があるため
-  const birthYearThreshold = 2007;
-  const years = Array.from({ length: 100 }, (_, i) => birthYearThreshold - i);
-
-  // 月の選択肢
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-
-  // 年月が変更されたら日をリセット
-  // 現在選択されている日がその月の日数を超えている場合は、日をリセットする
-  useEffect(() => {
-    const getDaysInMonth = (year: number, month: number) => {
-      return new Date(year, month, 0).getDate();
-    };
-
-    if (selectedYear && selectedMonth) {
-      const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
-      if (selectedDay && selectedDay > daysInMonth) {
-        setSelectedDay(null);
-      }
-    } else {
-      setSelectedDay(null);
-    }
-  }, [selectedYear, selectedMonth, selectedDay]);
-
-  // 日の選択肢 (選択された年月に基づいて動的に計算)
-  const days =
-    selectedYear && selectedMonth
-      ? Array.from(
-          { length: new Date(selectedYear, selectedMonth, 0).getDate() },
-          (_, i) => i + 1,
-        )
-      : [];
-
-  // フォーム送信用に日付をフォーマット
-  const formatDate = (
-    year: number | null,
-    month: number | null,
-    day: number | null,
-  ) => {
-    if (!year || !month || !day) return "";
-    // 数値を2桁にフォーマットするヘルパー関数
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    return `${year}-${pad(month)}-${pad(day)}`;
-  };
-
-  const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
   useEffect(() => {
     // フォーム送信成功時の処理
     if (state?.success && isNew) {
@@ -253,73 +185,14 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <Label>生年月日</Label>
-            <div className="grid grid-cols-3 gap-2" aria-required="true">
-              <legend className="sr-only">生年月日</legend>
-              <div>
-                <Select
-                  name="year"
-                  value={selectedYear?.toString() || ""}
-                  onValueChange={(value) => setSelectedYear(Number(value))}
-                  required
-                  aria-required="true"
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="年" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {years.map((year) => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}年
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Select
-                  name="month"
-                  value={selectedMonth?.toString() || ""}
-                  onValueChange={(value) => setSelectedMonth(Number(value))}
-                  disabled={!selectedYear}
-                  required
-                  aria-required="true"
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="月" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {months.map((month) => (
-                      <SelectItem key={month} value={month.toString()}>
-                        {month}月
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Select
-                  name="day"
-                  value={selectedDay?.toString() || ""}
-                  onValueChange={(value) => setSelectedDay(Number(value))}
-                  disabled={!selectedMonth || !selectedYear}
-                  required
-                  aria-required="true"
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="日" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {days.map((day) => (
-                      <SelectItem key={day} value={day.toString()}>
-                        {day}日
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <input type="hidden" name="date_of_birth" value={formattedDate} />
+            <Label htmlFor="date_of_birth">生年月日</Label>
+            <Input
+              type="date"
+              name="date_of_birth"
+              required
+              readOnly
+              value={initialProfile?.date_of_birth || ""}
+            />
           </div>
 
           <div className="space-y-2">

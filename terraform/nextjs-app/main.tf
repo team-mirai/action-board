@@ -39,7 +39,6 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
 
-      # Supabase環境変数
       env {
         name  = "NEXT_PUBLIC_SUPABASE_URL"
         value = var.NEXT_PUBLIC_SUPABASE_URL
@@ -48,6 +47,16 @@ resource "google_cloud_run_v2_service" "default" {
       env {
         name  = "NEXT_PUBLIC_SUPABASE_ANON_KEY"
         value = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      }
+
+      env {
+        name  = "NEXT_PUBLIC_SENTRY_DSN"
+        value = var.NEXT_PUBLIC_SENTRY_DSN
+      }
+
+      env {
+        name  = "NEXT_PUBLIC_GA_ID"
+        value = var.NEXT_PUBLIC_GA_ID
       }
 
       env {
@@ -67,11 +76,6 @@ resource "google_cloud_run_v2_service" "default" {
             version = "latest"
           }
         }
-      }
-
-      env {
-        name  = "NEXT_PUBLIC_SENTRY_DSN"
-        value = var.NEXT_PUBLIC_SENTRY_DSN
       }
 
       env {

@@ -36,11 +36,23 @@ test.describe("認証フロー", () => {
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
 
-    await page.fill(
-      'input[name="date_of_birth"]',
-      "2000-01-01", // 18歳以上の日付を入力
-      { force: true },
-    );
+    // 年を選択
+    const year = page.getByTestId("year_select");
+    await year.press("Enter");
+    const selectedYear = page.getByRole("option", { name: "2001年" });
+    await selectedYear.click();
+
+    // 月を選択
+    const month = page.getByTestId("month_select");
+    await month.press("Enter");
+    const selectedMonth = page.getByRole("option", { name: "3月" });
+    await selectedMonth.click();
+
+    // 日を選択
+    const day = page.getByTestId("day_select");
+    await day.press("Enter");
+    const selectedDay = page.getByRole("option", { name: "14日" });
+    await selectedDay.click();
 
     // 利用規約に同意する
     await page.locator("#terms").click();
@@ -105,11 +117,23 @@ test.describe("認証フロー", () => {
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
 
-    await page.fill(
-      'input[name="date_of_birth"]',
-      "2000-01-01", // 18歳以上の日付を入力
-      { force: true },
-    );
+    // 年を選択
+    const year = page.getByTestId("year_select");
+    await year.press("Enter");
+    const selectedYear = page.getByRole("option", { name: "2001年" });
+    await selectedYear.click();
+
+    // 月を選択
+    const month = page.getByTestId("month_select");
+    await month.press("Enter");
+    const selectedMonth = page.getByRole("option", { name: "3月" });
+    await selectedMonth.click();
+
+    // 日を選択
+    const day = page.getByTestId("day_select");
+    await day.press("Enter");
+    const selectedDay = page.getByRole("option", { name: "14日" });
+    await selectedDay.click();
 
     // 利用規約に同意する
     await page.locator("#terms").click();
