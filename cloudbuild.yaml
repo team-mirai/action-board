@@ -19,9 +19,14 @@ steps:
         npx supabase config push
     env:
       - 'CI=1'
+      - 'SMTP_HOST=${_SUPABASE_SMTP_HOST}'
+      - 'SMTP_USER=${_SUPABASE_SMTP_USER}'
+      - 'SMTP_ADMIN_EMAIL=${_SUPABASE_SMTP_ADMIN_EMAIL}'
+      - 'SMTP_SENDER_NAME=${_SUPABASE_SMTP_SENDER_NAME}'
     secretEnv:
       - SUPABASE_ACCESS_TOKEN
       - SUPABASE_DB_PASSWORD
+      - SMTP_PASS
 
   # Dockerイメージのビルド
   - name: 'gcr.io/cloud-builders/docker'
@@ -81,3 +86,5 @@ availableSecrets:
       env: SUPABASE_ACCESS_TOKEN
     - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-db-password/versions/latest'
       env: SUPABASE_DB_PASSWORD
+    - versionName: 'projects/${PROJECT_ID}/secrets/${_SERVICE_NAME}-supabase-smtp-password/versions/latest'
+      env: SMTP_PASS
