@@ -57,12 +57,6 @@ variable "application_domain_name" {
   type        = string
 }
 
-variable "repository_name" {
-  description = "Artifact Registry repository name"
-  type        = string
-  default     = "app"
-}
-
 variable "trigger_branch" {
   description = "Git branch pattern to trigger the build"
   type        = string
