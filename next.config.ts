@@ -15,9 +15,8 @@ export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
-  // TODO: 決定したら設定する
-  // org: "",
-  // project: "action-board",
+  org: "team-mirai",
+  project: "action-board",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
