@@ -55,6 +55,11 @@ resource "google_cloud_run_v2_service" "default" {
       }
 
       env {
+        name  = "NEXT_PUBLIC_SENTRY_ENVIRONMENT"
+        value = var.environment
+      }
+
+      env {
         name  = "NEXT_PUBLIC_GA_ID"
         value = var.NEXT_PUBLIC_GA_ID
       }
