@@ -108,6 +108,6 @@
   }
 
   .mission-content a {
-    @apply text-primary underline-offset-4 hover:underline transition-colors duration-200;
+    @apply text-primary underline transition-colors duration-200;
   }
 }
