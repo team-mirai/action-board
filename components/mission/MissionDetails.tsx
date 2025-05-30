@@ -33,9 +33,14 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-          {mission.content}
-        </p>
+        <div
+          className="text-muted-foreground leading-relaxed whitespace-pre-wrap"
+          ref={(el) => {
+            if (el && mission.content) {
+              el.innerHTML = mission.content;
+            }
+          }}
+        />
       </CardContent>
     </Card>
   );
