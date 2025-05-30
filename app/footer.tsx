@@ -27,6 +27,12 @@ export default function Footer() {
             >
               プライバシーポリシー
             </Link>
+            <Link
+              href="https://forms.gle/2DaAuESXwgCzuixz5"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              お問い合わせ
+            </Link>
           </div>
           <p className="text-sm text-muted-foreground">
             © 2025 Team Mirai. All rights reserved.
