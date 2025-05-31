@@ -63,6 +63,10 @@ resource "google_cloud_run_v2_service" "default" {
         name  = "NEXT_PUBLIC_GA_ID"
         value = var.NEXT_PUBLIC_GA_ID
       }
+      env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = var.SUPABASE_SITE_URL
+      }
 
       env {
         name = "SUPABASE_SERVICE_ROLE_KEY"
@@ -81,10 +85,6 @@ resource "google_cloud_run_v2_service" "default" {
             version = "latest"
           }
         }
-      }
-      env {
-        name  = "SITE_URL"
-        value = var.SUPABASE_SITE_URL
       }
 
       env {
