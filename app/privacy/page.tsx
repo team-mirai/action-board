@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
             1. 個人情報の定義
           </h2>
           <p className="text-gray-700 leading-relaxed">
-            本ポリシーにおける「個人情報」とは、個人情報保護法に基づき、生存する個人に関する情報であって、氏名、メールアドレス、生年、郵便番号、SNSアカウントその他の記述等により特定の個人を識別できる情報、ならびに他の情報と照合することで特定個人を識別できる情報を指します。
+            本ポリシーにおける「個人情報」とは、個人情報保護法に基づき、生存する個人に関する情報であって、氏名、メールアドレス、生年月日、郵便番号、SNSアカウントその他の記述等により特定の個人を識別できる情報、ならびに他の情報と照合することで特定個人を識別できる情報を指します。
           </p>
         </section>
 
@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
           </p>
           <ul className="list-disc pl-6 space-y-2 text-gray-700">
             <li>ニックネーム</li>
-            <li>生年</li>
+            <li>生年月日</li>
             <li>郵便番号</li>
             <li>メールアドレス</li>
             <li>SNSアカウント</li>
