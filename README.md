@@ -23,8 +23,8 @@
    supabase start
    ````
 
-Studio URL: http://127.0.0.1:54323 → Supabaseのダッシュボード
-Inbucket URL: http://127.0.0.1:54324 → ローカルのメールが届きます
+- Studio URL: http://127.0.0.1:54323 → Supabaseのダッシュボード
+- Inbucket URL: http://127.0.0.1:54324 → ローカルのメールが届きます
 
 2. `.env.example` を `.env.local` にリネームし、以下の値を更新:
 
