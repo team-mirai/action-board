@@ -30,7 +30,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   const ogpImageUrl = mission.ogp_image_url; // ミッションにOGP画像URLがある場合
   
   // OGPパラメータ付きURLを生成
-  const shareUrl = ogpImageUrl 
+  const shareUrl = ogpImageUrl
     ? `${baseUrl}?ogp=${encodeURIComponent(ogpImageUrl)}`
     : baseUrl;
 
@@ -55,7 +55,11 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           >
             Xでシェア
           </ShareTwitterButton>
-          <ShareFacebookButton missionId={mission.id} className="w-full" url={shareUrl}>
+          <ShareFacebookButton
+            missionId={mission.id}
+            className="w-full"
+            url={shareUrl}
+          >
             Facebookでシェア
           </ShareFacebookButton>
           {/* 内部で判定しておりモバイルのみ表示 */}
