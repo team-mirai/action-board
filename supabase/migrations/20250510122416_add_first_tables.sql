@@ -502,10 +502,15 @@ CREATE POLICY "Users can delete their own mission artifact files"
 -- 本番データ
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count)
 VALUES
-  ('05814416-9cd8-4582-a940-ced9a832efee', '動画を切り抜いてYoutubeショートにアップロードしよう', '/img/mission_fallback_icon.png', '動画を切り抜いてYoutubeショートにアップロードしてください。そのURLを教えてください。', 2, NULL, 'LINK', NULL),
-  ('41dedf9a-2290-4609-bb73-5469ee8dd909', 'いどばた政策サイトからマニフェストに提案しよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>サイトにアクセスし、マニフェストについて提案してみてください。提案できたURLを教えてください。', 3, NULL, 'LINK', NULL),
-  ('56c03661-8243-42c6-bf81-9dba56c5abfe', 'マニフェストの感想をSNSでシェアしよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>にアクセスし、マニフェストを読んだ感想をSNSでシェアしてください。シェアしたURLを教えてください。', 3, NULL, 'LINK', NULL),
-  ('2c5f7173-48be-4989-9d1b-c749fd56ae44', 'チームみらいの公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/team_mirai_jp">チームみらい</a>の公式Xをフォローしてください。', 1, NULL, 'NONE', NULL),
-  ('0f4f16e5-35eb-4756-a966-607895a61b0e', '安野たかひろの公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/takahiroanno">安野たかひろ</a>の公式Xをフォローしてください。', 1, NULL, 'NONE', NULL),  
-  ('9071a1eb-e272-43be-9c6b-e08b258a41c3', '公式Youtubeチャンネルを登録しよう', '/img/mission_fallback_icon.png', '<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw">チームみらいの公式Youtubeチャンネル</a>をチャンネル登録してください。', 1, NULL, 'NONE', NULL),
-  ('e7a03d8b-ef29-406f-b2fb-065285855997', '公式LINEアカウントを友達申請しよう', '/img/mission_fallback_icon.png', '<a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204">チームみらいのLINEアカウント</a>に友達申請してください。', 1, NULL, 'NONE', NULL);
+  ('05814416-9cd8-4582-a940-ced9a832efee', 'Youtube動画を切り抜こう', '/img/mission_fallback_icon.png', 'チームみらいのYoutube動画を切り抜いてYoutubeショートにアップロードしてください。成果物として、そのURLを入力してください。', 2, NULL, 'LINK', NULL),
+  ('41dedf9a-2290-4609-bb73-5469ee8dd909', 'いどばた政策サイトからマニフェストに提案しよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>サイトにアクセスし、マニフェストについて提案してみてください。成果物として、そのURLを入力してください。', 3, NULL, 'LINK', NULL),
+  ('56c03661-8243-42c6-bf81-9dba56c5abfe', 'マニフェストの感想をSNSでシェアしよう', '/img/mission_fallback_icon.png', '<a href="https://policy.team-mir.ai/view/README.md">いどばた政策</a>にアクセスし、マニフェストを読んだ感想をSNSでシェアしてください。成果物としてシェアしたURLを教えてください。', 3, NULL, 'LINK', NULL),
+  ('2c5f7173-48be-4989-9d1b-c749fd56ae44', 'チームみらいの公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/team_mirai_jp">チームみらい</a>の公式Xをフォローしてください。成果物として、あなたのXのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),
+  ('0f4f16e5-35eb-4756-a966-607895a61b0e', '安野たかひろの公式Xをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://x.com/takahiroanno">安野たかひろ</a>の公式Xをフォローしてください。成果物として、あなたのXのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),  
+  ('9071a1eb-e272-43be-9c6b-e08b258a41c3', '公式Youtubeチャンネルを登録しよう', '/img/mission_fallback_icon.png', '<a href="https://www.youtube.com/channel/UCiMwbmcCSMORJ-85XWhStBw">チームみらいの公式Youtubeチャンネル</a>をチャンネル登録してください。成果物として、あなたのYoutubeのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),
+  ('e7a03d8b-ef29-406f-b2fb-065285855997', '公式LINEアカウントと友達になろう', '/img/mission_fallback_icon.png', '<a href="https://line.me/R/ti/p/@465hhyop?oat_content=url&ts=05062204">チームみらいのLINEアカウント</a>を友達に追加してください。成果物として、あなたのLINEのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),
+  ('1776d950-34f4-44e6-a5c5-2e40fa9038a3', '公式noteをフォローしよう', '/img/mission_fallback_icon.png', '<a href="https://note.com/annotakahiro24">チームみらいの公式note</a>をフォローしてください。成果物として、あなたのnoteのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),
+  ('fd9da44a-d5ba-4bbf-a1c0-98a0142ee029', '都道府県別オープンチャットに入ろう', '/img/mission_fallback_icon.png', '<a href="https://silent-tent-c92.notion.site/1f9f6f56bae180d19ebcf176d8338ba3">チームみらいの都道府県別LINEオープンチャット</a>に参加してください。成果物として、あなたLINEのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),
+  ('6b6190c7-909d-4188-a2dc-039a68bbbe64', 'ボランティア目的別オープンチャットに入ろう', '/img/mission_fallback_icon.png', '<a href="https://silent-tent-c92.notion.site/1f9f6f56bae1802aa4e9ff90f1308062">チームみらいのボランティア目的別LINEオープンチャット</a>に参加してください。成果物として、参加したオープンチャット名と、あなたLINEのアカウント名を入力してください。', 1, NULL, 'TEXT', 1),    
+  ('f95c8971-af0d-4192-bf51-986781fcbb0e', '6/1 交流会@仙台に参加しよう', '/img/mission_fallback_icon.png', '<a href="https://forms.gle/9zY5SDFpr7oLEWRv5">仙台会場で開催される安野たかひろとみなさまの交流会への参加フォーム</a>から参加してください。成果物として、参加したイベントで付与されるイベントコードを入力ください。', 1, NULL, 'TEXT', 1)    
+  ;
