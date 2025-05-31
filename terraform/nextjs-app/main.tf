@@ -82,6 +82,10 @@ resource "google_cloud_run_v2_service" "default" {
           }
         }
       }
+      env {
+        name  = "SITE_URL"
+        value = var.SUPABASE_SITE_URL
+      }
 
       env {
         name  = "NODE_ENV"
