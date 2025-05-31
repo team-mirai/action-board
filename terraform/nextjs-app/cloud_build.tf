@@ -108,5 +108,6 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _SUPABASE_SMTP_USER        = var.SUPABASE_SMTP_USER
     _SUPABASE_SMTP_ADMIN_EMAIL = var.SUPABASE_SMTP_ADMIN_EMAIL
     _SUPABASE_SMTP_SENDER_NAME = var.SUPABASE_SMTP_SENDER_NAME
+    _SUPABASE_SITE_URL         = var.SUPABASE_SITE_URL
   }
 }

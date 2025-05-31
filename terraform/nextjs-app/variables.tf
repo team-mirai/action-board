@@ -121,3 +121,7 @@ variable "SUPABASE_SMTP_SENDER_NAME" {
   type        = string
 }
 
+variable "SUPABASE_SITE_URL" {
+  description = "Supabase Site URL"
+  type        = string
+}
