@@ -97,7 +97,6 @@ export async function generateRootMetadata({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
-
   try {
     const params = await searchParams;
 
