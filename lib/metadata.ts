@@ -2,7 +2,7 @@
 // 【最小限版】lib/metadata.ts - 必要最低限の機能のみ
 // ==========================================
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -12,7 +12,8 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 const config = {
   title: "チームみらい アクションボード",
-  description: "チームみらいのアクションボードです。テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
+  description: 
+    "チームみらいのアクションボードです。テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
   defaultImage: "/img/ogp-default.png",
 } as const;
 
@@ -31,7 +32,7 @@ export function sanitizeImageUrl(url: string): string | null {
   if (!isValidImageUrl(url)) {
     return null;
   }
-  
+
   try {
     return new URL(url).toString();
   } catch {
@@ -65,7 +66,7 @@ export function createDefaultMetadata(): Metadata {
 // 動的OGPメタデータ
 export function createOgpMetadata(imageUrl: string): Metadata {
   const sanitizedImageUrl = sanitizeImageUrl(imageUrl);
-  
+
   if (!sanitizedImageUrl) {
     return createDefaultMetadata();
   }
@@ -96,7 +97,7 @@ export async function generateRootMetadata({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
-  
+
   try {
     const params = await searchParams;
     
@@ -104,20 +105,22 @@ export async function generateRootMetadata({
     if (!params) {
       return createDefaultMetadata();
     }
-    
+
     const ogpImageUrl = typeof params.ogp === 'string' ? params.ogp : null;
-    
+
     if (ogpImageUrl) {
       const isValid = isValidImageUrl(ogpImageUrl);
       const sanitized = sanitizeImageUrl(ogpImageUrl);
       return createOgpMetadata(ogpImageUrl);
-    } else {
-      return createDefaultMetadata();
     }
+    return createDefaultMetadata();
   } catch (error) {
     // searchParamsの取得に失敗した場合はデフォルトを返す
-    console.error('generateRootMetadata error:', error);
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+    console.error("generateRootMetadata error:", error);
+    console.error(
+      "Error stack:", 
+      error instanceof Error ? error.stack : "No stack"
+    );
     return createDefaultMetadata();
   }
 }

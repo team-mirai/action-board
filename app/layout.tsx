@@ -3,9 +3,8 @@ import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
 import Footer from "./footer";
 import "./globals.css";
-import Script from "next/script";
 import { generateRootMetadata } from "@/lib/metadata";
-
+import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
