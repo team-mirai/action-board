@@ -90,7 +90,7 @@ export function MissionFormWrapper({
         {completed && (
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
             <p className="text-sm font-medium text-gray-800">
-              このミッションの達成済みです。
+              このミッションは達成済みです。
             </p>
           </div>
         )}
