@@ -28,7 +28,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   // OGP画像付きURLを生成
   const baseUrl = `${window.location.origin}/missions/${mission.id}`;
   const ogpImageUrl = mission.ogp_image_url; // ミッションにOGP画像URLがある場合
-  
+
   // OGPパラメータ付きURLを生成
   const shareUrl = ogpImageUrl
     ? `${baseUrl}?ogp=${encodeURIComponent(ogpImageUrl)}`
