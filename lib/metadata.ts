@@ -12,7 +12,7 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 const config = {
   title: "チームみらい アクションボード",
-  description:  
+  description:
     "チームみらいのアクションボードです。テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
   defaultImage: "/img/ogp-default.png",
 } as const;
@@ -118,7 +118,7 @@ export async function generateRootMetadata({
     // searchParamsの取得に失敗した場合はデフォルトを返す
     console.error("generateRootMetadata error:", error);
     console.error(
-      "Error stack:", 
+      "Error stack:",
       error instanceof Error ? error.stack : "No stack",
     );
     return createDefaultMetadata();
