@@ -4,14 +4,8 @@ import { Geist } from "next/font/google";
 import Footer from "./footer";
 import "./globals.css";
 import Script from "next/script";
+import { generateRootMetadata } from "@/lib/metadata";
 
-const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "チームみらい アクションボード",
-  description: "チームみらいのアクションボードです。",
-};
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -19,6 +13,9 @@ const geistSans = Geist({
   display: "swap",
   subsets: ["latin"],
 });
+
+//metadata.tsxでmetadataを管理
+export const generateMetadata = generateRootMetadata;
 
 export default function RootLayout({
   children,

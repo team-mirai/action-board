@@ -5,8 +5,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
+import { generateRootMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+// メタデータ生成を外部関数に委譲
+export const generateMetadata = generateRootMetadata;
 
 export default async function Home() {
   const supabase = await createClient();

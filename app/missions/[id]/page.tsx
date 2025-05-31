@@ -12,10 +12,16 @@ import { LogIn, Shield } from "lucide-react";
 import Link from "next/link";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
+import { generateRootMetadata } from "@/lib/metadata";
+
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+// メタデータ生成を外部関数に委譲
+export const generateMetadata = generateRootMetadata;
+
 
 export default async function MissionPage({ params }: Props) {
   const supabase = await createServerClient();
