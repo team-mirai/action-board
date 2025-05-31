@@ -68,6 +68,21 @@ export function ArtifactForm({
           </div>
         )}
 
+        {/* テキスト入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.TEXT.key && (
+          <div className="space-y-2">
+            <Label htmlFor="artifactText">成果物のテキスト</Label>
+            <Textarea
+              name="artifactText"
+              id="artifactText"
+              placeholder="成果物のテキストを入力してください"
+              rows={5}
+              disabled={disabled}
+              required
+            />
+          </div>
+        )}
+
         {/* 画像アップロードフォーム */}
         {(artifactConfig.key === ARTIFACT_TYPES.IMAGE.key ||
           artifactConfig.key === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key) && (

@@ -5,6 +5,11 @@ export const ARTIFACT_TYPES = {
     prompt: "成果物のURLを入力してください。",
     validationRegex: /^https?:\/\/.+/,
   },
+  TEXT: {
+    key: "TEXT",
+    displayName: "テキスト",
+    prompt: "成果物のテキストを入力してください。",
+  },
   IMAGE: {
     key: "IMAGE",
     displayName: "画像",
@@ -45,6 +50,7 @@ export function getArtifactConfig(
 export type MissionRequiredArtifactType =
   | ArtifactTypeKey
   | "LINK"
+  | "TEXT"
   | "IMAGE"
   | "IMAGE_WITH_GEOLOCATION"
   | "NONE";

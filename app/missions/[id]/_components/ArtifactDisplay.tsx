@@ -74,6 +74,21 @@ const LinkArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   </div>
 );
 
+const TextArtifact: React.FC<{ artifact: MissionArtifact }> = ({
+  artifact,
+}) => (
+  <div className="">
+    {artifact.text_content && (
+      <div className="bg-gray-50 p-3 rounded border">
+        <p className="text-sm whitespace-pre-wrap">{artifact.text_content}</p>
+      </div>
+    )}
+    {artifact.description && (
+      <p className="text-sm mt-1">{artifact.description}</p>
+    )}
+  </div>
+);
+
 const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
   switch (artifact.artifact_type) {
     case "IMAGE":
@@ -82,6 +97,8 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
       return <ImageWithGeolocationArtifact artifact={artifact} />;
     case "LINK":
       return <LinkArtifact artifact={artifact} />;
+    case "TEXT":
+      return <TextArtifact artifact={artifact} />;
     default:
       return null;
   }
