@@ -47,7 +47,7 @@ steps:
       - '--build-arg'
       - 'NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN}'
       - '--build-arg'
-      - 'NEXT_PUBLIC_SENTRY_ENVIRONMENT=${NEXT_PUBLIC_SENTRY_ENVIRONMENT}'      
+      - 'NEXT_PUBLIC_SENTRY_ENVIRONMENT=${_NEXT_PUBLIC_SENTRY_ENVIRONMENT}'      
       - '.'
 
   # Artifact Registryへのプッシュ
