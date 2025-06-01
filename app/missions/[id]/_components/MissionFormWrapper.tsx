@@ -2,6 +2,7 @@
 
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -92,6 +93,13 @@ export function MissionFormWrapper({
             <p className="text-sm font-medium text-gray-800">
               このミッションは達成済みです。
             </p>
+            <Button
+              onClick={() => setIsDialogOpen(true)}
+              className="mt-2"
+              variant="outline"
+            >
+              シェアする
+            </Button>
           </div>
         )}
 

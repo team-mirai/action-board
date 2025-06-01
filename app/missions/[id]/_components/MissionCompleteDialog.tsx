@@ -14,6 +14,7 @@ import { ShareButton } from "./ShareButton";
 import { ShareFacebookButton } from "./ShareFacebookButton";
 import { ShareLineButton } from "./ShareLineButton";
 import { ShareTwitterButton } from "./ShareTwitterButton";
+import { ShareUrlButton } from "./ShareUrlButton";
 
 type Props = {
   isOpen: boolean;
@@ -39,7 +40,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-xl">
-            おめでとう！
+            おめでとうございます！
           </DialogTitle>
           <DialogDescription className="text-center">
             {message}
@@ -75,6 +76,9 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           >
             その他のサービスにシェア
           </ShareButton>
+          <ShareUrlButton url={shareUrl} className="w-full">
+            シェアURLをコピー
+          </ShareUrlButton>
         </div>
 
         <DialogFooter>
