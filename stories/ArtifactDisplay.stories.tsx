@@ -29,6 +29,7 @@ const imageArtifact: MissionArtifact = {
   artifact_type: "IMAGE",
   image_storage_path: "https://picsum.photos/200/200?random=1",
   link_url: null,
+  text_content: null,
   description:
     "これは画像アーティファクトのサンプルです。これは画像アーティファクトのサンプルです。これは画像アーティファクトのサンプルです。",
   created_at: "2024-01-01T00:00:00Z",
@@ -43,6 +44,7 @@ const imageWithGeolocationArtifact: MissionArtifact = {
   artifact_type: "IMAGE_WITH_GEOLOCATION",
   image_storage_path: "https://picsum.photos/200/200?random=2",
   link_url: null,
+  text_content: null,
   description: "これは位置情報付き画像アーティファクトのサンプルです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -67,6 +69,7 @@ const imageWithoutGeolocationArtifact: MissionArtifact = {
   artifact_type: "IMAGE_WITH_GEOLOCATION",
   image_storage_path: "https://picsum.photos/200/200?random=3",
   link_url: null,
+  text_content: null,
   description: "位置情報付きタイプですが、位置情報がないアーティファクトです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -81,6 +84,7 @@ const linkArtifact: MissionArtifact = {
   artifact_type: "LINK",
   image_storage_path: null,
   link_url: "https://example.com",
+  text_content: null,
   description: "これはリンクアーティファクトのサンプルです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -94,6 +98,7 @@ const linkArtifactWithoutDescription: MissionArtifact = {
   artifact_type: "LINK",
   image_storage_path: null,
   link_url: "https://github.com/example/repository",
+  text_content: null,
   description: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -129,17 +134,59 @@ export const LinkArtifactWithoutDescription: Story = {
   },
 };
 
-// 画像なしの画像アーティファクト
-const imageArtifactWithoutImage: MissionArtifact = {
+// TEXTアーティファクトのダミーデータ
+const textArtifact: MissionArtifact = {
   id: "artifact-6",
   achievement_id: "achievement-6",
   user_id: "user-6",
+  artifact_type: "TEXT",
+  image_storage_path: null,
+  link_url: null,
+  text_content:
+    "これはテキストアーティファクトのサンプルです。\n\n複数行のテキストも\n正しく表示されます。\n\n・リスト形式\n・での記載も\n・可能です",
+  description: "これはテキストアーティファクトのサンプルです。",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
+// 説明なしのTEXTアーティファクト
+const textArtifactWithoutDescription: MissionArtifact = {
+  id: "artifact-7",
+  achievement_id: "achievement-7",
+  user_id: "user-7",
+  artifact_type: "TEXT",
+  image_storage_path: null,
+  link_url: null,
+  text_content: "短いテキストのサンプル",
+  description: null,
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
+// 画像なしの画像アーティファクト
+const imageArtifactWithoutImage: MissionArtifact = {
+  id: "artifact-8",
+  achievement_id: "achievement-8",
+  user_id: "user-8",
   artifact_type: "IMAGE",
   image_storage_path: null,
   link_url: null,
+  text_content: null,
   description: "画像がないアーティファクトです。",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
+};
+
+export const TextArtifact: Story = {
+  args: {
+    artifact: textArtifact,
+  },
+};
+
+export const TextArtifactWithoutDescription: Story = {
+  args: {
+    artifact: textArtifactWithoutDescription,
+  },
 };
 
 export const ImageArtifactWithoutImage: Story = {

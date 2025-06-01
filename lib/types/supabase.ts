@@ -215,6 +215,7 @@ export type Database = {
           id: string;
           image_storage_path: string | null;
           link_url: string | null;
+          text_content: string | null;
           updated_at: string;
           user_id: string;
         };
@@ -226,6 +227,7 @@ export type Database = {
           id?: string;
           image_storage_path?: string | null;
           link_url?: string | null;
+          text_content?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -237,6 +239,7 @@ export type Database = {
           id?: string;
           image_storage_path?: string | null;
           link_url?: string | null;
+          text_content?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -273,6 +276,7 @@ export type Database = {
       };
       missions: {
         Row: {
+          artifact_label: string | null;
           content: string | null;
           created_at: string;
           difficulty: number;
@@ -280,11 +284,13 @@ export type Database = {
           icon_url: string | null;
           id: string;
           max_achievement_count: number | null;
+          ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
           updated_at: string;
         };
         Insert: {
+          artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
           difficulty: number;
@@ -292,11 +298,13 @@ export type Database = {
           icon_url?: string | null;
           id: string;
           max_achievement_count?: number | null;
+          ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
         };
         Update: {
+          artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
           difficulty?: number;
@@ -304,6 +312,7 @@ export type Database = {
           icon_url?: string | null;
           id?: string;
           max_achievement_count?: number | null;
+          ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;

@@ -52,7 +52,6 @@ variable "environment" {
   default     = "dev"
 }
 
-# Supabase関連の変数
 variable "NEXT_PUBLIC_SUPABASE_URL" {
   description = "Supabase URL (public)"
   type        = string
@@ -63,7 +62,23 @@ variable "NEXT_PUBLIC_SUPABASE_ANON_KEY" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_SENTRY_DSN" {
+  description = "Sentry DSN for error tracking (public)"
+  type        = string
+}
+
+variable "NEXT_PUBLIC_GA_ID" {
+  description = "Google Analytics ID (public)"
+  type        = string
+}
+
 variable "SUPABASE_SERVICE_ROLE_KEY" {
+  description = "Supabase Service Role Key (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "SUPABASE_DB_PASSWORD" {
   description = "Supabase Service Role Key (sensitive)"
   type        = string
   sensitive   = true
@@ -80,12 +95,33 @@ variable "SUPABASE_PROJECT_ID" {
   type        = string
 }
 
-variable "NEXT_PUBLIC_SENTRY_DSN" {
-  description = "Sentry DSN for error tracking (public)"
+variable "SUPABASE_SMTP_HOST" {
+  description = "Supabase SMTP Host"
   type        = string
 }
 
-variable "service_account" {
-  description = "Cloud Build service account email"
+variable "SUPABASE_SMTP_USER" {
+  description = "Supabase SMTP User"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_PASS" {
+  description = "Supabase SMTP Password"
+  type        = string
+  sensitive   = true
+}
+
+variable "SUPABASE_SMTP_ADMIN_EMAIL" {
+  description = "Supabase SMTP Admin Email"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_SENDER_NAME" {
+  description = "Supabase SMTP Sender Name"
+  type        = string
+}
+
+variable "SUPABASE_SITE_URL" {
+  description = "Supabase Site URL"
   type        = string
 }

@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { generateRootMetadata } from "@/lib/metadata";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +17,9 @@ import { getMissionPageData } from "./_lib/data";
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+// メタデータ生成を外部関数に委譲
+export const generateMetadata = generateRootMetadata;
 
 export default async function MissionPage({ params }: Props) {
   const supabase = await createServerClient();
@@ -35,7 +39,7 @@ export default async function MissionPage({ params }: Props) {
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 max-w-lg mx-auto">
         <MissionDetails mission={mission} />
 
         {user ? (

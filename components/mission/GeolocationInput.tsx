@@ -57,7 +57,7 @@ export function GeolocationInput({
     <div className="space-y-2">
       <Button
         type="button"
-        variant="secondary"
+        variant="outline"
         size="sm"
         onClick={handleGetGeolocation}
         disabled={disabled || isFetchingGeo}

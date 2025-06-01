@@ -4,41 +4,17 @@ resource "google_service_account" "cloud_run" {
   display_name = "Service Account for ${var.app_name} ${var.environment} Cloud Run"
 }
 
-# Secret Manager secret
-resource "google_secret_manager_secret" "supabase_service_role_key" {
-  secret_id = "${var.app_name}-${var.environment}-supabase-service-role-key"
-
-  replication {
-    auto {}
-  }
-}
-resource "google_secret_manager_secret" "supabase_access_token" {
-  secret_id = "${var.app_name}-${var.environment}-supabase-access-token"
-
-  replication {
-    auto {}
-  }
-}
-
-resource "google_secret_manager_secret_version" "supabase_service_role_key" {
-  secret      = google_secret_manager_secret.supabase_service_role_key.id
-  secret_data = var.SUPABASE_SERVICE_ROLE_KEY
-}
+# Cloud Run サービスアカウントにシークレットアクセス権限を付与
 resource "google_secret_manager_secret_iam_member" "supabase_service_role_key_access" {
   secret_id = google_secret_manager_secret.supabase_service_role_key.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
-}
-resource "google_secret_manager_secret_version" "supabase_access_token" {
-  secret      = google_secret_manager_secret.supabase_access_token.id
-  secret_data = var.SUPABASE_ACCESS_TOKEN
 }
 resource "google_secret_manager_secret_iam_member" "supabase_access_token_access" {
   secret_id = google_secret_manager_secret.supabase_access_token.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
-
 
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
@@ -63,7 +39,6 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
 
-      # Supabase環境変数
       env {
         name  = "NEXT_PUBLIC_SUPABASE_URL"
         value = var.NEXT_PUBLIC_SUPABASE_URL
@@ -72,6 +47,25 @@ resource "google_cloud_run_v2_service" "default" {
       env {
         name  = "NEXT_PUBLIC_SUPABASE_ANON_KEY"
         value = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      }
+
+      env {
+        name  = "NEXT_PUBLIC_SENTRY_DSN"
+        value = var.NEXT_PUBLIC_SENTRY_DSN
+      }
+
+      env {
+        name  = "NEXT_PUBLIC_SENTRY_ENVIRONMENT"
+        value = var.environment
+      }
+
+      env {
+        name  = "NEXT_PUBLIC_GA_ID"
+        value = var.NEXT_PUBLIC_GA_ID
+      }
+      env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = var.SUPABASE_SITE_URL
       }
 
       env {
@@ -91,11 +85,6 @@ resource "google_cloud_run_v2_service" "default" {
             version = "latest"
           }
         }
-      }
-
-      env {
-        name  = "NEXT_PUBLIC_SENTRY_DSN"
-        value = var.NEXT_PUBLIC_SENTRY_DSN
       }
 
       env {

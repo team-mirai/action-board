@@ -28,9 +28,9 @@ const CancelSubmissionDialog: React.FC<CancelSubmissionDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>提出をキャンセルしますか？</DialogTitle>
+          <DialogTitle>達成を取り消しますか？</DialogTitle>
           <DialogDescription>
-            この操作は取り消すことができません。提出した成果物と関連データがすべて削除されます。
+            この操作は取り消すことができません。報告した履歴と関連データは削除されます。
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

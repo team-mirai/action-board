@@ -2,6 +2,7 @@
 
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -61,11 +62,14 @@ export function MissionFormWrapper({
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    // 提出履歴を更新
+    // 達成履歴を更新
     if (onSubmissionSuccess) {
       onSubmissionSuccess();
     }
   };
+
+  const completed =
+    hasReachedUserMaxAchievements && mission?.max_achievement_count !== null;
 
   return (
     <>
@@ -84,23 +88,23 @@ export function MissionFormWrapper({
           </div>
         )}
 
-        <ArtifactForm
-          key={formKey}
-          mission={mission}
-          authUser={authUser}
-          disabled={isButtonDisabled || isSubmitting}
-          submittedArtifactImagePath={null}
-        />
-
-        {hasReachedUserMaxAchievements &&
-          mission?.max_achievement_count !== null && (
-            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 text-center">
-              <p className="text-sm font-medium text-orange-800">
-                あなたはこのミッションの達成回数の上限 (
-                {mission.max_achievement_count}回) に達しました。
-              </p>
-            </div>
-          )}
+        {completed && (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+            <p className="text-sm font-medium text-gray-800">
+              このミッションは達成済みです。
+            </p>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDialogOpen(true);
+              }}
+              className="mt-2"
+              variant="outline"
+            >
+              シェアする
+            </Button>
+          </div>
+        )}
 
         {!hasReachedUserMaxAchievements &&
           userAchievementCount > 0 &&
@@ -113,12 +117,29 @@ export function MissionFormWrapper({
             </div>
           )}
 
-        <SubmitButton
-          pendingText="登録中..."
+        <ArtifactForm
+          key={formKey}
+          mission={mission}
+          authUser={authUser}
           disabled={isButtonDisabled || isSubmitting}
-        >
-          {buttonLabel}
-        </SubmitButton>
+          submittedArtifactImagePath={null}
+        />
+
+        {!completed && (
+          <>
+            <SubmitButton
+              pendingText="登録中..."
+              size="lg"
+              disabled={isButtonDisabled || isSubmitting}
+            >
+              {buttonLabel}
+            </SubmitButton>
+            <p className="text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </p>
+          </>
+        )}
       </form>
 
       <MissionCompleteDialog

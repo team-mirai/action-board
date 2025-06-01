@@ -1,4 +1,7 @@
-* muraikenta
-* ryan5500
-* tkurokawa
-* xarsh
+# Global code owners - all files in the repository
+* @muraikenta @ryan5500 @tkurokawa @xarsh @dotneet
+
+# Specific directory rules (examples)
+# /docs/ @muraikenta @ryan5500
+# /terraform/ @ryan5500 @tkurokawa
+# /supabase/ @ryan5500 @tkurokawa @xarsh

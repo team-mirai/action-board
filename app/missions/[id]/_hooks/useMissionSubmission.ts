@@ -14,7 +14,7 @@ export function useMissionSubmission(
     ) {
       return "このミッションは完了済みです";
     }
-    return "完了する";
+    return "達成を報告する";
   }, [mission.max_achievement_count, userAchievementCount]);
 
   const isButtonDisabled = useMemo(() => {

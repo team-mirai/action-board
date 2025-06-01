@@ -3,47 +3,27 @@ import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
 import Footer from "./footer";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
+import { generateRootMetadata } from "@/lib/metadata";
+import Script from "next/script";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "チームみらい アクションボード",
-  description: "チームみらいのアクションボードです。",
-  openGraph: {
-    title: "チームみらい アクションボード",
-    description: "チームみらいのアクションボードです。",
-    images: [
-      {
-        url: "/img/logo.png",
-        width: 1200,
-        height: 630,
-        alt: "チームみらい アクションボード",
-      },
-    ],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "チームみらい アクションボード",
-    description: "チームみらいのアクションボードです。",
-    images: ["/img/logo.png"],
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "32x32" },
-    ],
-    apple: "/apple-icon.png",
-  },
-};
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const geistSans = Geist({
   display: "swap",
   subsets: ["latin"],
 });
+
+//metadata.tsxでmetadataを管理
+export const generateMetadata = generateRootMetadata;
+
+// Next.js 15でのviewport設定
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  userScalable: false,
+};
 
 export default function RootLayout({
   children,
@@ -53,6 +33,22 @@ export default function RootLayout({
   return (
     <html lang="ja" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -64,6 +60,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

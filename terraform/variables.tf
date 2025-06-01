@@ -22,7 +22,6 @@ variable "tfc_workspace" {
 variable "app_name" {
   description = "The name of the application"
   type        = string
-  default     = "nextjs-supabase-app"
 }
 
 variable "min_instance_count" {
@@ -50,18 +49,12 @@ variable "github_oauth_token_secret_version" {
 variable "github_repository_remote_uri" {
   description = "GitHub repository remote URI"
   type        = string
-  default     = "https://github.com/team-mirai/action-board.git"
+  default     = "https://github.com/team-mirai-volunteer/action-board.git"
 }
 
 variable "application_domain_name" {
   description = "The domain name for the SSL certificate"
   type        = string
-}
-
-variable "repository_name" {
-  description = "Artifact Registry repository name"
-  type        = string
-  default     = "app"
 }
 
 variable "trigger_branch" {
@@ -76,7 +69,6 @@ variable "environment" {
   default     = "dev"
 }
 
-# Supabase関連の変数
 variable "NEXT_PUBLIC_SUPABASE_URL" {
   description = "Supabase URL (public)"
   type        = string
@@ -84,6 +76,16 @@ variable "NEXT_PUBLIC_SUPABASE_URL" {
 
 variable "NEXT_PUBLIC_SUPABASE_ANON_KEY" {
   description = "Supabase Anonymous Key (public)"
+  type        = string
+}
+
+variable "NEXT_PUBLIC_SENTRY_DSN" {
+  description = "Sentry DSN for error tracking (public)"
+  type        = string
+}
+
+variable "NEXT_PUBLIC_GA_ID" {
+  description = "Google Analytics ID (public)"
   type        = string
 }
 
@@ -98,7 +100,6 @@ variable "SUPABASE_ACCESS_TOKEN" {
   sensitive   = true
 }
 
-# Supabase デプロイ関連の変数
 variable "SUPABASE_PROJECT_ID" {
   description = "Supabase Project ID"
   type        = string
@@ -110,8 +111,33 @@ variable "SUPABASE_DB_PASSWORD" {
   sensitive   = true
 }
 
-variable "NEXT_PUBLIC_SENTRY_DSN" {
-  description = "Sentry DSN for error tracking (public)"
+variable "SUPABASE_SMTP_HOST" {
+  description = "Supabase SMTP Host"
   type        = string
 }
 
+variable "SUPABASE_SMTP_USER" {
+  description = "Supabase SMTP User"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_PASS" {
+  description = "Supabase SMTP Password"
+  type        = string
+  sensitive   = true
+}
+
+variable "SUPABASE_SMTP_ADMIN_EMAIL" {
+  description = "Supabase SMTP Admin Email"
+  type        = string
+}
+
+variable "SUPABASE_SMTP_SENDER_NAME" {
+  description = "Supabase SMTP Sender Name"
+  type        = string
+}
+
+variable "SUPABASE_SITE_URL" {
+  description = "Supabase Site URL"
+  type        = string
+}

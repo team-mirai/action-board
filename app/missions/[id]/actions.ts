@@ -24,6 +24,12 @@ const linkArtifactSchema = baseMissionFormSchema.extend({
     .url({ message: "有効なURLを入力してください" }),
 });
 
+// TEXTタイプ用スキーマ
+const textArtifactSchema = baseMissionFormSchema.extend({
+  requiredArtifactType: z.literal(ARTIFACT_TYPES.TEXT.key),
+  artifactText: z.string().nonempty({ message: "テキストが必要です" }),
+});
+
 // IMAGEタイプ用スキーマ
 const imageArtifactSchema = baseMissionFormSchema.extend({
   requiredArtifactType: z.literal(ARTIFACT_TYPES.IMAGE.key),
@@ -68,6 +74,7 @@ const noneArtifactSchema = baseMissionFormSchema.extend({
 // 統合スキーマ
 const achieveMissionFormSchema = z.discriminatedUnion("requiredArtifactType", [
   linkArtifactSchema,
+  textArtifactSchema,
   imageArtifactSchema,
   imageWithGeolocationArtifactSchema,
   noneArtifactSchema,
@@ -83,6 +90,7 @@ export const achieveMissionAction = async (formData: FormData) => {
   const missionId = formData.get("missionId")?.toString();
   const requiredArtifactType = formData.get("requiredArtifactType")?.toString();
   const artifactLink = formData.get("artifactLink")?.toString();
+  const artifactText = formData.get("artifactText")?.toString();
   const artifactImagePath = formData.get("artifactImagePath")?.toString();
   const artifactDescription = formData.get("artifactDescription")?.toString();
   // 位置情報データの取得
@@ -96,6 +104,7 @@ export const achieveMissionAction = async (formData: FormData) => {
     missionId,
     requiredArtifactType,
     artifactLink,
+    artifactText,
     artifactImagePath,
     artifactDescription,
     latitude,
@@ -178,34 +187,6 @@ export const achieveMissionAction = async (formData: FormData) => {
         error: "あなたはこのミッションの達成回数の上限に達しています。",
       };
     }
-
-    // ミッション全体の達成回数を取得（全体の上限がある場合）
-    const { data: countData, error: countError } = await supabase
-      .from("mission_achievement_count_view")
-      .select("achievement_count")
-      .eq("mission_id", validatedMissionId)
-      .single();
-
-    if (countError) {
-      console.error(`Achievement count fetch error: ${countError.message}`);
-      return {
-        success: false,
-        error: "達成回数の取得に失敗しました。",
-      };
-    }
-
-    // ミッション全体の達成回数が上限に達しているかチェック
-    if (
-      countData &&
-      typeof countData.achievement_count === "number" &&
-      typeof missionData.max_achievement_count === "number" &&
-      countData.achievement_count >= missionData.max_achievement_count
-    ) {
-      return {
-        success: false,
-        error: "このミッションは全体の達成回数の上限に達しています。",
-      };
-    }
   }
 
   // ミッション達成を記録
@@ -262,15 +243,25 @@ export const achieveMissionAction = async (formData: FormData) => {
       artifactTypeLabel = "LINK";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.LINK.key) {
         artifactPayload.link_url = validatedData.artifactLink;
-        // CHECK制約: link_url必須、image_storage_pathはnull
+        // CHECK制約: link_url必須、他はnull
+        artifactPayload.image_storage_path = null;
+        artifactPayload.text_content = null;
+      }
+    } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.TEXT.key) {
+      artifactTypeLabel = "TEXT";
+      if (validatedData.requiredArtifactType === ARTIFACT_TYPES.TEXT.key) {
+        artifactPayload.text_content = validatedData.artifactText;
+        // CHECK制約: text_content必須、他はnull
+        artifactPayload.link_url = null;
         artifactPayload.image_storage_path = null;
       }
     } else if (validatedRequiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
       artifactTypeLabel = "IMAGE";
       if (validatedData.requiredArtifactType === ARTIFACT_TYPES.IMAGE.key) {
         artifactPayload.image_storage_path = validatedData.artifactImagePath;
-        // CHECK制約: link_urlはnull
+        // CHECK制約: image_storage_path必須、他はnull
         artifactPayload.link_url = null;
+        artifactPayload.text_content = null;
       }
     } else if (
       validatedRequiredArtifactType ===
@@ -283,18 +274,24 @@ export const achieveMissionAction = async (formData: FormData) => {
       ) {
         artifactPayload.image_storage_path = validatedData.artifactImagePath;
         artifactPayload.link_url = null;
+        artifactPayload.text_content = null;
       }
     } else {
-      // その他のタイプは両方nullに
+      // その他のタイプは全てnullに
       artifactPayload.link_url = null;
       artifactPayload.image_storage_path = null;
+      artifactPayload.text_content = null;
     }
 
-    // CHECK制約: link_urlかimage_storage_pathのどちらか一方は必須
-    if (!artifactPayload.link_url && !artifactPayload.image_storage_path) {
+    // CHECK制約: link_url、text_content、image_storage_pathのいずれか一つは必須
+    if (
+      !artifactPayload.link_url &&
+      !artifactPayload.image_storage_path &&
+      !artifactPayload.text_content
+    ) {
       validationError =
         validationError ||
-        "リンクまたは画像のいずれか一方は必須です（CHECK制約違反防止）";
+        "リンク、テキスト、または画像のいずれかは必須です（CHECK制約違反防止）";
     }
 
     // バリデーションエラー時は詳細ログとともにリダイレクト
@@ -446,9 +443,9 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     console.error(`Delete Error: ${deleteError.code} ${deleteError.message}`);
     return {
       success: false,
-      error: `提出のキャンセルに失敗しました: ${deleteError.message}`,
+      error: `達成の取り消しに失敗しました: ${deleteError.message}`,
     };
   }
 
-  return { success: true, message: "提出をキャンセルしました。" };
+  return { success: true, message: "達成を取り消しました。" };
 };

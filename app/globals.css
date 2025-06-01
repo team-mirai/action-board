@@ -67,6 +67,8 @@
     @apply bg-background text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
       "Yu Gothic", Meiryo, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   h1,
@@ -105,5 +107,9 @@
   .shadow-soft-lg {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px
       rgba(0, 0, 0, 0.03);
+  }
+
+  .mission-content a {
+    @apply text-primary underline transition-colors duration-200;
   }
 }
