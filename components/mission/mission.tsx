@@ -45,7 +45,9 @@ export default function Mission({
     >
       <div className="flex items-start gap-4">
         <div className="flex-col items-center justify-center">
-          <MissionIcon src={iconUrl} alt={mission.title} size="md" />
+          <div className="flex items-center justify-center border border-4 border-muted-foreground/25 p-1 rounded-full w-16 h-16">
+            <MissionIcon src={iconUrl} alt={mission.title} size="sm" />
+          </div>
           <MissionAchievementStatus
             hasReachedMaxAchievements={hasReachedMaxAchievements}
             userAchievementCount={userAchievementCount}

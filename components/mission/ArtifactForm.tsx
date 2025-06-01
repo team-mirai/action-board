@@ -169,7 +169,7 @@ export function ArtifactForm({
           <Textarea
             name="artifactDescription"
             id="artifactDescription"
-            placeholder="達成内容に関する補足説明 (任意)"
+            placeholder="達成内容に関して補足説明があれば入力してください"
             rows={3}
             disabled={disabled}
           />
