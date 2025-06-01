@@ -34,6 +34,7 @@ jobs:
           echo "Starting Supabase..."
           supabase start -x studio,postgres-meta,imgproxy
         env:
+          SMTP_ENABLED: false
           DOCKER_BUILDKIT: 1
           COMPOSE_DOCKER_CLI_BUILD: 1
 
