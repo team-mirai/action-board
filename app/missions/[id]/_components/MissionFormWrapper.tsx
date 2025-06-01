@@ -117,7 +117,7 @@ export function MissionFormWrapper({
         {!completed && (
           <SubmitButton
             pendingText="登録中..."
-            className="w-full md:max-w-48 mx-auto"
+            size="lg"
             disabled={isButtonDisabled || isSubmitting}
           >
             {buttonLabel}
