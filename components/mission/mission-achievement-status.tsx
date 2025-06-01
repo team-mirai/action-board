@@ -1,3 +1,6 @@
+import { Badge } from "@/components/ui/badge";
+import { CheckIcon, CircleDashed } from "lucide-react";
+
 interface MissionAchievementStatusProps {
   hasReachedMaxAchievements: boolean;
   userAchievementCount: number;
@@ -11,12 +14,10 @@ export default function MissionAchievementStatus({
 }: MissionAchievementStatusProps) {
   if (hasReachedMaxAchievements) {
     return (
-      <div className="flex items-center justify-center mt-2">
-        <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border-2 border-gray-300 shadow-sm">
-          <span className="text-sm">✓</span>
-          達成済み
-        </div>
-      </div>
+      <Badge variant="outline" className="text-xxs px-2">
+        <CheckIcon size={14} className="mr-1" />
+        達成済み
+      </Badge>
     );
   }
 
@@ -24,27 +25,27 @@ export default function MissionAchievementStatus({
     const isPartiallyComplete = userAchievementCount > 0;
 
     return (
-      <div className="flex items-center justify-center mt-2">
-        <div
-          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border-2 shadow-sm ${
-            isPartiallyComplete
-              ? "bg-blue-100 text-blue-800 border-blue-300"
-              : "bg-gray-100 text-gray-600 border-gray-300"
-          }`}
-        >
-          <span className="text-sm">{isPartiallyComplete ? "🔄" : "○"}</span>
-          {userAchievementCount}/{maxAchievementCount}回達成
-        </div>
-      </div>
+      <Badge variant="outline" className="text-xxs px-2">
+        {isPartiallyComplete ? (
+          <CheckIcon size={14} className="mr-1" />
+        ) : (
+          <CircleDashed size={14} className="mr-1" />
+        )}
+        {userAchievementCount}/{maxAchievementCount}回達成
+      </Badge>
     );
   }
 
   return (
-    <div className="flex items-center justify-center mt-2">
-      <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border-2 border-gray-300 shadow-sm">
-        <span className="text-sm">{userAchievementCount > 0 ? "🔄" : "○"}</span>
-        {userAchievementCount}回達成
-      </div>
-    </div>
+    <Badge variant="outline" className="text-xxs px-2">
+      <span>
+        {userAchievementCount > 0 ? (
+          <CheckIcon size={14} className="mr-1" />
+        ) : (
+          <CircleDashed size={14} className="mr-1" />
+        )}
+      </span>
+      {userAchievementCount}回達成
+    </Badge>
   );
 }
