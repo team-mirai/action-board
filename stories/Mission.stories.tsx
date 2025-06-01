@@ -27,6 +27,7 @@ const dummyMission: Tables<"missions"> = {
   max_achievement_count: null,
   required_artifact_type: "NONE",
   ogp_image_url: null,
+  artifact_label: null,
 };
 
 export const Default: Story = {
