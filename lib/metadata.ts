@@ -50,6 +50,8 @@ export function createDefaultMetadata(): Metadata {
   return {
     title: config.title,
     description: config.description,
+    viewport:
+      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
     openGraph: {
       title: config.title,
       description: config.description,
@@ -75,6 +77,8 @@ export function createOgpMetadata(imageUrl: string): Metadata {
   return {
     title: config.title,
     description: config.description,
+    viewport:
+      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
     openGraph: {
       title: config.title,
       description: config.description,
