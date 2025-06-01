@@ -94,7 +94,10 @@ export function MissionFormWrapper({
               このミッションは達成済みです。
             </p>
             <Button
-              onClick={() => setIsDialogOpen(true)}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDialogOpen(true);
+              }}
               className="mt-2"
               variant="outline"
             >
