@@ -14,7 +14,7 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const config = {
   title: "チームみらい アクションボード",
   description:
-    "選挙活動をもっと身近に。選挙活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
+    "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
   defaultImage: "/img/ogp-default.png",
   icons: {
     icon: [
