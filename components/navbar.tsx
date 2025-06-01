@@ -24,8 +24,9 @@ export default async function Navbar() {
     <nav className="sticky top-0 z-50 w-full flex justify-center bg-white border-b border-b-foreground/10 h-16">
       <div className="px-4 md:container md:mx-auto w-full flex justify-between items-center text-sm">
         <div className="flex gap-5 items-center font-semibold min-w-[60px]">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-4">
             <Image src="/img/logo.png" alt="logo" width={57} height={48} />
+            <div className="text-lg">アクションボード（α版）</div>
           </Link>
         </div>
         <div className="gap-6 items-center font-semibold hidden sm:flex">
