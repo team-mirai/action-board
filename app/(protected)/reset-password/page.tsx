@@ -10,28 +10,28 @@ export default async function ResetPassword(props: {
   const searchParams = await props.searchParams;
   return (
     <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
-      <h1 className="text-2xl font-medium">Reset password</h1>
+      <h1 className="text-2xl font-medium">パスワードリセット</h1>
       <p className="text-sm text-foreground/60">
-        Please enter your new password below.
+        新しいパスワードを入力してください。
       </p>
-      <Label htmlFor="password">New password</Label>
+      <Label htmlFor="password">新しいパスワード</Label>
       <Input
         type="password"
         name="password"
-        placeholder="New password"
+        placeholder="新しいパスワード"
         required
         autoComplete="new-password"
       />
-      <Label htmlFor="confirmPassword">Confirm password</Label>
+      <Label htmlFor="confirmPassword">パスワード確認</Label>
       <Input
         type="password"
         name="confirmPassword"
-        placeholder="Confirm password"
+        placeholder="パスワード確認"
         required
         autoComplete="new-password"
       />
       <SubmitButton formAction={resetPasswordAction}>
-        Reset password
+        パスワードをリセット
       </SubmitButton>
       <FormMessage message={searchParams} />
     </form>
