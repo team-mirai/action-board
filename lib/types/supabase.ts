@@ -283,6 +283,7 @@ export type Database = {
           icon_url: string | null;
           id: string;
           max_achievement_count: number | null;
+          ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
           updated_at: string;
@@ -295,6 +296,7 @@ export type Database = {
           icon_url?: string | null;
           id: string;
           max_achievement_count?: number | null;
+          ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
@@ -307,6 +309,7 @@ export type Database = {
           icon_url?: string | null;
           id?: string;
           max_achievement_count?: number | null;
+          ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;
