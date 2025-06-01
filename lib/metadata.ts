@@ -2,6 +2,7 @@
 // 【最小限版】lib/metadata.ts - 必要最低限の機能のみ
 // ==========================================
 
+import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
 const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -94,18 +95,34 @@ export function createOgpMetadata(imageUrl: string): Metadata {
 
 export async function generateRootMetadata({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params?: Promise<{ [key: string]: string | undefined }>;
 }): Promise<Metadata> {
   try {
-    const params = await searchParams;
+    const supabase = await createClient();
+    const searchParamsResolved = await searchParams;
+    const paramsResolved = await params;
 
-    // paramsがnullまたはundefinedの場合の安全な処理
-    if (!params) {
+    // searchParamsがnullまたはundefinedの場合の安全な処理
+    if (!searchParamsResolved) {
       return createDefaultMetadata();
     }
 
-    const ogpImageUrl = typeof params.ogp === "string" ? params.ogp : null;
+    let ogpImageUrl: string | null = null;
+
+    // type=completeの場合、paramsからミッションIDを取得してogp_image_urlを取得
+    if (searchParamsResolved.type === "complete" && paramsResolved?.id) {
+      const missionId = paramsResolved.id;
+      const { data: mission } = await supabase
+        .from("missions")
+        .select("ogp_image_url")
+        .eq("id", missionId)
+        .single();
+
+      ogpImageUrl = mission?.ogp_image_url || null;
+    }
 
     if (ogpImageUrl) {
       const isValid = isValidImageUrl(ogpImageUrl);
