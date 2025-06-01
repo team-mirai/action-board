@@ -166,7 +166,7 @@ otp_expiry = 3600
 
 # Use a production-ready SMTP server
 [auth.email.smtp]
-enabled = true
+enabled = "env(SMTP_ENABLED)"
 host = "env(SMTP_HOST)"
 port = 587
 user = "env(SMTP_USER)"

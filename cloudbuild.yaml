@@ -19,6 +19,7 @@ steps:
         npx supabase config push
     env:
       - 'CI=1'
+      - 'SMTP_ENABLED=true'
       - 'SMTP_HOST=${_SUPABASE_SMTP_HOST}'
       - 'SMTP_USER=${_SUPABASE_SMTP_USER}'
       - 'SMTP_ADMIN_EMAIL=${_SUPABASE_SMTP_ADMIN_EMAIL}'
