@@ -40,8 +40,17 @@ export default function Mission({
       <CardHeader className="relative">
         <div className="flex items-start gap-4">
           <div className="flex flex-col items-center justify-center">
-            <div className="flex items-center justify-center border border-4 border-muted-foreground/25 p-1 rounded-full w-16 h-16">
-              <MissionIcon src={iconUrl} alt={mission.title} size="sm" />
+            <div
+              className={clsx(
+                "w-20 h-20 rounded-full p-[3px]",
+                hasReachedMaxAchievements
+                  ? "bg-gradient-to-r from-[#64D8C6] to-[#BCECD3]"
+                  : "border-4 border-muted-foreground/25",
+              )}
+            >
+              <div className="flex items-center justify-center w-full h-full rounded-full bg-white">
+                <MissionIcon src={iconUrl} alt={mission.title} size="md" />
+              </div>
             </div>
             <MissionAchievementStatus
               hasReachedMaxAchievements={hasReachedMaxAchievements}

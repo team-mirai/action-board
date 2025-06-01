@@ -14,9 +14,9 @@ export default function MissionAchievementStatus({
 }: MissionAchievementStatusProps) {
   if (hasReachedMaxAchievements) {
     return (
-      <Badge variant="outline" className="text-xxs px-2">
-        <CheckIcon size={14} className="mr-1" />
-        達成済み
+      <Badge variant="outline" className="text-xxs px-2 bg-neutral-950 -mt-3">
+        <CheckIcon size={14} className="mr-1 text-white" />
+        <span className="text-white">達成済み</span>
       </Badge>
     );
   }
@@ -25,7 +25,7 @@ export default function MissionAchievementStatus({
     const isPartiallyComplete = userAchievementCount > 0;
 
     return (
-      <Badge variant="outline" className="text-xxs px-2">
+      <Badge variant="outline" className="text-xxs px-2 bg-white -mt-3">
         {isPartiallyComplete ? (
           <CheckIcon size={14} className="mr-1" />
         ) : (
@@ -37,7 +37,7 @@ export default function MissionAchievementStatus({
   }
 
   return (
-    <Badge variant="outline" className="text-xxs px-2">
+    <Badge variant="outline" className="text-xxs px-2 bg-white -mt-3">
       <span>
         {userAchievementCount > 0 ? (
           <CheckIcon size={14} className="mr-1" />
