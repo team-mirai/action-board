@@ -57,6 +57,8 @@ jobs:
           echo "Resetting Supabase database..."
           supabase db reset
           echo "Supabase database reset completed."
+        env:
+          SMTP_ENABLED: false
 
       # 環境変数を設定（ローカルSupabaseの接続情報）
       - name: Set Supabase environment variables
