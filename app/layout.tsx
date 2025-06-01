@@ -1,6 +1,6 @@
 import Navbar from "@/components/navbar";
+import { notoSansJP } from "@/lib/metadata";
 import { ThemeProvider } from "next-themes";
-import { Geist } from "next/font/google";
 import Footer from "./footer";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,11 +8,6 @@ import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-
-const geistSans = Geist({
-  display: "swap",
-  subsets: ["latin"],
-});
 
 //metadata.tsxでmetadataを管理
 export const generateMetadata = generateRootMetadata;
@@ -31,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={geistSans.className} suppressHydrationWarning>
+    <html lang="ja" className={notoSansJP.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         {GA_ID && (
           <>
