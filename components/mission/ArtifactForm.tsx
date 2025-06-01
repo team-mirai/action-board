@@ -51,6 +51,9 @@ export function ArtifactForm({
         <p className="text-sm text-muted-foreground">
           ミッションを完了したら、達成報告しましょう！
         </p>
+        <p className="text-sm text-muted-foreground">
+          ※ フォームの内容は他の人に公開されることはありません。
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* リンク入力フォーム */}
