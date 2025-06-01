@@ -65,8 +65,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
-      "Yu Gothic", Meiryo, sans-serif;
+    font-family: var(--font-noto-sans-jp), -apple-system, BlinkMacSystemFont,
+      "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
