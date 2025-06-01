@@ -23,17 +23,11 @@ type Props = {
 };
 
 export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
-  const message = `ミッション「${mission.title}」が完了しました！`;
-  const shareMessage = `チームみらい Action Board で${message} #チームみらい\n`;
+  const message = `「${mission.title}」を達成しました！`;
+  const shareMessage = `チームみらいアクションボードで${message} #チームみらい\n`;
 
   // OGP画像付きURLを生成
-  const baseUrl = `${window.location.origin}/missions/${mission.id}`;
-  const ogpImageUrl = mission.ogp_image_url; // ミッションにOGP画像URLがある場合
-
-  // OGPパラメータ付きURLを生成
-  const shareUrl = ogpImageUrl
-    ? `${baseUrl}?ogp=${encodeURIComponent(ogpImageUrl)}`
-    : baseUrl;
+  const shareUrl = `${window.location.origin}/missions/${mission.id}?type=complete`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -45,6 +39,9 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           <DialogDescription className="text-center">
             {message}
           </DialogDescription>
+          {mission.ogp_image_url && (
+            <img src={mission.ogp_image_url} alt="ミッションクリア" />
+          )}
         </DialogHeader>
 
         <div className="flex flex-col gap-3 py-4">
