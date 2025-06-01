@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
 
 const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -24,6 +25,14 @@ const config = {
     apple: "/apple-icon.png",
   },
 };
+
+// font-family設定
+export const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
+  weight: ["400", "500", "700"],
+});
 
 // ==========================================
 // URL検証（Supabase Storage対応）
@@ -69,6 +78,9 @@ export function createDefaultMetadata(): Metadata {
       images: [`${defaultUrl}${config.defaultImage}`],
     },
     icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
   };
 }
 
@@ -95,6 +107,9 @@ export function createOgpMetadata(imageUrl: string): Metadata {
       images: [sanitizedImageUrl],
     },
     icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
   };
 }
 

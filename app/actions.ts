@@ -194,7 +194,11 @@ export const forgotPasswordAction = async (formData: FormData) => {
   const callbackUrl = formData.get("callbackUrl")?.toString();
 
   if (!email) {
-    return encodedRedirect("error", "/forgot-password", "Email is required");
+    return encodedRedirect(
+      "error",
+      "/forgot-password",
+      "メールアドレスが必要です",
+    );
   }
 
   const validatedFields = forgotPasswordFormSchema.safeParse({ email });
@@ -215,7 +219,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/forgot-password",
-      "Could not reset password",
+      "パスワードリセットに失敗しました",
     );
   }
 
@@ -226,7 +230,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     "/forgot-password",
-    "Check your email for a link to reset your password.",
+    "パスワードリセット用のリンクをメールでお送りしました。",
   );
 };
 
@@ -240,12 +244,12 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       "/reset-password",
-      "Password and confirm password are required",
+      "パスワードとパスワード確認が必要です",
     );
   }
 
   if (password !== confirmPassword) {
-    encodedRedirect("error", "/reset-password", "Passwords do not match");
+    encodedRedirect("error", "/reset-password", "パスワードが一致しません");
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -253,10 +257,14 @@ export const resetPasswordAction = async (formData: FormData) => {
   });
 
   if (error) {
-    encodedRedirect("error", "/reset-password", "Password update failed");
+    encodedRedirect(
+      "error",
+      "/reset-password",
+      "パスワードの更新に失敗しました",
+    );
   }
 
-  encodedRedirect("success", "/reset-password", "Password updated");
+  encodedRedirect("success", "/reset-password", "パスワードを更新しました");
 };
 
 export const signOutAction = async () => {
