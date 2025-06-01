@@ -115,13 +115,19 @@ export function MissionFormWrapper({
         />
 
         {!completed && (
-          <SubmitButton
-            pendingText="登録中..."
-            size="lg"
-            disabled={isButtonDisabled || isSubmitting}
-          >
-            {buttonLabel}
-          </SubmitButton>
+          <>
+            <SubmitButton
+              pendingText="登録中..."
+              size="lg"
+              disabled={isButtonDisabled || isSubmitting}
+            >
+              {buttonLabel}
+            </SubmitButton>
+            <p className="text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </p>
+          </>
         )}
       </form>
 
