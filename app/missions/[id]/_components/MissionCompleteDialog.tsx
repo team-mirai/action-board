@@ -25,6 +25,15 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
   const message = `ミッション「${mission.title}」が完了しました！`;
   const shareMessage = `チームみらい Action Board で${message} #チームみらい\n`;
 
+  // OGP画像付きURLを生成
+  const baseUrl = `${window.location.origin}/missions/${mission.id}`;
+  const ogpImageUrl = mission.ogp_image_url; // ミッションにOGP画像URLがある場合
+
+  // OGPパラメータ付きURLを生成
+  const shareUrl = ogpImageUrl
+    ? `${baseUrl}?ogp=${encodeURIComponent(ogpImageUrl)}`
+    : baseUrl;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -42,10 +51,15 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             message={shareMessage}
             missionId={mission.id}
             className="w-full"
+            url={shareUrl}
           >
             Xでシェア
           </ShareTwitterButton>
-          <ShareFacebookButton missionId={mission.id} className="w-full">
+          <ShareFacebookButton
+            missionId={mission.id}
+            className="w-full"
+            url={shareUrl}
+          >
             Facebookでシェア
           </ShareFacebookButton>
           {/* 内部で判定しておりモバイルのみ表示 */}
@@ -57,6 +71,7 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             className="w-full md:hidden"
             message={shareMessage}
             missionId={mission.id}
+            url={shareUrl}
           >
             その他のサービスにシェア
           </ShareButton>
