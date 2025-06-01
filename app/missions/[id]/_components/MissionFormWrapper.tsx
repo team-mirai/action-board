@@ -2,6 +2,7 @@
 
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -92,6 +93,13 @@ export function MissionFormWrapper({
             <p className="text-sm font-medium text-gray-800">
               このミッションは達成済みです。
             </p>
+            <Button
+              onClick={() => setIsDialogOpen(true)}
+              className="mt-2"
+              variant="outline"
+            >
+              シェアする
+            </Button>
           </div>
         )}
 
@@ -115,13 +123,19 @@ export function MissionFormWrapper({
         />
 
         {!completed && (
-          <SubmitButton
-            pendingText="登録中..."
-            className="w-full md:max-w-48 mx-auto"
-            disabled={isButtonDisabled || isSubmitting}
-          >
-            {buttonLabel}
-          </SubmitButton>
+          <>
+            <SubmitButton
+              pendingText="登録中..."
+              size="lg"
+              disabled={isButtonDisabled || isSubmitting}
+            >
+              {buttonLabel}
+            </SubmitButton>
+            <p className="text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </p>
+          </>
         )}
       </form>
 

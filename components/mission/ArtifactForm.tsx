@@ -47,21 +47,21 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">
-          達成報告フォーム - {artifactConfig.displayName}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">{artifactConfig.prompt}</p>
+        <CardTitle className="text-lg">達成報告フォーム</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          ミッションを完了したら、達成報告しましょう！
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactLink">成果物のリンク</Label>
+            <Label htmlFor="artifactLink">{mission.artifact_label}</Label>
             <Input
               type="url"
               name="artifactLink"
               id="artifactLink"
-              placeholder="https://example.com"
+              placeholder={`${mission.artifact_label}を入力してください`}
               disabled={disabled}
               required
             />
@@ -71,12 +71,11 @@ export function ArtifactForm({
         {/* テキスト入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.TEXT.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactText">成果物のテキスト</Label>
-            <Textarea
+            <Label htmlFor="artifactText">{mission.artifact_label}</Label>
+            <Input
               name="artifactText"
               id="artifactText"
-              placeholder="成果物のテキストを入力してください"
-              rows={5}
+              placeholder={`${mission.artifact_label}を入力してください`}
               disabled={disabled}
               required
             />
@@ -169,7 +168,7 @@ export function ArtifactForm({
           <Textarea
             name="artifactDescription"
             id="artifactDescription"
-            placeholder="達成内容に関する補足説明 (任意)"
+            placeholder="達成内容に関して補足説明があれば入力してください"
             rows={3}
             disabled={disabled}
           />

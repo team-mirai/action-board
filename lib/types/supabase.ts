@@ -276,6 +276,7 @@ export type Database = {
       };
       missions: {
         Row: {
+          artifact_label: string | null;
           content: string | null;
           created_at: string;
           difficulty: number;
@@ -289,6 +290,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
           difficulty: number;
@@ -302,6 +304,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          artifact_label?: string | null;
           content?: string | null;
           created_at?: string;
           difficulty?: number;
