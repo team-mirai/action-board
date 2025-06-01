@@ -300,7 +300,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       const yearsToWait = 18 - age;
       const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
       setAgeError(
-        `公職選挙法により18歳以上の方のみ選挙運動に参加できます。${waitText}参画できますので、その日を楽しみにお待ちください！`,
+        `18歳以上の方のみご登録いただけます。${waitText}参画できますので、その日を楽しみにお待ちください！`,
       );
       setIsFormValid(false);
       return false;
