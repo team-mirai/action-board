@@ -1,57 +1,17 @@
-import { signUpAction } from "@/app/actions";
-import { FormMessage, type Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import type { Message } from "@/components/form-message";
 import Image from "next/image";
-import Link from "next/link";
-import { SmtpMessage } from "../smtp-message";
+import SignUpForm from "./SignUpForm";
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
-  if ("message" in searchParams) {
-    return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-        <FormMessage message={searchParams} />
-      </div>
-    );
-  }
-
   return (
-    <>
-      <form className="flex flex-col min-w-72 max-w-72 mx-auto">
-        <div className="flex justify-center items-center m-4">
-          <Image src="/img/logo.png" alt="logo" width={114} height={96} />
-        </div>
-        <h1 className="text-2xl font-medium text-center mb-2">
-          チームみらいに参画する
-        </h1>
-        <p className="text-sm text-foreground text-center">
-          すでに参画済みの方は{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
-            こちら
-          </Link>
-        </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
-            サインアップ
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
-      <SmtpMessage />
-    </>
+    <div className="flex-1 flex flex-col min-w-72">
+      <div className="flex justify-center items-center m-4">
+        <Image src="/img/logo.png" alt="logo" width={114} height={96} />
+      </div>
+      <SignUpForm searchParams={searchParams} />
+    </div>
   );
 }

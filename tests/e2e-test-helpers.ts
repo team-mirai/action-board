@@ -44,12 +44,27 @@ export async function assertAuthState(
 ): Promise<void> {
   if (isLoggedIn) {
     // ログイン時はアバターアイコンが表示されること
-    await expect(page.getByTestId("avatar")).toBeVisible();
+    await expect(await page.getByRole("menu")).toBeVisible();
+    await page.getByRole("menu").click();
+    await expect(
+      page.getByRole("menuitem", { name: "ログアウト" }),
+    ).toBeVisible();
+    await page.getByRole("menu").click();
   } else {
     // 未ログイン時はログインとサインアップリンクが表示されること
-    await expect(page.getByRole("link", { name: "ログイン" })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "サインアップ" }),
-    ).toBeVisible();
+    if (await page.getByRole("menu").isVisible()) {
+      await page.getByRole("menu").click();
+      await expect(
+        page.getByRole("menuitem", { name: "ログイン" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("menuitem", { name: "サインアップ" }),
+      ).toBeVisible();
+    } else {
+      await expect(page.getByRole("link", { name: "ログイン" })).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "サインアップ" }),
+      ).toBeVisible();
+    }
   }
 }

@@ -1,13 +1,20 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { dateTimeFormatter } from "@/utils/formatter";
-import type { Tables } from "@/utils/types/supabase";
+import { dateTimeFormatter } from "@/lib/formatter";
+import type { Tables } from "@/lib/types/supabase";
 import Link from "next/link";
+import { Button } from "./ui/button";
+import UserAvatar from "./user-avatar";
 
 interface ActivityTimelineProps {
   timeline: Tables<"activity_timeline_view">[];
+  hasNext: boolean;
+  onLoadMore?: () => void;
 }
 
-export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
+export function ActivityTimeline({
+  timeline,
+  hasNext,
+  onLoadMore,
+}: ActivityTimelineProps) {
   return (
     <div className="flex flex-col gap-4">
       {timeline.length === 0 && <div>活動履歴がありません</div>}
@@ -17,10 +24,13 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
           className="flex flex-row gap-2 items-center"
         >
           <Link href={`/users/${activity.user_id}`}>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-              <AvatarFallback>アイコン</AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              className="w-10 h-10"
+              userProfile={{
+                name: activity.name,
+                avatar_url: activity.avatar_url,
+              }}
+            />
           </Link>
           <div>
             <div className="text-sm">
@@ -34,6 +44,11 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
           </div>
         </div>
       ))}
+      {hasNext && (
+        <Button variant="outline" onClick={onLoadMore}>
+          もっと見る
+        </Button>
+      )}
     </div>
   );
 }

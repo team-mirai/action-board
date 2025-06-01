@@ -40,6 +40,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Jest
+jest-report/
+
 # Playwright
 test-results/
 playwright-report/
+*storybook.log
+
+copilot-instructions.md
+# Sentry Config File
+.env.sentry-build-plugin

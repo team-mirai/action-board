@@ -4,7 +4,6 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { SmtpMessage } from "../smtp-message";
 
 export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
@@ -18,15 +17,19 @@ export default async function ForgotPassword(props: {
         </div>
         <h1 className="text-2xl font-medium">パスワードを忘れた方</h1>
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
+          <Label htmlFor="email">メールアドレス</Label>
+          <Input
+            name="email"
+            placeholder="you@example.com"
+            required
+            autoComplete="username"
+          />
           <SubmitButton formAction={forgotPasswordAction}>
             パスワードリセットメールを送信
           </SubmitButton>
           <FormMessage message={searchParams} />
         </div>
       </form>
-      <SmtpMessage />
     </>
   );
 }

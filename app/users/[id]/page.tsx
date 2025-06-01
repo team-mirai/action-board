@@ -1,15 +1,19 @@
-import { ActivityTimeline } from "@/components/activity-timeline";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/utils/supabase/client";
+import UserAvatar from "@/components/user-avatar";
+import { getAvatarUrl } from "@/lib/avatar";
+import { createClient } from "@/lib/supabase/client";
 import { MapPin } from "lucide-react";
+import UserDetailActivities from "./user-detail-activities";
+
+const PAGE_SIZE = 20;
 
 type Params = {
   id: string;
 };
 
 type Props = {
-  params: Params;
+  params: Promise<Params>;
 };
 
 export default async function UserDetailPage({ params }: Props) {
@@ -22,22 +26,25 @@ export default async function UserDetailPage({ params }: Props) {
     .select("*")
     .eq("id", id)
     .single();
+  if (!user) return <div>ユーザーが見つかりません</div>;
 
   // 活動タイムライン取得
   const { data: timeline } = await supabase
     .from("activity_timeline_view")
     .select("*")
-    .order("created_at", { ascending: false });
+    .eq("user_id", id)
+    .order("created_at", { ascending: false })
+    .limit(PAGE_SIZE);
 
-  if (!user) return <div>ユーザーが見つかりません</div>;
+  const { count } = await supabase
+    .from("activity_timeline_view")
+    .select("*", { count: "exact" })
+    .eq("user_id", id);
 
   return (
     <div className="flex flex-col items-center p-4 gap-4">
       <div className="flex flex-col items-center">
-        <Avatar className="w-16 h-16">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-          <AvatarFallback>アイコン</AvatarFallback>
-        </Avatar>
+        <UserAvatar userProfile={user} size="2xl" />
         <div className="text-xl font-bold mt-2">
           {user.x_username || user.name}
         </div>
@@ -50,7 +57,12 @@ export default async function UserDetailPage({ params }: Props) {
         <div className="flex flex-row justify-between items-center mb-2">
           <span className="text-lg font-bold">活動タイムライン</span>
         </div>
-        <ActivityTimeline timeline={timeline || []} />
+        <UserDetailActivities
+          userId={id}
+          initialTimeline={timeline || []}
+          pageSize={PAGE_SIZE}
+          totalCount={count || 0}
+        />
       </Card>
     </div>
   );

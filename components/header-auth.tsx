@@ -1,8 +1,8 @@
 import { signOutAction } from "@/app/actions";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import MyAvatar from "./my-avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,20 +19,11 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("private_users")
-    .select("name")
-    .single();
-
   return user /* && profile */ ? (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar className="w-8 h-8" data-testid="avatar">
-            <AvatarFallback className="bg-emerald-100 text-emerald-700 font-medium">
-              {profile?.name.substring(0, 1) ?? "ユ"}
-            </AvatarFallback>
-          </Avatar>
+        <DropdownMenuTrigger role="menu">
+          <MyAvatar className="w-8 h-8" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
@@ -42,14 +33,29 @@ export default async function AuthButton() {
         >
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
+              <Link href="/">ダッシュボード</Link>
+            </DropdownMenuItem>
+            {/*
+            <DropdownMenuItem asChild>
+              <Link href="/missions">ミッション</Link>
+            </DropdownMenuItem>
+            */}
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild>
               <Link href="/settings/profile">アカウント</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>お知らせ</DropdownMenuItem>
+            <DropdownMenuItem asChild>お知らせ</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <form action={signOutAction}>
             <DropdownMenuItem>
-              <button type="submit" className="w-full text-left cursor-default">
+              <button
+                type="submit"
+                className="w-full text-left cursor-default"
+                data-testid="sign-out"
+              >
                 ログアウト
               </button>
             </DropdownMenuItem>

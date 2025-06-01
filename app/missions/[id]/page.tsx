@@ -1,86 +1,85 @@
-import { achieveMissionAction } from "@/app/actions";
-import { SubmitButton } from "@/components/submit-button";
-import { createClient } from "@/utils/supabase/server";
-import type { User } from "@supabase/supabase-js";
+import { MissionDetails } from "@/components/mission/MissionDetails";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { generateRootMetadata } from "@/lib/metadata";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { LogIn, Shield } from "lucide-react";
+import Link from "next/link";
+import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
+import { getMissionPageData } from "./_lib/data";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-type buttonLabelProps = {
-  authUser: User | null;
-  achievement: {
-    created_at: string;
-    id: string;
-    mission_id: string | null;
-    user_id: string | null;
-  } | null;
-};
-function buttonLabel({ authUser, achievement }: buttonLabelProps) {
-  if (authUser === null) {
-    return "ログインしてください";
-  }
-
-  if (achievement !== null) {
-    return "このミッションは完了済みです";
-  }
-
-  return "完了する";
-}
+// メタデータ生成を外部関数に委譲
+export const generateMetadata = generateRootMetadata;
 
 export default async function MissionPage({ params }: Props) {
-  const { id } = await params;
-  const supabase = await createClient();
-
-  // 認証状態に応じてボタンを変化させるため、認証ユーザーを取得
+  const supabase = await createServerClient();
   const {
-    data: { user: authUser },
+    data: { user },
   } = await supabase.auth.getUser();
 
-  // ミッション情報を取得
-  const { data: mission } = await supabase
-    .from("missions")
-    .select()
-    .eq("id", id)
-    .single();
+  const { id } = await params;
+  const pageData = await getMissionPageData(id, user?.id);
 
-  if (!mission) {
-    throw new Error("Mission not found");
+  if (!pageData) {
+    return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  // 達成済みのものは完了ボタンをdisabledにするため、達成状況も取得
-  const { data: user } = await supabase
-    .from("private_users")
-    .select("id")
-    .single(); // 認証していない場合にはnullになる可能性がある
-
-  // 達成状況の取得
-  let achievement = null;
-
-  if (user?.id) {
-    const { data: achievementData } = await supabase
-      .from("achievements")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("mission_id", mission.id)
-      .single();
-
-    achievement = achievementData;
-  }
+  const { mission, userAchievements, submissions, userAchievementCount } =
+    pageData;
 
   return (
-    <div className="flex flex-col">
-      <h1>{mission.title}</h1>
-      <p>{mission.content}</p>
-      <form className="flex-1 flex flex-col min-w-64">
-        <SubmitButton
-          pendingText="登録中..."
-          formAction={achieveMissionAction}
-          disabled={authUser === null || achievement !== null}
-        >
-          {buttonLabel({ authUser, achievement })}
-        </SubmitButton>
-      </form>
+    <div className="container mx-auto max-w-4xl p-4">
+      <div className="flex flex-col gap-6 max-w-lg mx-auto">
+        <MissionDetails mission={mission} />
+
+        {user ? (
+          <MissionWithSubmissionHistory
+            mission={mission}
+            authUser={user}
+            initialUserAchievementCount={userAchievementCount}
+            initialSubmissions={submissions}
+            missionId={id}
+          />
+        ) : (
+          <Card className="border-dashed border-2 border-muted-foreground/25">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                <Shield className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <CardTitle className="text-xl">
+                ログインしてミッションを達成しよう
+              </CardTitle>
+              <CardDescription>
+                ミッションの達成を報告するには、アカウントにログインしてください。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Link href="/sign-in">
+                <Button className="w-full sm:w-auto">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  ログインする
+                </Button>
+              </Link>
+              <p className="mt-4 text-sm text-muted-foreground">
+                アカウントをお持ちでない方は{" "}
+                <Link href="/sign-up" className="text-primary hover:underline">
+                  こちらから登録
+                </Link>
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
