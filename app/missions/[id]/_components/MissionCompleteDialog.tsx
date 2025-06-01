@@ -64,7 +64,11 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             Facebookでシェア
           </ShareFacebookButton>
           {/* 内部で判定しておりモバイルのみ表示 */}
-          <ShareLineButton className="w-full md:hidden" missionId={mission.id}>
+          <ShareLineButton
+            className="w-full md:hidden"
+            missionId={mission.id}
+            url={shareUrl}
+          >
             Lineでシェア
           </ShareLineButton>
           {/* navigator.share()を使っているのでモバイルのみ表示 */}
