@@ -100,15 +100,20 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   filename = "cloudbuild.yaml"
 
   substitutions = {
-    _REGION                    = var.region
-    _SERVICE_NAME              = "${var.app_name}-${var.environment}"
-    _REPOSITORY_NAME           = var.repository_name
-    _SUPABASE_PROJECT_ID       = var.SUPABASE_PROJECT_ID
-    _SUPABASE_SMTP_HOST        = var.SUPABASE_SMTP_HOST
-    _SUPABASE_SMTP_USER        = var.SUPABASE_SMTP_USER
-    _SUPABASE_SMTP_ADMIN_EMAIL = var.SUPABASE_SMTP_ADMIN_EMAIL
-    _SUPABASE_SMTP_SENDER_NAME = var.SUPABASE_SMTP_SENDER_NAME
-    _SUPABASE_SITE_URL         = var.SUPABASE_SITE_URL
-    _SUPABASE_ADDITIONAL_REDIRECT_URLS  = "${var.SUPABASE_SITE_URL}/auth/callback/"
+    _REGION                            = var.region
+    _SERVICE_NAME                      = "${var.app_name}-${var.environment}"
+    _REPOSITORY_NAME                   = var.repository_name
+    _NEXT_PUBLIC_SUPABASE_URL          = var.NEXT_PUBLIC_SUPABASE_URL
+    _NEXT_PUBLIC_SUPABASE_ANON_KEY     = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    _NEXT_PUBLIC_SENTRY_DSN            = var.NEXT_PUBLIC_SENTRY_DSN
+    _NEXT_PUBLIC_GA_ID                 = var.NEXT_PUBLIC_GA_ID
+    _NEXT_PUBLIC_SENTRY_ENVIRONMENT    = var.environment
+    _SUPABASE_PROJECT_ID               = var.SUPABASE_PROJECT_ID
+    _SUPABASE_SMTP_HOST                = var.SUPABASE_SMTP_HOST
+    _SUPABASE_SMTP_USER                = var.SUPABASE_SMTP_USER
+    _SUPABASE_SMTP_ADMIN_EMAIL         = var.SUPABASE_SMTP_ADMIN_EMAIL
+    _SUPABASE_SMTP_SENDER_NAME         = var.SUPABASE_SMTP_SENDER_NAME
+    _SUPABASE_SITE_URL                 = var.SUPABASE_SITE_URL
+    _SUPABASE_ADDITIONAL_REDIRECT_URLS = "${var.SUPABASE_SITE_URL}/auth/callback/"
   }
 }

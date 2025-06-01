@@ -17,6 +17,14 @@ const geistSans = Geist({
 //metadata.tsxでmetadataを管理
 export const generateMetadata = generateRootMetadata;
 
+// Next.js 15でのviewport設定
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

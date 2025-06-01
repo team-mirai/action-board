@@ -14,9 +14,16 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const config = {
   title: "チームみらい アクションボード",
   description:
-    "チームみらいのアクションボードです。テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
+    "選挙活動をもっと身近に。選挙活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
   defaultImage: "/img/ogp-default.png",
-} as const;
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: "/apple-icon.png",
+  },
+};
 
 // ==========================================
 // URL検証（Supabase Storage対応）
@@ -61,6 +68,7 @@ export function createDefaultMetadata(): Metadata {
       description: config.description,
       images: [`${defaultUrl}${config.defaultImage}`],
     },
+    icons: config.icons,
   };
 }
 
@@ -86,6 +94,7 @@ export function createOgpMetadata(imageUrl: string): Metadata {
       description: config.description,
       images: [sanitizedImageUrl],
     },
+    icons: config.icons,
   };
 }
 
