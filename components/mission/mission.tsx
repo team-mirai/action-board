@@ -87,8 +87,8 @@ export default function Mission({
               )}
             >
               {achievementsCount !== undefined
-                ? `${achievementsCount.toLocaleString()}回達成`
-                : "0回達成"}
+                ? `みんなで${achievementsCount.toLocaleString()}回達成`
+                : "みんなで0回達成"}
             </span>
           </div>
           <div className="flex items-center gap-2">

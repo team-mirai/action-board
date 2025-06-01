@@ -59,6 +59,7 @@ export default async function Missions({
   let query = supabase
     .from("missions")
     .select()
+    .order("difficulty", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (!showAchievedMissions) {
