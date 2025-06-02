@@ -300,7 +300,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       const yearsToWait = 18 - age;
       const waitText = yearsToWait > 1 ? `あと${yearsToWait}年で` : "もうすぐ";
       setAgeError(
-        `18歳以上の方のみご登録いただけます。${waitText}参画できますので、その日を楽しみにお待ちください！`,
+        `18歳以上の方のみご登録いただけます。${waitText}登録できますので、その日を楽しみにお待ちください！`,
       );
       setIsFormValid(false);
       return false;
@@ -352,10 +352,10 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       className="flex flex-col min-w-72 max-w-72 mx-auto"
     >
       <h1 className="text-2xl font-medium text-center mb-2">
-        チームみらいで手を動かす
+        アカウントを作成する
       </h1>
       <p className="text-sm text-foreground text-center">
-        すでに参画済みの方は{" "}
+        すでに登録済みの方は{" "}
         <Link className="text-primary font-medium underline" href="/sign-in">
           こちら
         </Link>
