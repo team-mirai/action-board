@@ -17,7 +17,12 @@
 
 ## サービスの起動方法
 
-1. `.env.example` を `.env.local` にリネーム
+1. `.env.local` ファイルの作成
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   `.env.example` ファイルをコピーして `.env.local` を作成します。
 
 2. Supabase のローカル環境を起動
 
