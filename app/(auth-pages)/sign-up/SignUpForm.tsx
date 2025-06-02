@@ -352,7 +352,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       className="flex flex-col min-w-72 max-w-72 mx-auto"
     >
       <h1 className="text-2xl font-medium text-center mb-2">
-        チームみらいに参画する
+        チームみらいで手を動かす
       </h1>
       <p className="text-sm text-foreground text-center">
         すでに参画済みの方は{" "}

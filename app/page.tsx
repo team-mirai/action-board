@@ -70,7 +70,7 @@ export default async function Home() {
                     size="lg"
                     className="min-w-72 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:via-teal-700 hover:to-emerald-800 text-white font-bold py-6 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
                   >
-                    <span className="text-lg">🚀 チームみらいに参画する</span>
+                    <span className="text-lg">🚀 チームみらいで手を動かす</span>
                   </Button>
                 </Link>
               </div>
