@@ -12,7 +12,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
       </div>
       <h1 className="text-2xl font-medium text-center mb-2">ログイン</h1>
       <p className="text-sm text-foreground text-center">
-        まだ参画していない方は{" "}
+        まだ登録していない方は{" "}
         <Link className="text-foreground font-medium underline" href="/sign-up">
           こちら
         </Link>
