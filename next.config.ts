@@ -41,4 +41,14 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: false,
+
+  // Upload source maps to enable readable stack traces in errors
+  // See the following for more information:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/sourcemaps/
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/build/#source-maps-options
+  sourcemaps: {
+    disable: !!process.env.CI,
+    ignore: ["**/node_modules/**", "**/.next/cache/**", "**/tests/**"],
+    deleteSourcemapsAfterUpload: true,
+  },
 });
