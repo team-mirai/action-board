@@ -64,7 +64,7 @@ test.describe("認証フロー", () => {
 
     // 5. サインアップ成功メッセージが表示されることを確認
     await expect(
-      page.getByText("参画頂きありがとうございます！"),
+      page.getByText("ご登録頂きありがとうございます！"),
     ).toBeVisible();
 
     // 6. サインインページに移動
