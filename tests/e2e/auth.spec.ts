@@ -27,7 +27,7 @@ test.describe("認証フロー", () => {
 
     await expect(page).toHaveURL("/sign-up");
     await expect(
-      page.getByRole("heading", { name: "チームみらいで手を動かす" }),
+      page.getByRole("heading", { name: "アカウントを作成する" }),
     ).toBeVisible();
 
     // 3. サインアップ情報を入力
@@ -106,7 +106,7 @@ test.describe("認証フロー", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(
-      page.getByRole("heading", { name: "チームみらいで手を動かす" }),
+      page.getByRole("heading", { name: "アカウントを作成する" }),
     ).toBeVisible();
     await expect(
       page.getByText("メールアドレス", { exact: true }),
