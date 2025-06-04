@@ -30,6 +30,8 @@ export default function Footer() {
             <Link
               href="https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
               className="text-muted-foreground hover:text-primary transition-colors duration-200"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               ご意見箱
             </Link>
