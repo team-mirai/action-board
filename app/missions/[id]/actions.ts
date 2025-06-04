@@ -1,9 +1,9 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
+import { grantMissionCompletionXp } from "@/lib/services/userLevel";
 import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert } from "@/lib/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
-import { encodedRedirect } from "@/lib/utils/utils";
 import { z } from "zod";
 
 // 基本スキーマ（共通項目）
@@ -377,9 +377,23 @@ export const achieveMissionAction = async (formData: FormData) => {
     }
   }
 
+  // ミッション達成時にXPを付与
+  const xpResult = await grantMissionCompletionXp(
+    authUser.id,
+    validatedMissionId,
+    achievement.id,
+  );
+
+  if (!xpResult.success) {
+    console.error("XP付与に失敗しました:", xpResult.error);
+    // XP付与の失敗はミッション達成の成功を妨げない
+  }
+
   return {
     success: true,
     message: "ミッションを達成しました！",
+    xpGranted: xpResult.xpGranted,
+    userLevel: xpResult.userLevel,
   };
 };
 
