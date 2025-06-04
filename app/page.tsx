@@ -112,7 +112,7 @@ export default async function Home() {
               </p>
             </div>
             <Link
-              href="https://silent-tent-c92.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
+              href="https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
               target="_blank"
               rel="noopener noreferrer"
             >

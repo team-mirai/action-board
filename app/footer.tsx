@@ -28,7 +28,7 @@ export default function Footer() {
               プライバシーポリシー
             </Link>
             <Link
-              href="https://silent-tent-c92.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
+              href="https://team-mirai.notion.site/204f6f56bae1800da8d5dd9c61dd7cd1?pvs=105"
               className="text-muted-foreground hover:text-primary transition-colors duration-200"
             >
               ご意見箱
