@@ -27,7 +27,7 @@ test.describe("認証フロー", () => {
 
     await expect(page).toHaveURL("/sign-up");
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アカウントを作成する" })
     ).toBeVisible();
 
     // 3. サインアップ情報を入力
@@ -64,7 +64,7 @@ test.describe("認証フロー", () => {
 
     // 5. サインアップ成功メッセージが表示されることを確認
     await expect(
-      page.getByText("ご登録頂きありがとうございます！"),
+      page.getByText("ご登録頂きありがとうございます！")
     ).toBeVisible();
 
     // 6. サインインページに移動
@@ -78,26 +78,20 @@ test.describe("認証フロー", () => {
     // 8. サインインボタンをクリック
     await page.getByRole("button", { name: "ログイン" }).click();
 
-    // 9. ホームページにリダイレクトされること (メール検証が必要なので失敗する可能性あり)
-    try {
-      await page.waitForURL("/", { timeout: 5000 });
-      // 10. ログイン状態であることを確認
-      await assertAuthState(page, true);
+    // 9. ホームページにリダイレクトされること
+    await page.waitForURL("/", { timeout: 5000 });
+    // 10. ログイン状態であることを確認
+    await assertAuthState(page, true);
 
-      // 11. ログアウト
-      await page.getByRole("menu").click();
-      await page.getByRole("menuitem", { name: "ログアウト" }).click();
+    // 11. ログアウト
+    await page.getByRole("menu").click();
+    await page.getByTestId("sign-out").click();
 
-      // 12. ログイン画面にリダイレクトされること
-      await page.waitForURL("/sign-in");
+    // 12. ログイン画面にリダイレクトされること
+    await page.waitForURL("/sign-in");
 
-      // 13. ログアウト状態であることを確認
-      await assertAuthState(page, false);
-    } catch (error) {
-      // メール検証が必要な場合は、ここでテストをスキップ
-      console.log("メール検証が必要なため、ログインテストはスキップされました");
-      test.skip();
-    }
+    // 13. ログアウト状態であることを確認
+    await assertAuthState(page, false);
   });
 
   test("サインアップページの表示と入力検証", async ({ page }) => {
@@ -106,14 +100,14 @@ test.describe("認証フロー", () => {
 
     // 1. 必要な要素が表示されていることを確認
     await expect(
-      page.getByRole("heading", { name: "アカウントを作成する" }),
+      page.getByRole("heading", { name: "アカウントを作成する" })
     ).toBeVisible();
     await expect(
-      page.getByText("メールアドレス", { exact: true }),
+      page.getByText("メールアドレス", { exact: true })
     ).toBeVisible();
     await expect(page.getByText("パスワード", { exact: true })).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "サインアップ" }),
+      page.getByRole("button", { name: "サインアップ" })
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
 
@@ -142,25 +136,25 @@ test.describe("認証フロー", () => {
 
     // 2. 空の入力ではサインアップボタンが無効化されていることを確認
     await expect(
-      page.getByRole("button", { name: "サインアップ" }),
+      page.getByRole("button", { name: "サインアップ" })
     ).toBeDisabled();
 
     // 3. メールのみを入力して無効化されていることを確認
     await page.fill('input[name="email"]', "test@example.com");
     await expect(
-      page.getByRole("button", { name: "サインアップ" }),
+      page.getByRole("button", { name: "サインアップ" })
     ).toBeDisabled();
 
     // 4. パスワードのみを入力して無効化されていることを確認
     await page.fill('input[name="email"]', "");
     await page.fill('input[name="password"]', "password123");
     await expect(
-      page.getByRole("button", { name: "サインアップ" }),
+      page.getByRole("button", { name: "サインアップ" })
     ).toBeDisabled();
 
     await page.fill('input[name="email"]', "test@example.com");
     await expect(
-      page.getByRole("button", { name: "サインアップ" }),
+      page.getByRole("button", { name: "サインアップ" })
     ).toBeEnabled();
   });
 
@@ -171,13 +165,13 @@ test.describe("認証フロー", () => {
     // 1. 必要な要素が表示されていることを確認
     await expect(page.getByRole("heading", { name: "ログイン" })).toBeVisible();
     await expect(
-      page.getByText("メールアドレス", { exact: true }),
+      page.getByText("メールアドレス", { exact: true })
     ).toBeVisible();
     await expect(page.getByText("パスワード", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "ログイン" })).toBeVisible();
     await expect(page.getByRole("link", { name: "こちら" })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "パスワードを忘れた方" }),
+      page.getByRole("link", { name: "パスワードを忘れた方" })
     ).toBeVisible();
 
     // 2. 空の入力で送信するとエラーになることを確認
