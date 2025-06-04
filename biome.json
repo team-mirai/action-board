@@ -7,7 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["**/.next/**", "**/node_modules/**", "**/supabase/.temp/**"]
+    "ignore": [
+      "**/.next/**",
+      "**/node_modules/**",
+      "**/supabase/.temp/**",
+      "**/playwright-report/**"
+    ]
   },
   "formatter": {
     "enabled": true,

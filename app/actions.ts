@@ -92,7 +92,7 @@ export const signUpActionWithState = async (
   return encodedRedirect(
     "success",
     "/sign-up",
-    "参画頂きありがとうございます！\n" +
+    "ご登録頂きありがとうございます！\n" +
       "認証メールをお送りしました。\n" +
       "メールに記載のURLをクリックして、アカウントを有効化してください。",
   );
