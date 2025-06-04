@@ -4,7 +4,7 @@ VALUES
     gen_random_uuid(),
     'ボランティアに登録しよう',
     '/img/mission_fallback.svg',
-    '私たち「チームみらい」はまさに今、「あなた」のお力を必要としています。ぜひボランティア登録をして一緒に、未来をより良いものへと変えていきましょう！<br/><a href="https://docs.google.com/forms/d/e/1FAIpQLScBqdkRNCRjy5OfLMM-drRWMCZDLrqx5YQVemhLsiH93KNq8g/viewform" target="_blank" rel="noopener noreferrer">ボランティア登録はこちらから</a>',
+    「チームみらい」はまさに今、あなたのお力を必要としています。ぜひボランティア登録をして一緒に、未来をより良いものへと変えていきましょう！<br/><a href="https://docs.google.com/forms/d/e/1FAIpQLScBqdkRNCRjy5OfLMM-drRWMCZDLrqx5YQVemhLsiH93KNq8g/viewform" target="_blank" rel="noopener noreferrer">ボランティア登録はこちらから</a>',
     1,
     NULL,
     'TEXT',
