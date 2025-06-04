@@ -187,34 +187,6 @@ export const achieveMissionAction = async (formData: FormData) => {
         error: "あなたはこのミッションの達成回数の上限に達しています。",
       };
     }
-
-    // ミッション全体の達成回数を取得（全体の上限がある場合）
-    const { data: countData, error: countError } = await supabase
-      .from("mission_achievement_count_view")
-      .select("achievement_count")
-      .eq("mission_id", validatedMissionId)
-      .single();
-
-    if (countError) {
-      console.error(`Achievement count fetch error: ${countError.message}`);
-      return {
-        success: false,
-        error: "達成回数の取得に失敗しました。",
-      };
-    }
-
-    // ミッション全体の達成回数が上限に達しているかチェック
-    if (
-      countData &&
-      typeof countData.achievement_count === "number" &&
-      typeof missionData.max_achievement_count === "number" &&
-      countData.achievement_count >= missionData.max_achievement_count
-    ) {
-      return {
-        success: false,
-        error: "このミッションは全体の達成回数の上限に達しています。",
-      };
-    }
   }
 
   // ミッション達成を記録

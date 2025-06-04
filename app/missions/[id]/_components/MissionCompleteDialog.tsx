@@ -14,6 +14,7 @@ import { ShareButton } from "./ShareButton";
 import { ShareFacebookButton } from "./ShareFacebookButton";
 import { ShareLineButton } from "./ShareLineButton";
 import { ShareTwitterButton } from "./ShareTwitterButton";
+import { ShareUrlButton } from "./ShareUrlButton";
 
 type Props = {
   isOpen: boolean;
@@ -22,28 +23,28 @@ type Props = {
 };
 
 export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
-  const message = `ミッション「${mission.title}」が完了しました！`;
-  const shareMessage = `チームみらい Action Board で${message} #チームみらい\n`;
+  const message = `「${mission.title}」を達成しました！`;
+  const shareMessage = `チームみらいアクションボードで${message} #チームみらい\n`;
 
   // OGP画像付きURLを生成
-  const baseUrl = `${window.location.origin}/missions/${mission.id}`;
-  const ogpImageUrl = mission.ogp_image_url; // ミッションにOGP画像URLがある場合
-
-  // OGPパラメータ付きURLを生成
-  const shareUrl = ogpImageUrl
-    ? `${baseUrl}?ogp=${encodeURIComponent(ogpImageUrl)}`
-    : baseUrl;
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/missions/${mission.id}?type=complete`
+      : "";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-xl">
-            おめでとう！
+            おめでとうございます！
           </DialogTitle>
           <DialogDescription className="text-center">
             {message}
           </DialogDescription>
+          {mission.ogp_image_url && (
+            <img src={mission.ogp_image_url} alt="ミッションクリア" />
+          )}
         </DialogHeader>
 
         <div className="flex flex-col gap-3 py-4">
@@ -63,7 +64,11 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
             Facebookでシェア
           </ShareFacebookButton>
           {/* 内部で判定しておりモバイルのみ表示 */}
-          <ShareLineButton className="w-full md:hidden" missionId={mission.id}>
+          <ShareLineButton
+            className="w-full md:hidden"
+            missionId={mission.id}
+            url={shareUrl}
+          >
             Lineでシェア
           </ShareLineButton>
           {/* navigator.share()を使っているのでモバイルのみ表示 */}
@@ -75,6 +80,9 @@ export function MissionCompleteDialog({ isOpen, onClose, mission }: Props) {
           >
             その他のサービスにシェア
           </ShareButton>
+          <ShareUrlButton url={shareUrl} className="w-full">
+            シェアURLをコピー
+          </ShareUrlButton>
         </div>
 
         <DialogFooter>

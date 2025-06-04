@@ -17,7 +17,14 @@
 
 ## サービスの起動方法
 
-1. Supabase のローカル環境を起動
+1. `.env.local` ファイルの作成
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   `.env.example` ファイルをコピーして `.env.local` を作成します。
+
+2. Supabase のローカル環境を起動
 
    ```bash
    supabase start
@@ -26,13 +33,11 @@
 - Studio URL: http://127.0.0.1:54323 → Supabaseのダッシュボード
 - Inbucket URL: http://127.0.0.1:54324 → ローカルのメールが届きます
 
-2. `.env.example` を `.env.local` にリネームし、以下の値を更新:
+3. `.env.local` ファイルの、以下の値を更新:
 
    ```
    NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[`supabase start` 実行後に表示される SUPABASE プロジェクトの API ANON KEY を入力]
 
-   # ローカル開発時は http://localhost:54323/ にアクセスして Cmd+K でコマンドメニューから 「Copy service API key」 で取得できます。
    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
    # SentryのDSNを指定します。開発時は空でもかまいません。
@@ -48,8 +53,13 @@
 
   supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。
 
+4. 必要なパッケージをインストール:
 
-4. Next.js のローカル開発サーバーを起動:
+   ```bash
+   npm install
+   ```
+
+5. Next.js のローカル開発サーバーを起動:
 
    ```bash
    npm run dev

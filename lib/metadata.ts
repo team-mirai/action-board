@@ -2,7 +2,9 @@
 // 【最小限版】lib/metadata.ts - 必要最低限の機能のみ
 // ==========================================
 
+import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
 
 const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -13,9 +15,24 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const config = {
   title: "チームみらい アクションボード",
   description:
-    "チームみらいのアクションボードです。テクノロジーで政治をかえる。あなたと一緒に未来をつくる。",
+    "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
   defaultImage: "/img/ogp-default.png",
-} as const;
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: "/apple-icon.png",
+  },
+};
+
+// font-family設定
+export const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
+  weight: ["400", "500", "700"],
+});
 
 // ==========================================
 // URL検証（Supabase Storage対応）
@@ -60,6 +77,10 @@ export function createDefaultMetadata(): Metadata {
       description: config.description,
       images: [`${defaultUrl}${config.defaultImage}`],
     },
+    icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
   };
 }
 
@@ -85,6 +106,10 @@ export function createOgpMetadata(imageUrl: string): Metadata {
       description: config.description,
       images: [sanitizedImageUrl],
     },
+    icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
   };
 }
 
@@ -94,18 +119,34 @@ export function createOgpMetadata(imageUrl: string): Metadata {
 
 export async function generateRootMetadata({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params?: Promise<{ [key: string]: string | undefined }>;
 }): Promise<Metadata> {
   try {
-    const params = await searchParams;
+    const supabase = await createClient();
+    const searchParamsResolved = await searchParams;
+    const paramsResolved = await params;
 
-    // paramsがnullまたはundefinedの場合の安全な処理
-    if (!params) {
+    // searchParamsがnullまたはundefinedの場合の安全な処理
+    if (!searchParamsResolved) {
       return createDefaultMetadata();
     }
 
-    const ogpImageUrl = typeof params.ogp === "string" ? params.ogp : null;
+    let ogpImageUrl: string | null = null;
+
+    // type=completeの場合、paramsからミッションIDを取得してogp_image_urlを取得
+    if (searchParamsResolved.type === "complete" && paramsResolved?.id) {
+      const missionId = paramsResolved.id;
+      const { data: mission } = await supabase
+        .from("missions")
+        .select("ogp_image_url")
+        .eq("id", missionId)
+        .single();
+
+      ogpImageUrl = mission?.ogp_image_url || null;
+    }
 
     if (ogpImageUrl) {
       const isValid = isValidImageUrl(ogpImageUrl);
