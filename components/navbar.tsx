@@ -1,4 +1,3 @@
-import { signOutAction } from "@/app/actions";
 import HeaderAuth from "@/components/header-auth";
 import {
   DropdownMenu,
@@ -39,7 +38,7 @@ export default async function Navbar() {
             <HeaderAuth />
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger aria-label="ナビゲーションメニューを開く">
                 <Menu role="menu" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
