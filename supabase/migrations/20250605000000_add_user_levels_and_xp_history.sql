@@ -55,17 +55,6 @@ CREATE POLICY "Users can view their own level"
     ON user_levels FOR SELECT
     USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own level"
-    ON user_levels FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
-
--- サービスロールからのすべての操作を許可（バックエンド処理用）
-CREATE POLICY "Service role can manage all user levels"
-    ON user_levels FOR ALL
-    USING (auth.role() = 'service_role')
-    WITH CHECK (auth.role() = 'service_role');
-
 -- 他のユーザーのレベル情報も参照可能（ランキング表示などのため）
 CREATE POLICY "All users can view other user levels"
     ON user_levels FOR SELECT
@@ -76,11 +65,5 @@ CREATE POLICY "All users can view other user levels"
 CREATE POLICY "Users can view their own xp transactions"
     ON xp_transactions FOR SELECT
     USING (auth.uid() = user_id);
-
--- サービスロールからのすべての操作を許可（バックエンド処理用）
-CREATE POLICY "Service role can manage all xp transactions"
-    ON xp_transactions FOR ALL
-    USING (auth.role() = 'service_role')
-    WITH CHECK (auth.role() = 'service_role');
 
 -- XP付与はサービス層で実装
