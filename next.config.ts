@@ -48,7 +48,7 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/sourcemaps/
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/build/#source-maps-options
   sourcemaps: {
-    disable: !!process.env.CI,
+    disable: !process.env.UPLOAD_SOURCEMAPS,
     ignore: ["**/node_modules/**", "**/.next/cache/**", "**/tests/**"],
     deleteSourcemapsAfterUpload: true,
   },
