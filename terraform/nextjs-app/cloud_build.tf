@@ -46,6 +46,12 @@ resource "google_secret_manager_secret_iam_member" "supabase_smtp_pass_accessor"
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "sentry_auth_token_accessor" {
+  secret_id = google_secret_manager_secret.sentry_auth_token.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
 
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {

@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: process.env.CI ? "standalone" : undefined,
+  output: process.env.STANDALONE_BUILD ? "standalone" : undefined,
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
@@ -18,8 +18,8 @@ export default withSentryConfig(nextConfig, {
   org: "team-mirai",
   project: "action-board",
 
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
+  // Suppress logs unless UPLOAD_SOURCEMAPS is set
+  silent: !process.env.UPLOAD_SOURCEMAPS,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

@@ -141,3 +141,9 @@ variable "SUPABASE_SITE_URL" {
   description = "Supabase Site URL"
   type        = string
 }
+
+variable "SENTRY_AUTH_TOKEN" {
+  description = "Sentry Auth Token (sensitive)"
+  type        = string
+  sensitive   = true
+}
