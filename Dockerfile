@@ -20,6 +20,9 @@ ENV UPLOAD_SOURCEMAPS=true
 
 WORKDIR /app
 
+# CA certificates are required for HTTPS requests (Sentry)
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
