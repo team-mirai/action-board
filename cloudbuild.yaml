@@ -9,7 +9,7 @@ steps:
         npx supabase db push
         npx supabase config push
     env:
-      - 'CI=1'
+      - 'CI=true'
       - 'SMTP_ENABLED=true'
       - 'SMTP_HOST=${_SUPABASE_SMTP_HOST}'
       - 'SMTP_USER=${_SUPABASE_SMTP_USER}'
@@ -46,6 +46,8 @@ steps:
       - '--build-arg'
       - 'SENTRY_AUTH_TOKEN=$$SENTRY_AUTH_TOKEN'
       - '.'
+    env:
+      - 'CI=true'
     secretEnv:
       - SENTRY_AUTH_TOKEN
 
