@@ -2,6 +2,7 @@ import { getMyUserLevel } from "@/lib/services/userLevel";
 import { getProfile, getUser } from "@/lib/services/users";
 import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
+import { LevelProgress } from "./level-progress";
 import MyAvatar from "./my-avatar";
 import { Button } from "./ui/button";
 
@@ -39,15 +40,18 @@ export default async function Levels() {
           </div>
         </div>
         <div className="mt-6 bg-white py-8 px-4 rounded-md flex flex-col items-center">
-          <div className="flex items-center">
-            <div className="text-sm">獲得ポイント：</div>
-            <div className="flex items-baseline">
-              <div className="text-2xl font-bold ml-1">
-                {userLevel?.xp ?? ""}
+          {userLevel && <LevelProgress userLevel={userLevel} />}
+          {!userLevel && (
+            <div className="mt-4 text-center">
+              <div className="flex items-center">
+                <div className="text-sm">獲得ポイント：</div>
+                <div>
+                  <span className="font-bold text-2xl">0</span>
+                  <span className="font-bold">ポイント</span>
+                </div>
               </div>
-              <div className="text-sm font-bold">ポイント</div>
             </div>
-          </div>
+          )}
           <Link href="/missions">
             <Button
               variant="tertiary"
