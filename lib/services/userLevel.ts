@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
 
@@ -67,20 +69,20 @@ export async function getOrInitializeUserLevel(
 }
 
 /**
- * 手動でXPを付与する（ボーナスや調整用）
+ * XPトランザクションの記録とユーザーレベルの更新を行う共通処理
  */
-export async function grantXp(
+async function processXpTransaction(
   userId: string,
   xpAmount: number,
-  sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY" = "BONUS",
+  sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY",
   sourceId?: string,
   description?: string,
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
   const supabase = await createServiceClient();
 
   try {
-    // トランザクションを使用して整合性を保つ
-    const { data: transaction, error: transactionError } = await supabase
+    // XPトランザクションを記録
+    const { error: transactionError } = await supabase
       .from("xp_transactions")
       .insert({
         user_id: userId,
@@ -88,24 +90,27 @@ export async function grantXp(
         source_type: sourceType,
         source_id: sourceId,
         description: description || `${sourceType}による経験値調整`,
-      })
-      .select()
-      .single();
+      });
 
     if (transactionError) {
       console.error("Failed to create XP transaction:", transactionError);
       return { success: false, error: transactionError.message };
     }
 
-    // ユーザーレベル情報を更新
+    // ユーザーレベル情報を取得・初期化
     const currentLevel = await getOrInitializeUserLevel(userId);
     if (!currentLevel) {
-      return { success: false, error: "Failed to get user level" };
+      return {
+        success: false,
+        error: "ユーザーレベル情報の取得に失敗しました",
+      };
     }
 
+    // 新しいXPとレベルを計算
     const newXp = currentLevel.xp + xpAmount;
     const newLevel = calculateLevel(newXp);
 
+    // ユーザーレベルを更新
     const { data: updatedLevel, error: updateError } = await supabase
       .from("user_levels")
       .update({
@@ -119,14 +124,33 @@ export async function grantXp(
 
     if (updateError) {
       console.error("Failed to update user level:", updateError);
-      return { success: false, error: updateError.message };
+      return { success: false, error: "ユーザーレベルの更新に失敗しました" };
     }
 
     return { success: true, userLevel: updatedLevel };
   } catch (error) {
-    console.error("Error in grantXp:", error);
-    return { success: false, error: "Unknown error occurred" };
+    console.error("Error in processXpTransaction:", error);
+    return { success: false, error: "予期しないエラーが発生しました" };
   }
+}
+
+/**
+ * 手動でXPを付与する（ボーナスや調整用）
+ */
+export async function grantXp(
+  userId: string,
+  xpAmount: number,
+  sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY" = "BONUS",
+  sourceId?: string,
+  description?: string,
+): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
+  return processXpTransaction(
+    userId,
+    xpAmount,
+    sourceType,
+    sourceId,
+    description,
+  );
 }
 
 /**
@@ -265,56 +289,25 @@ export async function grantMissionCompletionXp(
 
     // 難易度に基づくXP計算
     const xpToGrant = calculateMissionXp(mission.difficulty);
+    const description = `ミッション「${mission.title}」達成による経験値獲得`;
 
-    // XP履歴を記録
-    const { error: transactionError } = await supabase
-      .from("xp_transactions")
-      .insert({
-        user_id: userId,
-        xp_amount: xpToGrant,
-        source_type: "MISSION_COMPLETION",
-        source_id: achievementId,
-        description: `ミッション「${mission.title}」達成による経験値獲得`,
-      });
+    // 共通のXP処理を実行
+    const result = await processXpTransaction(
+      userId,
+      xpToGrant,
+      "MISSION_COMPLETION",
+      achievementId,
+      description,
+    );
 
-    if (transactionError) {
-      console.error("Failed to create XP transaction:", transactionError);
-      return { success: false, error: "XP履歴の記録に失敗しました" };
-    }
-
-    // ユーザーレベル情報を更新
-    const currentLevel = await getOrInitializeUserLevel(userId);
-    if (!currentLevel) {
+    if (result.success) {
       return {
-        success: false,
-        error: "ユーザーレベル情報の取得に失敗しました",
+        success: true,
+        userLevel: result.userLevel,
+        xpGranted: xpToGrant,
       };
     }
-
-    const newXp = currentLevel.xp + xpToGrant;
-    const newLevel = calculateLevel(newXp);
-
-    const { data: updatedLevel, error: updateError } = await supabase
-      .from("user_levels")
-      .update({
-        xp: newXp,
-        level: newLevel,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", userId)
-      .select()
-      .single();
-
-    if (updateError) {
-      console.error("Failed to update user level:", updateError);
-      return { success: false, error: "ユーザーレベルの更新に失敗しました" };
-    }
-
-    return {
-      success: true,
-      userLevel: updatedLevel,
-      xpGranted: xpToGrant,
-    };
+    return result;
   } catch (error) {
     console.error("Error in grantMissionCompletionXp:", error);
     return { success: false, error: "予期しないエラーが発生しました" };
