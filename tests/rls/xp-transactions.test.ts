@@ -199,9 +199,17 @@ describe("xp_transactions テーブルのRLSテスト", () => {
     expect(data).toHaveLength(2);
 
     // 作成日時の降順でソートされているか確認
-    expect(new Date(data?.[0].created_at!).getTime()).toBeGreaterThanOrEqual(
-      new Date(data?.[1].created_at!).getTime()
-    );
+    expect(data?.[0].created_at).toBeDefined();
+    expect(data?.[1].created_at).toBeDefined();
+
+    const firstDate = data?.[0].created_at;
+    const secondDate = data?.[1].created_at;
+
+    if (firstDate && secondDate) {
+      expect(new Date(firstDate).getTime()).toBeGreaterThanOrEqual(
+        new Date(secondDate).getTime(),
+      );
+    }
 
     // クリーンアップ
     await adminClient.from("xp_transactions").delete().eq("id", additionalTxId);
