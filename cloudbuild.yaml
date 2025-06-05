@@ -45,10 +45,6 @@ steps:
       - 'SENTRY_RELEASE=${COMMIT_SHA}'
       - '--build-arg'
       - 'SENTRY_AUTH_TOKEN=$$SENTRY_AUTH_TOKEN'
-      - '--build-arg'
-      - 'STANDALONE_BUILD=true'
-      - '--build-arg'
-      - 'SKIP_SOURCEMAPS='
       - '.'
     secretEnv:
       - SENTRY_AUTH_TOKEN

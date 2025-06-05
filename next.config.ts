@@ -18,8 +18,8 @@ export default withSentryConfig(nextConfig, {
   org: "team-mirai",
   project: "action-board",
 
-  // Only print logs for uploading source maps in CI
-  silent: !!process.env.SKIP_SOURCEMAPS,
+  // Suppress logs unless UPLOAD_SOURCEMAPS is set
+  silent: !process.env.UPLOAD_SOURCEMAPS,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
