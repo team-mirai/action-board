@@ -2,10 +2,37 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
+import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
 export type XpTransaction = Tables<"xp_transactions">;
 export type XpTransactionInsert = TablesInsert<"xp_transactions">;
+
+/**
+ * ユーザーのレベル情報を取得する
+ */
+export async function getMyUserLevel(): Promise<UserLevel | null> {
+  const user = await getUser();
+  if (!user) {
+    console.error("User not found");
+    return null;
+  }
+
+  const supabase = await createServiceClient();
+
+  const { data, error } = await supabase
+    .from("user_levels")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch user level:", error);
+    return null;
+  }
+
+  return data;
+}
 
 /**
  * ユーザーのレベル情報を取得する
@@ -31,7 +58,7 @@ export async function getUserLevel(userId: string): Promise<UserLevel | null> {
  * ユーザーのレベル情報を初期化する（新規ユーザー用）
  */
 export async function initializeUserLevel(
-  userId: string,
+  userId: string
 ): Promise<UserLevel | null> {
   const supabase = await createServiceClient();
 
@@ -57,7 +84,7 @@ export async function initializeUserLevel(
  * ユーザーのレベル情報を取得、存在しない場合は初期化
  */
 export async function getOrInitializeUserLevel(
-  userId: string,
+  userId: string
 ): Promise<UserLevel | null> {
   let userLevel = await getUserLevel(userId);
 
@@ -76,7 +103,7 @@ async function processXpTransaction(
   xpAmount: number,
   sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY",
   sourceId?: string,
-  description?: string,
+  description?: string
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
   const supabase = await createServiceClient();
 
@@ -142,14 +169,14 @@ export async function grantXp(
   xpAmount: number,
   sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY" = "BONUS",
   sourceId?: string,
-  description?: string,
+  description?: string
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
   return processXpTransaction(
     userId,
     xpAmount,
     sourceType,
     sourceId,
-    description,
+    description
   );
 }
 
@@ -158,7 +185,7 @@ export async function grantXp(
  */
 export async function getUserXpHistory(
   userId: string,
-  limit = 50,
+  limit = 50
 ): Promise<XpTransaction[]> {
   const supabase = await createServiceClient();
 
@@ -265,7 +292,7 @@ export function getLevelProgress(currentXp: number): number {
 export async function grantMissionCompletionXp(
   userId: string,
   missionId: string,
-  achievementId: string,
+  achievementId: string
 ): Promise<{
   success: boolean;
   userLevel?: UserLevel;
@@ -297,7 +324,7 @@ export async function grantMissionCompletionXp(
       xpToGrant,
       "MISSION_COMPLETION",
       achievementId,
-      description,
+      description
     );
 
     if (result.success) {

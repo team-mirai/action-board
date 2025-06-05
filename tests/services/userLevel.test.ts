@@ -70,7 +70,7 @@ describe("XP差分計算", () => {
       expect(totalXp(4)).toBe(totalXp(3) + 70);
     });
 
-    it("レベル5までの累計XPは275XP", () => {
+    it("レベル5までの累計XPは250XP", () => {
       expect(totalXp(5)).toBe(totalXp(4) + 85);
     });
 
