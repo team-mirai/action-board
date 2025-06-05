@@ -30,7 +30,7 @@ export const getProfile = cache(async () => {
 });
 
 export async function updateProfile(
-  user: Tables<"private_users">
+  user: Tables<"private_users">,
 ): Promise<Tables<"private_users"> | null> {
   const supabaseClient = await createClient();
 
