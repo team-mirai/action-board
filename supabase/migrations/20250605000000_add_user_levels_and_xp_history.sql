@@ -50,14 +50,10 @@ ALTER TABLE user_levels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE xp_transactions ENABLE ROW LEVEL SECURITY;
 
 -- user_levelsのRLSポリシー
--- 自分のレベル情報は閲覧・更新可能
-CREATE POLICY "Users can view their own level"
+-- 認証済みユーザーは全てのユーザーのレベル情報を参照可能（ランキング表示などのため）
+CREATE POLICY "Authenticated users can view all user levels"
     ON user_levels FOR SELECT
-    USING (auth.uid() = user_id);
-
--- 他のユーザーのレベル情報も参照可能（ランキング表示などのため）
-CREATE POLICY "All users can view other user levels"
-    ON user_levels FOR SELECT
+    TO authenticated
     USING (true);
 
 -- xp_transactionsのRLSポリシー
