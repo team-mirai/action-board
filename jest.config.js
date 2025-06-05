@@ -1,23 +1,20 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-// dotenv設定を最初に読み込む
-require("dotenv").config({ path: ".env" });
+const nextJest = require("next/jest");
 
-module.exports = {
-  preset: "ts-jest",
+const createJestConfig = nextJest({
+  // Provide the path to your Next.js app to load next.config.js and .env files
+  dir: "./",
+});
+
+// Add any custom config to be passed to Jest
+/** @type {import('jest').Config} */
+const config = {
   testEnvironment: "node",
   testMatch: ["**/tests/**/*.test.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  transform: {
-    "^.+\\.tsx?$": [
-      "ts-jest",
-      {
-        tsconfig: {
-          jsx: "react",
-          esModuleInterop: true,
-        },
-      },
-    ],
-  },
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 };
+
+// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
+module.exports = createJestConfig(config);

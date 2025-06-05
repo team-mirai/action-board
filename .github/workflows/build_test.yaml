@@ -15,13 +15,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
-      # CI環境で認証メール確認を無効化
-      - name: Disable email confirmations for CI
+
+      # 環境変数を設定（ローカルSupabaseの接続情報）
+      - name: Set Supabase environment variables
         run: |
-          echo "Disabling email confirmations in config.toml for CI environment..."
-          sed -i -e 's/enable_confirmations = true/enable_confirmations = false/' ./supabase/config.toml
-          grep "enable_confirmations" ./supabase/config.toml
+          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
+          echo "ENABLE_CONFIRMATIONS=false" >> $GITHUB_ENV
+          cat $GITHUB_ENV
 
       # Supabase CLIのセットアップと起動
       - name: Setup Supabase CLI
@@ -59,14 +62,6 @@ jobs:
           echo "Supabase database reset completed."
         env:
           SMTP_ENABLED: false
-
-      # 環境変数を設定（ローカルSupabaseの接続情報）
-      - name: Set Supabase environment variables
-        run: |
-          echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" >> $GITHUB_ENV
-          echo "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU" >> $GITHUB_ENV
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres" >> $GITHUB_ENV
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit

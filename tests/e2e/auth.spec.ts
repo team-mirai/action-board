@@ -78,26 +78,20 @@ test.describe("認証フロー", () => {
     // 8. サインインボタンをクリック
     await page.getByRole("button", { name: "ログイン" }).click();
 
-    // 9. ホームページにリダイレクトされること (メール検証が必要なので失敗する可能性あり)
-    try {
-      await page.waitForURL("/", { timeout: 5000 });
-      // 10. ログイン状態であることを確認
-      await assertAuthState(page, true);
+    // 9. ホームページにリダイレクトされること
+    await page.waitForURL("/", { timeout: 5000 });
+    // 10. ログイン状態であることを確認
+    await assertAuthState(page, true);
 
-      // 11. ログアウト
-      await page.getByRole("menu").click();
-      await page.getByRole("menuitem", { name: "ログアウト" }).click();
+    // 11. ログアウト
+    await page.getByRole("menu").click();
+    await page.getByTestId("sign-out").click();
 
-      // 12. ログイン画面にリダイレクトされること
-      await page.waitForURL("/sign-in");
+    // 12. ログイン画面にリダイレクトされること
+    await page.waitForURL("/sign-in");
 
-      // 13. ログアウト状態であることを確認
-      await assertAuthState(page, false);
-    } catch (error) {
-      // メール検証が必要な場合は、ここでテストをスキップ
-      console.log("メール検証が必要なため、ログインテストはスキップされました");
-      test.skip();
-    }
+    // 13. ログアウト状態であることを確認
+    await assertAuthState(page, false);
   });
 
   test("サインアップページの表示と入力検証", async ({ page }) => {
