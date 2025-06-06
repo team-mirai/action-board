@@ -2,7 +2,7 @@ import Activities from "@/components/activities";
 import Hero from "@/components/hero";
 import Metrics from "@/components/metrics";
 import Missions from "@/components/mission/missions";
-import Ranking from "@/components/ranking";
+import RankingTop10 from "@/components/ranking/ranking-top10";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
@@ -50,7 +50,7 @@ export default async function Home() {
 
       {/* ランキングセクション */}
       <section className="py-12 md:py-16 bg-gray-50">
-        <Ranking />
+        <RankingTop10 />
       </section>
 
       {/* アクティビティセクション */}
