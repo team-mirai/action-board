@@ -16,18 +16,18 @@ export const createServiceClient = async () => {
 };
 
 export const createClient = async () => {
-  const cookieStore = await cookies();
-
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     {
       cookies: {
-        getAll() {
+        async getAll() {
+          const cookieStore = await cookies();
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
+        async setAll(cookiesToSet) {
           try {
+            const cookieStore = await cookies();
             for (const { name, value, options } of cookiesToSet) {
               cookieStore.set(name, value, options);
             }

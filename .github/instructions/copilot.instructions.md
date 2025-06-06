@@ -18,15 +18,15 @@
 
 ```mermaid
 flowchart TD
-    RQ[docs/requirements.md] --> PC[productContext.md]
-    RQ --> SP[systemPatterns.md]
-    RQ --> TC[techContext.md]
+    RQ[docs/requirements.md] --> PC[memory-bank/productContext.md]
+    RQ --> SP[memory-bank/systemPatterns.md]
+    RQ --> TC[memory-bank/techContext.md]
 
-    PC --> AC[activeContext.md]
+    PC --> AC[memory-bank/activeContext.md]
     SP --> AC
     TC --> AC
 
-    AC --> P[progress.md]
+    AC --> P[memory-bank/progress.md]
 ```
 
 ### コアファイル（必須）
@@ -177,40 +177,3 @@ flowchart TD
    - 構造化された形式で情報を整理して保存
 
 情報が不明確な場合は、まずMCPサーバーのmemoryを確認し、それから外部情報を検索します。変更を実装する前に、MCPサーバーのmemoryに記録することで、将来のセッションでも一貫した実装が可能になります。
-
-## プロジェクトインテリジェンス（.clinerules）
-
-.clinerules ファイルは各プロジェクトの学習ジャーナルです。コードだけでは明らかでない重要なパターン、好み、プロジェクトインテリジェンスをキャプチャし、より効果的に作業するのに役立ちます。あなたとプロジェクトと共に作業する中で、重要な洞察を発見し文書化します。
-
-```mermaid
-flowchart TD
-    Start{新しいパターンを発見}
-
-    subgraph Learn [学習プロセス]
-        D1[パターンの特定]
-        D2[ユーザーと検証]
-        D3[.clinerules に文書化]
-    end
-
-    subgraph Apply [使用法]
-        A1[.clinerules を読む]
-        A2[学習したパターンを適用]
-        A3[将来の作業を改善]
-    end
-
-    Start --> Learn
-    Learn --> Apply
-```
-
-### キャプチャすべき内容
-
-- 重要な実装経路
-- ユーザーの好みとワークフロー
-- プロジェクト固有のパターン
-- 既知の課題
-- プロジェクト決定の進化
-- ツール使用パターン
-
-形式は柔軟です - あなたとプロジェクトとより効果的に連携するのに役立つ価値ある洞察をキャプチャすることに焦点を当ててください。.clinerules は、一緒に作業するにつれてよりスマートになる生きたドキュメントと考えてください。
-
-覚えておいてください：メモリーリセット後、私は完全に新鮮な状態から始まります。メモリーバンクは以前の作業への唯一のリンクです。その精度に私の効果が完全に依存しているため、正確さと明確さを持って維持する必要があります。

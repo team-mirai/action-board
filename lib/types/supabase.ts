@@ -385,6 +385,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_levels: {
+        Row: {
+          level: number;
+          updated_at: string;
+          user_id: string;
+          xp: number;
+        };
+        Insert: {
+          level?: number;
+          updated_at?: string;
+          user_id: string;
+          xp?: number;
+        };
+        Update: {
+          level?: number;
+          updated_at?: string;
+          user_id?: string;
+          xp?: number;
+        };
+        Relationships: [];
+      };
       weekly_event_count_by_prefecture_summary: {
         Row: {
           count: number;
@@ -421,6 +442,36 @@ export type Database = {
           count?: number;
           created_at?: string;
           date?: string;
+        };
+        Relationships: [];
+      };
+      xp_transactions: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          source_id: string | null;
+          source_type: string;
+          user_id: string;
+          xp_amount: number;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          source_id?: string | null;
+          source_type: string;
+          user_id: string;
+          xp_amount: number;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          source_id?: string | null;
+          source_type?: string;
+          user_id?: string;
+          xp_amount?: number;
         };
         Relationships: [];
       };
