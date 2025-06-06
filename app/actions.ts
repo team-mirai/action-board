@@ -89,13 +89,7 @@ export const signUpActionWithState = async (
   }
 
   // 成功時はリダイレクトする
-  return encodedRedirect(
-    "success",
-    "/sign-up",
-    "ご登録頂きありがとうございます！\n" +
-      "認証メールをお送りしました。\n" +
-      "メールに記載のURLをクリックして、アカウントを有効化してください。",
-  );
+  return encodedRedirect("success", "/sign-up-success", "登録が完了しました。");
 };
 
 // useActionState用のサインインアクション
