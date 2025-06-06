@@ -496,6 +496,18 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_ranking_view: {
+        Row: {
+          user_id: string;
+          name: string | null;
+          address_prefecture: string | null;
+          xp: number;
+          level: number;
+          updated_at: string;
+          rank: number;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       [_ in never]: never;
