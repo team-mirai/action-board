@@ -1,62 +1,67 @@
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'tanaka.hanako@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'sato.taro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'suzuki.misaki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'takahashi.ken@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'ito.aiko@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'yamada.jiro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'nakamura.sakura@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'kobayashi.naoto@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 'kato.miyuki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), now());
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), now());
 
--- ユーザー
+DO $$
+DECLARE
+    surnames TEXT[] := ARRAY['田中', '佐藤', '鈴木', '高橋', '渡辺', '伊藤', '山田', '中村', '小林', '加藤'];
+    given_names TEXT[] := ARRAY['太郎', '花子', '一郎', '美咲', '健太', 'さくら', '大輔', '愛', '翔太', '美穂'];
+    prefectures TEXT[] := ARRAY['東京都', '大阪府', '神奈川県', '愛知県', '埼玉県', '千葉県', '兵庫県', '北海道', '福岡県', '静岡県'];
+    user_uuid UUID;
+    email_addr TEXT;
+    full_name TEXT;
+    prefecture TEXT;
+    birth_date DATE;
+    postcode_val TEXT;
+    xp_amount INTEGER;
+    level_val INTEGER;
+    i INTEGER;
+BEGIN
+    FOR i IN 1..99 LOOP
+        user_uuid := gen_random_uuid();
+        
+        full_name := surnames[1 + (random() * 9)::INTEGER] || given_names[1 + (random() * 9)::INTEGER];
+        
+        email_addr := 'user' || i || '@example.com';
+        
+        prefecture := prefectures[1 + (random() * 9)::INTEGER];
+        
+        birth_date := '1980-01-01'::DATE + (random() * 7300)::INTEGER;
+        
+        postcode_val := (1000000 + (random() * 8999999)::INTEGER)::TEXT;
+        
+        xp_amount := (random() * 3000)::INTEGER;
+        level_val := CASE 
+            WHEN xp_amount >= 2000 THEN 10 + (random() * 8)::INTEGER
+            WHEN xp_amount >= 1000 THEN 5 + (random() * 10)::INTEGER
+            WHEN xp_amount >= 300 THEN 3 + (random() * 7)::INTEGER
+            ELSE 1 + (random() * 3)::INTEGER
+        END;
+        
+        -- auth.usersテーブルに挿入
+        INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+        VALUES (user_uuid, email_addr, crypt('password123', gen_salt('bf')), now(), now(), now());
+        
+        -- private_usersテーブルに挿入
+        INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
+        VALUES (user_uuid, full_name, prefecture, birth_date, NULL, postcode_val);
+        
+        INSERT INTO user_levels (user_id, xp, level, updated_at)
+        VALUES (user_uuid, xp_amount, level_val, now() - (random() * interval '30 days'));
+    END LOOP;
+END $$;
+
+-- ユーザー（安野たかひろのみ手動定義、残りは上記のループで生成）
 INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001'),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', '田中花子', '大阪府', '1995-05-05', NULL, '5300001'),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', '佐藤太郎', '東京都', '1988-03-15', 'sato_taro', '1500012'),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', '鈴木美咲', '神奈川県', '1992-07-22', 'suzuki_misaki', '2200001'),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', '高橋健一', '大阪府', '1985-11-08', 'takahashi_ken', '5600011'),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', '伊藤愛子', '愛知県', '1993-04-30', 'ito_aiko', '4600001'),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', '山田次郎', '福岡県', '1991-09-12', 'yamada_jiro', '8100001'),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', '中村さくら', '北海道', '1994-02-14', 'nakamura_sakura', '0600001'),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', '小林直人', '京都府', '1987-06-05', 'kobayashi_naoto', '6020001'),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', '加藤みゆき', '宮城県', '1996-12-25', 'kato_miyuki', '9800001'),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', '渡辺雄一', '広島県', '1989-08-18', 'watanabe_yuichi', '7300001'),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', '松本かな', '沖縄県', '1998-01-03', 'matsumoto_kana', '9000001');
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', '安野たかひろ', '東京都', '1990-12-01', 'takahiroanno', '1000001');
 
--- ユーザーレベル情報（XPとレベル設定）
+-- ユーザーレベル情報（安野たかひろのみ手動定義、残りは上記のループで生成）
 INSERT INTO user_levels (user_id, xp, level, updated_at)
 VALUES
-  -- 1位: 安野たかひろ（レベル20）
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 3325, 20, '2025-06-04T10:00:00Z'),
-  -- 2位: 佐藤太郎（レベル10）
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 900, 10, '2025-06-04T09:30:00Z'),
-  -- 3位: 鈴木美咲（レベル9）
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 740, 9, '2025-06-04T09:00:00Z'),
-  -- 4位: 高橋健一（レベル8）
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 595, 8, '2025-06-04T08:30:00Z'),
-  -- 5位: 伊藤愛子（レベル7）
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 465, 7, '2025-06-04T08:00:00Z'),
-  -- 6位: 山田次郎（レベル6）
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 350, 6, '2025-06-04T07:30:00Z'),
-  -- 7位: 中村さくら（レベル5）
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 250, 5, '2025-06-04T07:00:00Z'),
-  -- 8位: 小林直人（レベル4）
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 165, 4, '2025-06-04T06:30:00Z'),
-  -- 9位: 田中花子（レベル3）
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 95, 3, '2025-06-04T06:00:00Z'),
-  -- 10位: 加藤みゆき（レベル2）
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 40, 2, '2025-06-04T05:30:00Z'),
-  -- 11位: 渡辺雄一（レベル1）
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T05:00:00Z'),
-  -- 12位: 松本かな（レベル1、新規参加者）
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 0, 1, '2025-06-04T04:30:00Z');
+  -- 1位: 安野たかひろ（レベル20、最高XP）
+  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 3325, 20, '2025-06-04T10:00:00Z');
 
 -- ミッション
 INSERT INTO missions (id, title, icon_url, content, difficulty, event_date, required_artifact_type, max_achievement_count)
