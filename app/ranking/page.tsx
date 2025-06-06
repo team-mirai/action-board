@@ -143,13 +143,6 @@ export default function RankingPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-3">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span>次のレベルまで</span>
-                <span>2,320pt</span>
-              </div>
-              <Progress value={75} className="h-2" />
-            </div>
           </CardContent>
         </Card>
 
