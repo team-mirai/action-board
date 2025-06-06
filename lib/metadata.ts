@@ -117,50 +117,11 @@ export function createOgpMetadata(imageUrl: string): Metadata {
 // Next.js generateMetadata関数
 // ==========================================
 
-export async function generateRootMetadata({
-  searchParams,
-  params,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  params?: Promise<{ [key: string]: string | undefined }>;
-}): Promise<Metadata> {
+export async function generateRootMetadata(): Promise<Metadata> {
   try {
-    const supabase = await createClient();
-    const searchParamsResolved = await searchParams;
-    const paramsResolved = await params;
-
-    // searchParamsがnullまたはundefinedの場合の安全な処理
-    if (!searchParamsResolved) {
-      return createDefaultMetadata();
-    }
-
-    let ogpImageUrl: string | null = null;
-
-    // type=completeの場合、paramsからミッションIDを取得してogp_image_urlを取得
-    if (searchParamsResolved.type === "complete" && paramsResolved?.id) {
-      const missionId = paramsResolved.id;
-      const { data: mission } = await supabase
-        .from("missions")
-        .select("ogp_image_url")
-        .eq("id", missionId)
-        .single();
-
-      ogpImageUrl = mission?.ogp_image_url || null;
-    }
-
-    if (ogpImageUrl) {
-      const isValid = isValidImageUrl(ogpImageUrl);
-      const sanitized = sanitizeImageUrl(ogpImageUrl);
-      return createOgpMetadata(ogpImageUrl);
-    }
     return createDefaultMetadata();
   } catch (error) {
-    // searchParamsの取得に失敗した場合はデフォルトを返す
     console.error("generateRootMetadata error:", error);
-    console.error(
-      "Error stack:",
-      error instanceof Error ? error.stack : "No stack",
-    );
     return createDefaultMetadata();
   }
 }
