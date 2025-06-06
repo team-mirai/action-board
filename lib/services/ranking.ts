@@ -13,17 +13,22 @@ export interface UserRanking {
 }
 
 export async function getTop10Ranking(): Promise<UserRanking[]> {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("user_ranking_view")
-    .select("*")
-    .limit(10);
+    const { data, error } = await supabase
+      .from("user_ranking_view")
+      .select("*")
+      .limit(10);
 
-  if (error) {
-    console.error("Failed to fetch ranking:", error);
-    return [];
+    if (error) {
+      console.error("Failed to fetch ranking:", error);
+      throw new Error(`ランキングデータの取得に失敗しました: ${error.message}`);
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Ranking service error:", error);
+    throw error;
   }
-
-  return data || [];
 }
