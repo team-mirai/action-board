@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import UserAvatar from "@/components/user-avatar";
 import { getAvatarUrl } from "@/lib/avatar";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { MapPin } from "lucide-react";
 import UserDetailActivities from "./user-detail-activities";
 
@@ -18,7 +18,7 @@ type Props = {
 
 export default async function UserDetailPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // ユーザー情報取得
   const { data: user } = await supabase
