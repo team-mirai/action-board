@@ -52,13 +52,4 @@ export default withSentryConfig(nextConfig, {
     ignore: ["**/node_modules/**", "**/.next/cache/**", "**/tests/**"],
     deleteSourcemapsAfterUpload: true,
   },
-
-  release: {
-    name: process.env.SENTRY_RELEASE,
-    setCommits: {
-      auto: true,
-      ignoreMissing: true,
-      ignoreEmpty: true,
-    },
-  },
 });
