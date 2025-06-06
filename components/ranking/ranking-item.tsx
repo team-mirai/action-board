@@ -34,11 +34,11 @@ function getRankIcon(rank: number) {
 }
 
 function getLevelBadgeColor(level: number) {
-  if (level >= 40) return "bg-purple-500";
-  if (level >= 30) return "bg-red-500";
-  if (level >= 20) return "bg-orange-500";
-  if (level >= 10) return "bg-teal-500";
-  return "bg-gray-500";
+  if (level >= 40) return "bg-emerald-100 text-emerald-700";
+  if (level >= 30) return "bg-emerald-100 text-emerald-700";
+  if (level >= 20) return "bg-emerald-100 text-emerald-700";
+  if (level >= 10) return "bg-emerald-100 text-emerald-700";
+  return "text-emerald-700 bg-emerald-100";
 }
 
 export function RankingItem({
@@ -59,7 +59,7 @@ export function RankingItem({
       </div>
       <div className="flex items-center gap-3">
         <Badge
-          className={`${getLevelBadgeColor(user.level)} text-white px-3 py-1 rounded-full`}
+          className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full`}
         >
           Lv.{user.level}
         </Badge>
