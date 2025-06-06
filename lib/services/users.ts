@@ -1,5 +1,33 @@
+import "server-only";
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
+
+export const getUser = cache(async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user;
+});
+
+export const getProfile = cache(async () => {
+  const user = await getUser();
+  if (!user) {
+    console.error("User not found");
+    throw new Error("ユーザー（認証）が見つかりません");
+  }
+  const supabaseClient = await createClient();
+  const { data: privateUser } = await supabaseClient
+    .from("private_users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+  return privateUser;
+});
 
 export async function updateProfile(
   user: Tables<"private_users">,

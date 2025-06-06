@@ -2,10 +2,37 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
+import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
 export type XpTransaction = Tables<"xp_transactions">;
 export type XpTransactionInsert = TablesInsert<"xp_transactions">;
+
+/**
+ * ユーザーのレベル情報を取得する
+ */
+export async function getMyUserLevel(): Promise<UserLevel | null> {
+  const user = await getUser();
+  if (!user) {
+    console.error("User not found");
+    return null;
+  }
+
+  const supabase = await createServiceClient();
+
+  const { data, error } = await supabase
+    .from("user_levels")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch user level:", error);
+    return null;
+  }
+
+  return data;
+}
 
 /**
  * ユーザーのレベル情報を取得する
