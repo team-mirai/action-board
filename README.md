@@ -15,7 +15,7 @@
 - Supabase CLI
   - Macの場合 `brew install supabase/tap/supabase` でインストール
 
-### Windowsユーザー向け環境構築
+### Windowsユーザー向け環境構築の補足
 
 #### 前提条件(全て揃っている場合はSkip)
 
