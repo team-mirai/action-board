@@ -61,6 +61,9 @@ export default function ProfileForm({
       ? getAvatarUrl(supabase, initialProfile.avatar_url)
       : null,
   );
+  const [selectedPrefecture, setSelectedPrefecture] = useState<string>(
+    initialProfile?.address_prefecture || "",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -203,11 +206,17 @@ export default function ProfileForm({
               defaultValue={initialProfile?.address_prefecture || ""}
               required
               disabled={isPending}
+              onValueChange={setSelectedPrefecture}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="postcode">郵便番号(ハイフンなし半角7桁)</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
+            {selectedPrefecture === "海外" && (
+              <p className="text-sm text-red-600">
+                海外在住の方は000000を入力ください
+              </p>
+            )}
             <Input
               id="postcode"
               name="postcode"
