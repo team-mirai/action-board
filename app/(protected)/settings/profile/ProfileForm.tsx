@@ -230,15 +230,21 @@ export default function ProfileForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="x_username">
-              X(旧Twitter)のユーザー名(オプション)
-            </Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="x_username">X(旧Twitter)のユーザー名</Label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                オプション
+              </span>
+            </div>
+            <p className="text-sm text-gray-500">
+              Xのユーザー名を設定すると、あなたのプロフィールに表示することができます。
+            </p>
             <Input
               id="x_username"
               name="x_username"
               type="text"
               defaultValue={initialProfile?.x_username || ""}
-              placeholder="Xのユーザー名(オプション)"
+              placeholder="@を除いたユーザー名"
               disabled={isPending}
               maxLength={50}
             />
