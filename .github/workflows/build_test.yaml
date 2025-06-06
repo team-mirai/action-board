@@ -28,9 +28,9 @@ jobs:
 
       # Supabase CLIのセットアップと起動
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@v1.5.0
         with:
-          version: v1.192.5
+          version: latest
 
       - name: Start Supabase
         run: |
