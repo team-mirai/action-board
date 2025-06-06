@@ -34,7 +34,7 @@ export default async function Levels({
               <div className="flex items-baseline">
                 <div className="text-sm font-bold">LV.</div>
                 <div className="text-xxl font-bold ml-1 leading-none">
-                  {userLevel ? userLevel.level : "0"}
+                  {userLevel ? userLevel.level : "1"}
                 </div>
               </div>
               <div className="flex ml-4 text-sm items-center">
