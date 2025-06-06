@@ -49,7 +49,7 @@ export default async function Levels() {
               </div>
             </div>
           )}
-          <Link href="/missions">
+          <Link href="/#missions">
             <Button
               variant="tertiary"
               size="lg"
