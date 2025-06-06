@@ -278,11 +278,9 @@ export function getXpToNextLevel(currentXp: number): number {
  */
 export function getLevelProgress(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  const currentLevelXp = xpDelta(currentLevel);
-  const nextLevelXp = xpDelta(currentLevel + 1);
-  const levelXpRange = nextLevelXp - currentLevelXp;
-  const progressXp = currentXp - currentLevelXp;
-  return Math.max(0, Math.min(1, progressXp / levelXpRange));
+  const xpToNext = getXpToNextLevel(currentXp);
+  const levelXpRange = xpDelta(currentLevel);
+  return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
 }
 
 /**
