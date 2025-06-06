@@ -2,6 +2,12 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
+import {
+  calculateLevel,
+  calculateMissionXp,
+  totalXp,
+  xpDelta,
+} from "../utils/utils";
 import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
@@ -222,38 +228,6 @@ export async function getUserRank(userId: string): Promise<number | null> {
   return (count || 0) + 1; // より高いユーザー数 + 1 = 自分のランク
 }
 
-// L → L+1 の差分 XP
-export const xpDelta = (L: number) => {
-  if (L < 1) throw new Error("Level must be at least 1");
-  return 40 + 15 * (L - 1);
-};
-
-// レベル L 到達までの累計 XP
-export const totalXp = (L: number) => {
-  if (L < 1) throw new Error("Level must be at least 1");
-  return (L - 1) * (25 + (15 / 2) * L);
-};
-
-/**
- * XPに基づくレベル計算
- * 新しい式に基づく逆算
- */
-export function calculateLevel(xp: number): number {
-  if (xp < 0) return 1;
-
-  // 最大レベルを設定（計算の無限ループを防ぐため）
-  const maxLevel = 1000;
-
-  for (let level = 1; level <= maxLevel; level++) {
-    const requiredXp = totalXp(level + 1);
-    if (xp < requiredXp) {
-      return level;
-    }
-  }
-
-  return maxLevel;
-}
-
 /**
  * 次のレベルまでに必要なXP計算
  */
@@ -325,21 +299,5 @@ export async function grantMissionCompletionXp(
   } catch (error) {
     console.error("Error in grantMissionCompletionXp:", error);
     return { success: false, error: "予期しないエラーが発生しました" };
-  }
-}
-
-/**
- * ミッションの難易度に基づいてXPを計算する
- */
-export function calculateMissionXp(difficulty: number): number {
-  switch (difficulty) {
-    case 1:
-      return 50; // ★1 Easy
-    case 2:
-      return 100; // ★2 Normal
-    case 3:
-      return 200; // ★3 Hard
-    default:
-      return 50; // デフォルト（Easy相当）
   }
 }

@@ -8,12 +8,12 @@ import { Button } from "./ui/button";
 
 interface LevelsProps {
   userId: string;
-  hideMissions?: boolean;
+  hideProgress?: boolean;
 }
 
 export default async function Levels({
   userId,
-  hideMissions = false,
+  hideProgress = false,
 }: LevelsProps) {
   const profile = await getProfile(userId);
 
@@ -44,9 +44,9 @@ export default async function Levels({
             </div>
           </div>
         </div>
-        <div className="mt-6 bg-white py-8 px-4 rounded-md flex flex-col items-center">
-          <LevelProgress userLevel={userLevel} />
-          {!hideMissions && (
+        {!hideProgress && (
+          <div className="mt-6 bg-white py-8 px-4 rounded-md flex flex-col items-center">
+            <LevelProgress userLevel={userLevel} />
             <Link href="/#missions">
               <Button
                 variant="tertiary"
@@ -57,8 +57,8 @@ export default async function Levels({
                 <ChevronRight className="w-5 h-5 ml-1" />
               </Button>
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

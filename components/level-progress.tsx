@@ -1,5 +1,5 @@
-import { totalXp } from "@/lib/services/userLevel";
 import type { UserLevel } from "@/lib/services/userLevel";
+import { totalXp } from "@/lib/utils/utils";
 import React from "react";
 import { ProgressCircle } from "./ui/progress-circle";
 

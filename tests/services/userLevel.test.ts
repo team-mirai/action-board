@@ -1,11 +1,10 @@
+import { getLevelProgress, getXpToNextLevel } from "@/lib/services/userLevel";
 import {
   calculateLevel,
   calculateMissionXp,
-  getLevelProgress,
-  getXpToNextLevel,
   totalXp,
   xpDelta,
-} from "@/lib/services/userLevel";
+} from "@/lib/utils/utils";
 
 describe("userLevel service", () => {
   describe("ミッション経験値計算", () => {
