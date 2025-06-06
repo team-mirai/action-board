@@ -1,19 +1,27 @@
-import { getMyUserLevel } from "@/lib/services/userLevel";
-import { getProfile, getUser } from "@/lib/services/users";
+import { getUserLevel } from "@/lib/services/userLevel";
+import { getProfile } from "@/lib/services/users";
 import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { LevelProgress } from "./level-progress";
 import MyAvatar from "./my-avatar";
 import { Button } from "./ui/button";
 
-export default async function Levels() {
-  const profile = await getProfile();
+interface LevelsProps {
+  userId: string;
+  hideMissions?: boolean;
+}
+
+export default async function Levels({
+  userId,
+  hideMissions = false,
+}: LevelsProps) {
+  const profile = await getProfile(userId);
 
   if (!profile) {
     throw new Error("Private user data not found");
   }
 
-  const userLevel = await getMyUserLevel();
+  const userLevel = await getUserLevel(userId);
 
   return (
     <section className="bg-gradient-hero flex justify-center pt-10 pb-6 px-4">
@@ -37,28 +45,19 @@ export default async function Levels() {
           </div>
         </div>
         <div className="mt-6 bg-white py-8 px-4 rounded-md flex flex-col items-center">
-          {userLevel && <LevelProgress userLevel={userLevel} />}
-          {!userLevel && (
-            <div className="mt-4 text-center">
-              <div className="flex items-center">
-                <div className="text-sm">獲得ポイント：</div>
-                <div>
-                  <span className="font-bold text-2xl">0</span>
-                  <span className="font-bold">ポイント</span>
-                </div>
-              </div>
-            </div>
+          <LevelProgress userLevel={userLevel} />
+          {!hideMissions && (
+            <Link href="/#missions">
+              <Button
+                variant="tertiary"
+                size="lg"
+                className="rounded-full font-normal flex items-center mt-4"
+              >
+                ミッションをさがす
+                <ChevronRight className="w-5 h-5 ml-1" />
+              </Button>
+            </Link>
           )}
-          <Link href="/#missions">
-            <Button
-              variant="tertiary"
-              size="lg"
-              className="rounded-full font-normal flex items-center mt-4"
-            >
-              ミッションをさがす
-              <ChevronRight className="w-5 h-5 ml-1" />
-            </Button>
-          </Link>
         </div>
       </div>
     </section>

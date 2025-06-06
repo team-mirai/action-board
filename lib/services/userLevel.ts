@@ -20,16 +20,11 @@ export async function getMyUserLevel(): Promise<UserLevel | null> {
 
   const supabase = await createServiceClient();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", user.id)
     .single();
-
-  if (error) {
-    console.error("Failed to fetch user level:", error);
-    return null;
-  }
 
   return data;
 }
@@ -40,16 +35,11 @@ export async function getMyUserLevel(): Promise<UserLevel | null> {
 export async function getUserLevel(userId: string): Promise<UserLevel | null> {
   const supabase = await createServiceClient();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
     .single();
-
-  if (error) {
-    console.error("Failed to fetch user level:", error);
-    return null;
-  }
 
   return data;
 }
