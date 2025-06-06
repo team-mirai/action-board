@@ -20,7 +20,7 @@
 #### 前提条件(全て揃っている場合はSkip)
 
    - PowerShell ver5.1以上
-      - PowerShell上でコマンド `$PSVersionTable`
+      - PowerShellで確認: `$PSVersionTable`
 
    - gitのインストール(レポジトリのクローンに必要)
       - [公式サイト](https://gitforwindows.org/)からインストーラーをダウンロードし、実行
