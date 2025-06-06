@@ -29,7 +29,7 @@ export default function RankingPage() {
   const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const displayCount = showMore ? 100 : 20;
+  const displayCount = showMore ? 100 : 21;
 
   useEffect(() => {
     const fetchData = async () => {
