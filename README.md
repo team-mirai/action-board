@@ -9,11 +9,57 @@
 
 ## 必要な環境
 
-- Node.js  
+- Node.js
   - Macの場合 `brew install node` でインストール
-- Docker  
-- Supabase CLI  
+- Docker
+- Supabase CLI
   - Macの場合 `brew install supabase/tap/supabase` でインストール
+
+- Windowsは下記の"## Windowsユーザー向け備忘録"を参照
+
+
+## Windowsユーザー向け環境構築の備忘録
+
+前提条件(全て揃っている場合はSkip)
+
+   - PowerShell ver5.1以上
+      -> PowerShell上でコマンド "$PSVersionTable"
+
+   - gitのインストール
+      -> 公式サイト(https://gitforwindows.org/)からインストーラーをダウンロードし、実行
+      -> これが無いとレポジトリのクローンができません
+
+   - WSL2のインストール
+      -> cmd or PowerShell (いずれも管理者権限が必要) "wsl --install"
+      -> これが無いとDockerが動きません
+
+   - Hyper-Vの有効化(デフォルトでは有効化)
+      -> コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (入ってない場合、チェックマークをつける)
+      -> チェックマークをつけてもHyper-vが有効になってない場合があるので、以下を実行
+      -> PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド "bcdedit" > hypervisorlaunchtype を参照 (AutoであればOK)
+      -> Offになってる場合、Hyper-vをOn "bcdedit /set hypervisorlaunchtype auto"
+      -> Onに変更したあとPCの再起動が必要です
+      -> これが無いとWSLが動きません
+
+環境構築
+
+   -Node.js
+      -> 公式サイト(https://nodejs.org/ja)からインストーラーをダウンロードし、実行
+      -> ver22.16.0 (25/06/06時点)
+      -> npmも同時にインストールされます
+
+   -supabase CLI
+      - cmd "npm install -g supabase"
+      - E404エラーが出てインストールに失敗する場合
+         - Scoopをインストール
+         - "powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
+powershell -Command ".\install.ps1""
+         - Scoop で supabase をインストール
+            - "scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install supabase"
+      - インストールされているか確認: "supabase --version"
+
 
 ## サービスの起動方法
 
@@ -119,7 +165,7 @@ npx supabase gen types typescript --local > utils/types/supabase.ts
    npm run test:e2e -- --project=chromium
    npm run test:e2e -- --project=firefox
    npm run test:e2e -- --project=webkit
-   
+
    # モバイルデバイス
    npm run test:e2e -- --project=mobile-chrome
    npm run test:e2e -- --project=mobile-safari
@@ -206,5 +252,5 @@ RLSテストは以下のテーブルに対して実装されています:
 ```bash
 npm run storybook
 ```
-
 `stories`ディレクトリにstorybookのファイルを配置してください。
+
