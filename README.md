@@ -15,40 +15,34 @@
 - Supabase CLI
   - Macの場合 `brew install supabase/tap/supabase` でインストール
 
-- Windowsは下記の"## Windowsユーザー向け備忘録"を参照
+### Windowsユーザー向け環境構築の補足
 
-
-## Windowsユーザー向け環境構築の備忘録
-
-前提条件(全て揃っている場合はSkip)
+#### 前提条件(全て揃っている場合はSkip)
 
    - PowerShell ver5.1以上
-      -> PowerShell上でコマンド "$PSVersionTable"
+      - PowerShellで確認: `$PSVersionTable`
 
-   - gitのインストール
-      -> 公式サイト(https://gitforwindows.org/)からインストーラーをダウンロードし、実行
-      -> これが無いとレポジトリのクローンができません
+   - gitのインストール(レポジトリのクローンに必要)
+      - [公式サイト](https://gitforwindows.org/)からインストーラーをダウンロードし、実行
 
-   - WSL2のインストール
-      -> cmd or PowerShell (いずれも管理者権限が必要) "wsl --install"
-      -> これが無いとDockerが動きません
+   - WSL2のインストール(DockerのベースとなるLinux環境)
+      - cmd or PowerShell (いずれも管理者権限が必要) `wsl --install`
 
-   - Hyper-Vの有効化(デフォルトでは有効化)
-      -> コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (入ってない場合、チェックマークをつける)
-      -> チェックマークをつけてもHyper-vが有効になってない場合があるので、以下を実行
-      -> PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド "bcdedit" > hypervisorlaunchtype を参照 (AutoであればOK)
-      -> Offになってる場合、Hyper-vをOn "bcdedit /set hypervisorlaunchtype auto"
-      -> Onに変更したあとPCの再起動が必要です
-      -> これが無いとWSLが動きません
+   - Hyper-Vの有効化(WSL2のベースとなる仮想環境)
+      - コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
+      - 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
+      - PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      - Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      - Autoに変更したあとPCの再起動が必要です
 
-環境構築
+#### 環境構築
 
-   -Node.js
-      -> 公式サイト(https://nodejs.org/ja)からインストーラーをダウンロードし、実行
-      -> ver22.16.0 (25/06/06時点)
-      -> npmも同時にインストールされます
+   - Node.js
+      - [公式サイト](https://nodejs.org/ja)からインストーラーをダウンロードし、実行
+      - ver22.16.0 (25/06/06時点)
+      - npmも同時にインストールされます
 
-   -supabase CLI
+   - supabase CLI
       - cmd "npm install -g supabase"
       - E404エラーが出てインストールに失敗する場合
          - Scoopをインストール
