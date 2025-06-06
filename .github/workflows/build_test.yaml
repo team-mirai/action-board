@@ -30,7 +30,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1.5.0
         with:
-          version: latest
+          version: v1.192.5
 
       - name: Start Supabase
         run: |
