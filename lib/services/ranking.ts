@@ -12,14 +12,14 @@ export interface UserRanking {
   rank: number;
 }
 
-export async function getTop10Ranking(): Promise<UserRanking[]> {
+export async function getRanking(limit = 10): Promise<UserRanking[]> {
   try {
     const supabase = await createClient();
 
     const { data, error } = await supabase
       .from("user_ranking_view")
       .select("*")
-      .limit(10);
+      .limit(limit);
 
     if (error) {
       console.error("Failed to fetch ranking:", error);

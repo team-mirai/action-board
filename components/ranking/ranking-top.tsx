@@ -1,19 +1,23 @@
 // TOPページ用のランキングコンポーネント
 import { Card } from "@/components/ui/card";
-import { getTop10Ranking } from "@/lib/services/ranking";
+import { getRanking } from "@/lib/services/ranking";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { RankingItem } from "./ranking-item";
 
-export default async function RankingTop10() {
-  const rankings = await getTop10Ranking();
+interface RankingTopProps {
+  limit?: number;
+}
+
+export default async function RankingTop({ limit = 10 }: RankingTopProps) {
+  const rankings = await getRanking(limit);
 
   return (
     <div className="max-w-6xl mx-auto px-4">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl md:text-4xl text-gray-900 mb-2">
-            トップ10ランキング
+            トップ{limit}ランキング
           </h2>
           <Link
             href="/ranking"
