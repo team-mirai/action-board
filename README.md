@@ -15,12 +15,9 @@
 - Supabase CLI
   - Macの場合 `brew install supabase/tap/supabase` でインストール
 
-- Windowsは下記の"## Windowsユーザー向け"を参照
+### Windowsユーザー向け環境構築
 
-
-## Windowsユーザー向け環境構築
-
-### 前提条件(全て揃っている場合はSkip)
+#### 前提条件(全て揃っている場合はSkip)
 
    - PowerShell ver5.1以上
       - PowerShell上でコマンド "$PSVersionTable"
@@ -41,7 +38,7 @@
       - Onに変更したあとPCの再起動が必要です
       - これが無いとWSLが動きません
 
-### 環境構築
+#### 環境構築
 
    - Node.js
       - [公式サイト](https://nodejs.org/ja)からインストーラーをダウンロードし、実行
