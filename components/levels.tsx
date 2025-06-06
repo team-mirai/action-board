@@ -20,9 +20,9 @@ export default async function Levels() {
       <div className="w-full max-w-md flex flex-col items-stretch">
         <div className="flex items-stretch">
           <MyAvatar className="w-24 h-24" />
-          <div className="flex flex-col justify-between ml-6">
+          <div className="flex flex-col ml-6">
             <div className="text-lg font-bold leading-none">{profile.name}</div>
-            <div className="flex items-center">
+            <div className="flex items-center mt-2">
               <div className="flex items-baseline">
                 <div className="text-sm font-bold">LV.</div>
                 <div className="text-xxl font-bold ml-1 leading-none">
@@ -33,9 +33,6 @@ export default async function Levels() {
                 <MapPin className="w-4 h-4 mr-0.5" />
                 {profile.address_prefecture}
               </div>
-            </div>
-            <div className="bg-white rounded-full h-8 flex items-center font-bold px-4 text-sm">
-              コミュニティサポーター🔥
             </div>
           </div>
         </div>
