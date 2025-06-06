@@ -22,15 +22,14 @@
    - PowerShell ver5.1以上
       - PowerShell上でコマンド "$PSVersionTable"
 
-   - gitのインストール
+   - gitのインストール(レポジトリのクローンに必要)
       - [公式サイト](https://gitforwindows.org/)からインストーラーをダウンロードし、実行
-      - これが無いとレポジトリのクローンができません
 
-   - WSL2のインストール
+   - WSL2のインストール(DockerのベースとなるLinux環境)
       - cmd or PowerShell (いずれも管理者権限が必要) "wsl --install"
-      - これが無いとDockerが動きません
 
-   - Hyper-Vの有効化(デフォルトでは有効化)
+   - Hyper-Vの有効化(WSL2のベースとなる仮想環境)
+      - デフォルトでは有効化
       - コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (入ってない場合、チェックマークをつける)
       - チェックマークをつけてもHyper-vが有効になってない場合があるので、以下を実行
       - PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド "bcdedit" > hypervisorlaunchtype を参照 (AutoであればOK)
