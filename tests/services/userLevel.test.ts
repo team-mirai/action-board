@@ -1,6 +1,7 @@
 import {
   calculateLevel,
   calculateMissionXp,
+  getXpToNextLevel,
   totalXp,
   xpDelta,
 } from "@/lib/services/userLevel";
@@ -152,5 +153,23 @@ describe("XPからユーザーのレベルを計算", () => {
 
   it("XPが最大レベル1000の必要XPを超える場合はレベル1000", () => {
     expect(calculateLevel(totalXp(1001))).toBe(1000);
+  });
+});
+
+describe("次のレベルまでのXP計算", () => {
+  it("XPが0の場合、次のレベルまでのXPは40", () => {
+    expect(getXpToNextLevel(0)).toBe(40);
+  });
+
+  it("XPが40の場合、次のレベルまでのXPは55", () => {
+    expect(getXpToNextLevel(40)).toBe(55);
+  });
+
+  it("XPが100の場合、次のレベルまでのXPは65", () => {
+    expect(getXpToNextLevel(100)).toBe(65);
+  });
+
+  it("XPが750の場合、次のレベルまでのXPは150", () => {
+    expect(getXpToNextLevel(750)).toBe(150);
   });
 });

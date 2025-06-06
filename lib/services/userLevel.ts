@@ -242,9 +242,8 @@ export function calculateLevel(xp: number): number {
  */
 export function getXpToNextLevel(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  const nextLevel = currentLevel + 1;
-  const nextLevelXp = xpDelta(nextLevel);
-  return nextLevelXp - currentXp;
+  const nextLevelTotalXp = totalXp(currentLevel + 1);
+  return Math.max(0, nextLevelTotalXp - currentXp);
 }
 
 /**
