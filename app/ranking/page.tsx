@@ -108,59 +108,50 @@ export default function RankingPage() {
           </CardContent>
         </Card>
 
-        {currentUser && (
-          <Card className="border-teal-200 bg-teal-50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <User className="w-5 h-5 text-teal-600" />
-                あなたのランキング
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-teal-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    {currentUser.rank}
-                  </div>
-                  <UserAvatar
-                    userProfile={{
-                      name: currentUser.name,
-                      avatar_url: null,
-                    }}
-                    size="md"
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      {currentUser.name || "あなた"}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {currentUser.address_prefecture || "未設定"}
-                    </div>
-                  </div>
+        <Card className="border-teal-200 bg-teal-50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <User className="w-5 h-5 text-teal-600" />
+              あなたのランキング
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-teal-200">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  {currentUser?.rank || 156}
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge
-                      className={`${getLevelBadgeColor(currentUser.level)} text-white`}
-                    >
-                      Lv.{currentUser.level}
-                    </Badge>
+                <div>
+                  <div className="font-semibold text-gray-900">
+                    {currentUser?.name || "あなた"}
                   </div>
-                  <div className="text-lg font-bold text-teal-600">
-                    {currentUser.xp.toLocaleString()}pt
+                  <div className="text-sm text-gray-600">
+                    {currentUser?.address_prefecture || "東京都"}
                   </div>
                 </div>
               </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                  <span>次のレベルまで</span>
-                  <span>2,320pt</span>
+              <div className="text-right">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge
+                    className={`${getLevelBadgeColor(currentUser?.level || 12)} text-white`}
+                  >
+                    Lv.{currentUser?.level || 12}
+                  </Badge>
                 </div>
-                <Progress value={75} className="h-2" />
+                <div className="text-lg font-bold text-teal-600">
+                  {currentUser?.xp.toLocaleString() || "45,680"}pt
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+            <div className="mt-3">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>次のレベルまで</span>
+                <span>2,320pt</span>
+              </div>
+              <Progress value={75} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-3">
