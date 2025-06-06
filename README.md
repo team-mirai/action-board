@@ -20,22 +20,20 @@
 #### 前提条件(全て揃っている場合はSkip)
 
    - PowerShell ver5.1以上
-      - PowerShell上でコマンド "$PSVersionTable"
+      - PowerShell上でコマンド `$PSVersionTable`
 
    - gitのインストール(レポジトリのクローンに必要)
       - [公式サイト](https://gitforwindows.org/)からインストーラーをダウンロードし、実行
 
    - WSL2のインストール(DockerのベースとなるLinux環境)
-      - cmd or PowerShell (いずれも管理者権限が必要) "wsl --install"
+      - cmd or PowerShell (いずれも管理者権限が必要) `wsl --install`
 
    - Hyper-Vの有効化(WSL2のベースとなる仮想環境)
-      - デフォルトでは有効化
-      - コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (入ってない場合、チェックマークをつける)
-      - チェックマークをつけてもHyper-vが有効になってない場合があるので、以下を実行
-      - PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド "bcdedit" > hypervisorlaunchtype を参照 (AutoであればOK)
-      - Offになってる場合、Hyper-vをOn "bcdedit /set hypervisorlaunchtype auto"
-      - Onに変更したあとPCの再起動が必要です
-      - これが無いとWSLが動きません
+      - コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
+      - 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
+      - PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      - Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      - Autoに変更したあとPCの再起動が必要です
 
 #### 環境構築
 
