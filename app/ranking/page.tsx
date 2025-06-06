@@ -25,7 +25,7 @@ const getLevelBadgeColor = (level: number) => {
 export default function RankingPage() {
   const [rankings, setRankings] = useState<UserRanking[]>([]);
   const [currentUser, setCurrentUser] = useState<UserRanking | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<"all" | number>("all");
+
   const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -45,11 +45,6 @@ export default function RankingPage() {
 
     fetchData();
   }, []);
-
-  const filteredRankings =
-    selectedLevel === "all"
-      ? rankings
-      : rankings.filter((user) => user.level >= selectedLevel);
 
   if (loading) {
     return (
@@ -73,41 +68,6 @@ export default function RankingPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">レベル別表示</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={selectedLevel === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedLevel("all")}
-                className={
-                  selectedLevel === "all" ? "bg-teal-500 hover:bg-teal-600" : ""
-                }
-              >
-                全体
-              </Button>
-              {[1, 10, 20, 30, 40].map((level) => (
-                <Button
-                  key={level}
-                  variant={selectedLevel === level ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedLevel(level)}
-                  className={
-                    selectedLevel === level
-                      ? "bg-teal-500 hover:bg-teal-600"
-                      : ""
-                  }
-                >
-                  Lv.{level}+
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="border-teal-200 bg-teal-50">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -148,14 +108,10 @@ export default function RankingPage() {
 
         <Card className="border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">
-              {selectedLevel === "all"
-                ? "TOP100ランキング"
-                : `レベル${selectedLevel}以上のランキング`}
-            </CardTitle>
+            <CardTitle className="text-lg">TOP100ランキング</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 p-8">
-            {filteredRankings.slice(0, displayCount).map((user) => (
+            {rankings.slice(0, displayCount).map((user) => (
               <RankingItem
                 key={user.user_id}
                 user={{
@@ -170,43 +126,16 @@ export default function RankingPage() {
               />
             ))}
 
-            {!showMore && filteredRankings.length > displayCount && (
+            {!showMore && rankings.length > displayCount && (
               <Button
                 variant="outline"
                 className="w-full mt-4"
                 onClick={() => setShowMore(true)}
               >
                 <ChevronDown className="w-4 h-4 mr-2" />
-                さらに表示 (残り{filteredRankings.length - displayCount}件)
+                さらに表示 (残り{rankings.length - displayCount}件)
               </Button>
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">ランキング統計</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-teal-600">
-                  {rankings.length}
-                </div>
-                <div className="text-sm text-gray-600">参加者数</div>
-              </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-teal-600">
-                  {rankings.length > 0
-                    ? (
-                        rankings.reduce((sum, user) => sum + user.level, 0) /
-                        rankings.length
-                      ).toFixed(1)
-                    : "0"}
-                </div>
-                <div className="text-sm text-gray-600">平均レベル</div>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
