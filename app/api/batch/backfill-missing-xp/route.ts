@@ -1,4 +1,4 @@
-import { grantXp } from "@/lib/services/userLevel";
+import { grantXpBatch } from "@/lib/services/userLevel";
 import { createServiceClient } from "@/lib/supabase/server";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import { type NextRequest, NextResponse } from "next/server";
@@ -154,87 +154,108 @@ export async function POST(request: NextRequest) {
       error?: string;
     }> = [];
 
-    // 各達成にXPを付与
+    // バッチ処理用のトランザクションデータを準備
+    const batchTransactions: Array<{
+      userId: string;
+      xpAmount: number;
+      sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY";
+      sourceId?: string;
+      description?: string;
+      achievementId: string; // 結果レポート用
+      missionTitle: string; // 結果レポート用
+    }> = [];
+
+    // 各達成のデータを検証してバッチに追加
     for (const achievement of missingXpAchievements) {
-      try {
-        const mission = Array.isArray(achievement.missions)
-          ? achievement.missions[0]
-          : achievement.missions;
+      const mission = Array.isArray(achievement.missions)
+        ? achievement.missions[0]
+        : achievement.missions;
 
-        if (!mission) {
-          console.warn(
-            `達成ID ${achievement.id} のミッション情報が見つかりません`,
-          );
-          skippedCount++;
-          results.push({
-            achievementId: achievement.id,
-            userId: achievement.user_id,
-            missionTitle: "不明",
-            status: "skipped",
-            error: "ミッション情報が見つかりません",
-          });
-          continue;
-        }
-
-        // ミッション難易度に基づくXP計算
-        const xpToGrant = calculateMissionXp(mission.difficulty);
-        const description = `ミッション「${mission.title}」達成による経験値獲得`;
-
-        console.log(
-          `処理中: 達成ID ${achievement.id}, ユーザーID ${achievement.user_id}, XP ${xpToGrant}`,
+      if (!mission) {
+        console.warn(
+          `達成ID ${achievement.id} のミッション情報が見つかりません`,
         );
-
-        // XPを付与
-        const result = await grantXp(
-          achievement.user_id,
-          xpToGrant,
-          "MISSION_COMPLETION",
-          achievement.id,
-          description,
-        );
-
-        if (result.success) {
-          processedCount++;
-          results.push({
-            achievementId: achievement.id,
-            userId: achievement.user_id,
-            missionTitle: mission.title,
-            xpGranted: xpToGrant,
-            status: "success",
-          });
-          console.log(
-            `✓ 達成ID ${achievement.id} にXP ${xpToGrant} を付与しました`,
-          );
-        } else {
-          errorCount++;
-          results.push({
-            achievementId: achievement.id,
-            userId: achievement.user_id,
-            missionTitle: mission.title,
-            status: "error",
-            error: result.error || "XP付与に失敗しました",
-          });
-          console.error(
-            `✗ 達成ID ${achievement.id} のXP付与に失敗: ${result.error}`,
-          );
-        }
-
-        // レート制限を避けるため少し待機
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      } catch (error) {
-        errorCount++;
-        const errorMessage =
-          error instanceof Error ? error.message : "予期しないエラー";
+        skippedCount++;
         results.push({
           achievementId: achievement.id,
           userId: achievement.user_id,
-          missionTitle: Array.isArray(achievement.missions)
-            ? achievement.missions[0]?.title || "不明"
-            : achievement.missions?.title || "不明",
-          status: "error",
-          error: errorMessage,
+          missionTitle: "不明",
+          status: "skipped",
+          error: "ミッション情報が見つかりません",
         });
-        console.error(`達成ID ${achievement.id} の処理中にエラー:`, error);
+        continue;
+      }
+
+      const xpToGrant = calculateMissionXp(mission.difficulty);
+      const description = `ミッション「${mission.title}」達成による経験値獲得`;
+
+      batchTransactions.push({
+        userId: achievement.user_id,
+        xpAmount: xpToGrant,
+        sourceType: "MISSION_COMPLETION",
+        sourceId: achievement.id,
+        description,
+        achievementId: achievement.id,
+        missionTitle: mission.title,
+      });
+    }
+
+    console.log(`バッチ処理でXPを付与します: ${batchTransactions.length} 件`);
+
+    // バッチでXPを一括付与
+    const batchResult = await grantXpBatch(
+      batchTransactions.map((tx) => ({
+        userId: tx.userId,
+        xpAmount: tx.xpAmount,
+        sourceType: tx.sourceType,
+        sourceId: tx.sourceId,
+        description: tx.description,
+      })),
+    );
+
+    if (!batchResult.success) {
+      console.error("バッチXP付与に失敗:", batchResult.error);
+      return NextResponse.json(
+        {
+          error: "バッチXP付与に失敗しました",
+          details: batchResult.error,
+        },
+        { status: 500 },
+      );
+    }
+
+    // バッチ結果を個別結果にマッピング
+    const userResultMap = new Map(
+      batchResult.results.map((result) => [result.userId, result]),
+    );
+
+    for (const transaction of batchTransactions) {
+      const batchUserResult = userResultMap.get(transaction.userId);
+
+      if (batchUserResult?.success) {
+        processedCount++;
+        results.push({
+          achievementId: transaction.achievementId,
+          userId: transaction.userId,
+          missionTitle: transaction.missionTitle,
+          xpGranted: transaction.xpAmount,
+          status: "success",
+        });
+        console.log(
+          `✓ 達成ID ${transaction.achievementId} にXP ${transaction.xpAmount} を付与しました`,
+        );
+      } else {
+        errorCount++;
+        results.push({
+          achievementId: transaction.achievementId,
+          userId: transaction.userId,
+          missionTitle: transaction.missionTitle,
+          status: "error",
+          error: batchUserResult?.error || "XP付与に失敗しました",
+        });
+        console.error(
+          `✗ 達成ID ${transaction.achievementId} のXP付与に失敗: ${batchUserResult?.error}`,
+        );
       }
     }
 
