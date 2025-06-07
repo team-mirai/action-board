@@ -10,9 +10,9 @@ create table user_referral (
 
 alter table user_referral enable row level security;
 
-create policy "Users can SELECT their own referral" on user_referral
+create policy "Anyone can SELECT all referrals" on user_referral
 for select
-using (auth.uid() = user_id);
+using (true);
 
 create policy "Users can INSERT their own referral" on user_referral
 for insert
