@@ -93,31 +93,39 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // XPが付与されていない達成をフィルタリング
-    const missingXpAchievements: AchievementWithMission[] = [];
+    // XPが付与されていない達成をフィルタリング（IN句を使用してN+1クエリを回避）
+    const achievementIds = typedAchievements.map(
+      (achievement) => achievement.id,
+    );
 
-    for (const achievement of typedAchievements) {
-      // この達成に対するXPトランザクションが存在するかチェック
-      const { data: existingXp, error: xpCheckError } = await supabase
+    // 全ての達成IDに対するXPトランザクションを一括取得
+    const { data: existingXpTransactions, error: xpBulkCheckError } =
+      await supabase
         .from("xp_transactions")
-        .select("id")
+        .select("source_id")
         .eq("source_type", "MISSION_COMPLETION")
-        .eq("source_id", achievement.id)
-        .maybeSingle();
+        .in("source_id", achievementIds);
 
-      if (xpCheckError) {
-        console.error(
-          `達成ID ${achievement.id} のXPチェックでエラー:`,
-          xpCheckError,
-        );
-        continue;
-      }
-
-      // XPトランザクションが存在しない場合は処理対象に追加
-      if (!existingXp) {
-        missingXpAchievements.push(achievement);
-      }
+    if (xpBulkCheckError) {
+      console.error("XPトランザクションの一括取得でエラー:", xpBulkCheckError);
+      return NextResponse.json(
+        {
+          error: "XPトランザクションの確認に失敗しました",
+          details: xpBulkCheckError.message,
+        },
+        { status: 500 },
+      );
     }
+
+    // すでにXPが付与されている達成IDのSetを作成（高速な検索のため）
+    const processedAchievementIds = new Set(
+      existingXpTransactions?.map((tx) => tx.source_id) || [],
+    );
+
+    // XPが未付与の達成のみを抽出
+    const missingXpAchievements = typedAchievements.filter(
+      (achievement) => !processedAchievementIds.has(achievement.id),
+    );
 
     console.log(
       `XP未付与の達成が ${missingXpAchievements.length} 件見つかりました`,
@@ -268,7 +276,7 @@ export async function GET() {
   try {
     const supabase = await createServiceClient();
 
-    // XP未付与の達成数を確認
+    // XP未付与の達成数を確認（IN句を使用してN+1クエリを回避）
     const { data: allAchievements, error: achievementsError } = await supabase
       .from("achievements")
       .select("id")
@@ -286,41 +294,47 @@ export async function GET() {
 
     let missingXpCount = 0;
 
-    if (allAchievements) {
-      for (const achievement of allAchievements) {
-        const { data: existingXp } = await supabase
-          .from("xp_transactions")
-          .select("id")
-          .eq("source_type", "MISSION_COMPLETION")
-          .eq("source_id", achievement.id)
-          .maybeSingle();
+    if (allAchievements && allAchievements.length > 0) {
+      // 全ての達成IDに対するXPトランザクションを一括取得
+      const achievementIds = allAchievements.map(
+        (achievement) => achievement.id,
+      );
 
-        if (!existingXp) {
-          missingXpCount++;
-        }
-      }
+      const { data: existingXpTransactions } = await supabase
+        .from("xp_transactions")
+        .select("source_id")
+        .eq("source_type", "MISSION_COMPLETION")
+        .in("source_id", achievementIds);
+
+      // XPが付与済みの達成IDのSetを作成
+      const processedAchievementIds = new Set(
+        existingXpTransactions?.map((tx) => tx.source_id) || [],
+      );
+
+      // XP未付与の達成数を計算
+      missingXpCount = allAchievements.filter(
+        (achievement) => !processedAchievementIds.has(achievement.id),
+      ).length;
     }
 
-    // 統計情報を返却
-    const { data: totalAchievements, error: countError } = await supabase
+    // 統計情報を返却（count機能を使用して効率化）
+    const { count: totalAchievements, error: countError } = await supabase
       .from("achievements")
       .select("*", { count: "exact", head: true });
 
-    const { data: totalXpTransactions, error: xpCountError } = await supabase
+    const { count: totalXpTransactions, error: xpCountError } = await supabase
       .from("xp_transactions")
       .select("*", { count: "exact", head: true })
       .eq("source_type", "MISSION_COMPLETION");
 
     return NextResponse.json({
       statistics: {
-        totalAchievements: totalAchievements?.length || 0,
-        totalXpTransactions: totalXpTransactions?.length || 0,
+        totalAchievements: totalAchievements || 0,
+        totalXpTransactions: totalXpTransactions || 0,
         missingXpAchievements: missingXpCount,
-        completionRate: totalAchievements?.length
+        completionRate: totalAchievements
           ? Math.round(
-              ((totalAchievements.length - missingXpCount) /
-                totalAchievements.length) *
-                100,
+              ((totalAchievements - missingXpCount) / totalAchievements) * 100,
             )
           : 0,
       },
