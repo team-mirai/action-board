@@ -46,19 +46,19 @@
 
    - Supabase CLI
       - cmd `npm install -g supabase`
-      - E404エラーが出てインストールに失敗する場合
-         - Scoopをインストール
-         ```
-         powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
-         powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
-         powershell -Command ".\install.ps1"
-         ```
+         - E404エラーが出てインストールに失敗する場合
+            - Scoopをインストール
+            ```
+            powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+            powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
+            powershell -Command ".\install.ps1"
+            ```
 
-         - Scoop で supabase をインストール
-         ```
-         scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-         scoop install supabase
-         ```
+            - Scoop で supabase をインストール
+            ```
+            scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+            scoop install supabase
+            ```
 
       - インストールされているか確認: `supabase --version`
 
