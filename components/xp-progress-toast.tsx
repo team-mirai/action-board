@@ -192,12 +192,12 @@ export function XpProgressToast({
 
   return (
     <ToastProvider>
-      <Toast open={isOpen} onOpenChange={onOpenChange} className="w-[268px]">
-        <div className="flex flex-col space-y-2">
-          <ToastTitle className="text-sm font-bold">
+      <Toast open={isOpen} onOpenChange={onOpenChange} className="w-full max-w-sm mx-auto">
+        <div className="flex flex-col space-y-3 p-2">
+          <ToastTitle className="text-base font-bold text-center">
             +{xpGranted}XP獲得！
           </ToastTitle>
-          <ToastDescription className="text-xs text-gray-600">
+          <ToastDescription className="text-sm text-gray-600 text-center">
             次のレベルまで{" "}
             {Math.max(
               0,
@@ -207,23 +207,23 @@ export function XpProgressToast({
             )}
             XP
           </ToastDescription>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-medium">Lv.{stageData.level}</span>
-            <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div className="flex items-center space-x-3">
+            <span className="text-sm font-medium">Lv.{stageData.level}</span>
+            <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-100 ease-out"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 h-full rounded-full transition-all duration-100 ease-out"
                 style={{
                   width: `${progressPercentage}%`,
                 }}
               />
             </div>
-            <span className="text-xs font-medium">
+            <span className="text-sm font-medium">
               Lv.{stageData.nextLevel}
             </span>
           </div>
         </div>
       </Toast>
-      <ToastViewport />
+      <ToastViewport className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col p-4 gap-2 w-full max-w-sm mx-auto" />
     </ToastProvider>
   );
 }
