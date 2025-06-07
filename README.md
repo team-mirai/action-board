@@ -52,10 +52,12 @@
 powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
 powershell -Command ".\install.ps1"
          ```
+
          - Scoop で supabase をインストール
-         - ```scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+         ```scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
 scoop install supabase
          ```
+
       - インストールされているか確認: `supabase --version`
 
 
