@@ -3,13 +3,13 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 
 export interface UserRanking {
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  xp: number;
-  level: number;
-  updated_at: string;
-  rank: number;
+  user_id: string | null;
+  address_prefecture: string | null;
+  level: number | null;
+  name: string | null;
+  rank: number | null;
+  updated_at: string | null;
+  xp: number | null;
 }
 
 export async function getRanking(limit = 10): Promise<UserRanking[]> {
