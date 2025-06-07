@@ -61,6 +61,9 @@ export default function ProfileForm({
       ? getAvatarUrl(supabase, initialProfile.avatar_url)
       : null,
   );
+  const [selectedPrefecture, setSelectedPrefecture] = useState<string>(
+    initialProfile?.address_prefecture || "",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -203,11 +206,17 @@ export default function ProfileForm({
               defaultValue={initialProfile?.address_prefecture || ""}
               required
               disabled={isPending}
+              onValueChange={setSelectedPrefecture}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="postcode">郵便番号(ハイフンなし半角7桁)</Label>
             <p className="text-sm text-gray-500">この項目は公開されません</p>
+            {selectedPrefecture === "海外" && (
+              <p className="text-sm text-red-600">
+                海外在住の方は000000を入力ください
+              </p>
+            )}
             <Input
               id="postcode"
               name="postcode"
@@ -221,15 +230,21 @@ export default function ProfileForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="x_username">
-              X(旧Twitter)のユーザー名(オプション)
-            </Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="x_username">X(旧Twitter)のユーザー名</Label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                オプション
+              </span>
+            </div>
+            <p className="text-sm text-gray-500">
+              Xのユーザー名を設定すると、あなたのプロフィールに表示することができます。
+            </p>
             <Input
               id="x_username"
               name="x_username"
               type="text"
               defaultValue={initialProfile?.x_username || ""}
-              placeholder="Xのユーザー名(オプション)"
+              placeholder="@を除いたユーザー名"
               disabled={isPending}
               maxLength={50}
             />

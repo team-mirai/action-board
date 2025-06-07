@@ -41,7 +41,7 @@ const config = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "var(--color-accent)",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
@@ -60,6 +60,7 @@ const config = {
       },
       fontSize: {
         xxs: "0.625rem", // 10px
+        xxl: "1.375rem",
       },
       keyframes: {
         "accordion-down": {

@@ -1,5 +1,6 @@
 "use server";
 
+import { getOrInitializeUserLevel } from "@/lib/services/userLevel";
 import { createClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -66,7 +67,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -88,14 +89,16 @@ export const signUpActionWithState = async (
     };
   }
 
+  if (data.user?.id) {
+    try {
+      await getOrInitializeUserLevel(data.user.id);
+    } catch (levelError) {
+      console.error("Failed to initialize user level:", levelError);
+    }
+  }
+
   // 成功時はリダイレクトする
-  return encodedRedirect(
-    "success",
-    "/sign-up",
-    "ご登録頂きありがとうございます！\n" +
-      "認証メールをお送りしました。\n" +
-      "メールに記載のURLをクリックして、アカウントを有効化してください。",
-  );
+  return encodedRedirect("success", "/sign-up-success", "登録が完了しました。");
 };
 
 // useActionState用のサインインアクション
