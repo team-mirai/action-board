@@ -195,6 +195,7 @@ export async function getMissionPageData(
   let userAchievements: Achievement[] = [];
   let userAchievementCount = 0;
   let submissions: SubmissionData[] = [];
+  let referralCode: string | null = null;
 
   if (userId) {
     const { achievements, count } = await getUserAchievements(
@@ -204,6 +205,7 @@ export async function getMissionPageData(
     userAchievements = achievements;
     userAchievementCount = count;
     submissions = await getSubmissionHistory(userId, missionId);
+    referralCode = await getReferralCode(userId);
   }
 
   // 総達成回数の取得
@@ -215,5 +217,24 @@ export async function getMissionPageData(
     submissions,
     userAchievementCount,
     totalAchievementCount,
+    referralCode,
   };
+}
+
+// ログインユーザーに紐づくリファラルコードの取得
+export async function getReferralCode(userId: string): Promise<string | null> {
+  const supabase = await createServerClient();
+
+  const { data, error } = await supabase
+    .from("user_referral")
+    .select("referral_code")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    console.error("Referral code fetch error:", error.message);
+    return null;
+  }
+
+  return data?.referral_code || null;
 }

@@ -4,13 +4,17 @@ import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
+import QRCode from "react-qr-code"; // 必要に応じてnpm install react-qr-code
 import type { SubmissionData } from "../_lib/types";
+import { CopyReferralButton } from "./CopyReferralButton";
 import { MissionFormWrapper } from "./MissionFormWrapper";
+import QRCodeDisplay from "./QRCodeDisplay";
 import { SubmissionHistoryWrapper } from "./SubmissionHistoryWrapper";
 
 type Props = {
   mission: Tables<"missions">;
   authUser: User;
+  referralCode: string | null;
   initialUserAchievementCount: number;
   initialSubmissions: SubmissionData[];
   missionId: string;
@@ -19,6 +23,7 @@ type Props = {
 export function MissionWithSubmissionHistory({
   mission,
   authUser,
+  referralCode,
   initialUserAchievementCount,
   initialSubmissions,
   missionId,
@@ -146,14 +151,28 @@ export function MissionWithSubmissionHistory({
     }
   };
 
+  const signupUrl = `${process.env.NEXT_PUBLIC_APP_ORIGIN}/sign-up?ref=${referralCode}`;
+
   return (
     <>
-      <MissionFormWrapper
-        mission={mission}
-        authUser={authUser}
-        userAchievementCount={userAchievementCount}
-        onSubmissionSuccess={refreshSubmissions}
-      />
+      {mission.required_artifact_type === "REFERRAL" &&
+        authUser &&
+        referralCode && (
+          <div className="bg-white rounded-xl border-2 p-6 flex flex-col items-center">
+            <p className="mb-2 font-semibold text-center text-lg">QRコード</p>
+            <QRCodeDisplay value={signupUrl} />
+            <CopyReferralButton referralUrl={signupUrl} />
+          </div>
+        )}
+
+      {mission.required_artifact_type !== "REFERRAL" && (
+        <MissionFormWrapper
+          mission={mission}
+          authUser={authUser}
+          userAchievementCount={userAchievementCount}
+          onSubmissionSuccess={refreshSubmissions}
+        />
+      )}
 
       {submissions.length > 0 && (
         <SubmissionHistoryWrapper

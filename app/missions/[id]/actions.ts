@@ -3,6 +3,8 @@
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
 import { grantMissionCompletionXp } from "@/lib/services/userLevel";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
+
 import type { TablesInsert } from "@/lib/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
 import { z } from "zod";
 
@@ -87,6 +89,7 @@ const cancelSubmissionFormSchema = z.object({
 });
 
 export const achieveMissionAction = async (formData: FormData) => {
+  const supabase = await createClient();
   const missionId = formData.get("missionId")?.toString();
   const requiredArtifactType = formData.get("requiredArtifactType")?.toString();
   const artifactLink = formData.get("artifactLink")?.toString();
@@ -128,8 +131,6 @@ export const achieveMissionAction = async (formData: FormData) => {
     requiredArtifactType: validatedRequiredArtifactType,
     artifactDescription: validatedArtifactDescription,
   } = validatedData;
-
-  const supabase = await createClient();
 
   // ユーザーがログイン済みかチェック (念のため)
   const {

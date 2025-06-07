@@ -478,6 +478,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_referral: {
+        Row: {
+          user_id: string;
+          referral_code: string;
+          del_flg: boolean;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          user_id: string;
+          referral_code: string;
+          del_flg?: boolean;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          referral_code?: string;
+          del_flg?: boolean;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_referral_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       activity_timeline_view: {

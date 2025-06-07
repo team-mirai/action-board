@@ -26,6 +26,7 @@ export type MissionPageData = {
   submissions: SubmissionData[];
   userAchievementCount: number;
   totalAchievementCount: number;
+  referralCode: string | null;
 };
 
 export type ButtonLabelProps = {

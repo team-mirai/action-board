@@ -34,8 +34,13 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const { mission, userAchievements, submissions, userAchievementCount } =
-    pageData;
+  const {
+    mission,
+    userAchievements,
+    submissions,
+    userAchievementCount,
+    referralCode,
+  } = pageData;
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
@@ -46,6 +51,7 @@ export default async function MissionPage({ params }: Props) {
           <MissionWithSubmissionHistory
             mission={mission}
             authUser={user}
+            referralCode={referralCode}
             initialUserAchievementCount={userAchievementCount}
             initialSubmissions={submissions}
             missionId={id}

@@ -4,6 +4,7 @@ import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { encodedRedirect } from "@/lib/utils/utils";
+import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -242,6 +243,50 @@ export async function updateProfile(
       return {
         success: false,
         error: "ユーザー情報の更新に失敗しました",
+      };
+    }
+  }
+
+  // ユーザー別紹介コードの登録処理（重複時は最大5回リトライ）
+  const MAX_RETRY = 5;
+
+  const { data: existingReferral } = await supabaseClient
+    .from("user_referral")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!existingReferral) {
+    let success = false;
+    let lastError = null;
+
+    for (let attempt = 0; attempt < MAX_RETRY; attempt++) {
+      const referralCode = nanoid(8); // 8桁ランダムコード
+
+      const { error: referralInsertError } = await supabaseClient
+        .from("user_referral")
+        .insert({
+          user_id: user.id,
+          referral_code: referralCode,
+        });
+
+      if (!referralInsertError) {
+        success = true;
+        break;
+      }
+
+      // 重複ならリトライ、それ以外なら終了
+      if (referralInsertError.code !== "23505") {
+        lastError = referralInsertError;
+        break;
+      }
+    }
+
+    if (!success) {
+      console.error("紹介コード登録に失敗:", lastError);
+      return {
+        success: false,
+        error: "紹介コードの登録に失敗しました。（重複によるリトライ上限）",
       };
     }
   }
