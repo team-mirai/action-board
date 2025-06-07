@@ -26,12 +26,12 @@ export default async function RankingPage() {
     <div className="flex flex-col min-h-screen py-4 w-full">
       {/* ユーザーのランキングカード */}
       {userRanking && (
-        <section className="py-4 md:py-16 bg-white">
+        <section className="py-4 bg-white">
           <CurrentUserCard currentUser={userRanking} />
         </section>
       )}
 
-      <section className="py-4 md:py-16 bg-white">
+      <section className="py-4 bg-white">
         {/* ランキング */}
         <RankingTop limit={100} />
       </section>
