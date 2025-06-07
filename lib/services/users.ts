@@ -14,7 +14,7 @@ export const getUser = cache(async () => {
   return user;
 });
 
-export const getProfile = cache(async () => {
+export const getMyProfile = cache(async () => {
   const user = await getUser();
   if (!user) {
     console.error("User not found");
@@ -25,6 +25,16 @@ export const getProfile = cache(async () => {
     .from("private_users")
     .select("*")
     .eq("id", user.id)
+    .single();
+  return privateUser;
+});
+
+export const getProfile = cache(async (userId: string) => {
+  const supabaseClient = await createClient();
+  const { data: privateUser } = await supabaseClient
+    .from("public_user_profiles")
+    .select("*")
+    .eq("id", userId)
     .single();
   return privateUser;
 });

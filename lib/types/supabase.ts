@@ -387,18 +387,21 @@ export type Database = {
       };
       user_levels: {
         Row: {
+          last_notified_level: number | null;
           level: number;
           updated_at: string;
           user_id: string;
           xp: number;
         };
         Insert: {
+          last_notified_level?: number | null;
           level?: number;
           updated_at?: string;
           user_id: string;
           xp?: number;
         };
         Update: {
+          last_notified_level?: number | null;
           level?: number;
           updated_at?: string;
           user_id?: string;
@@ -498,13 +501,13 @@ export type Database = {
       };
       user_ranking_view: {
         Row: {
-          user_id: string;
-          name: string;
-          address_prefecture: string;
-          xp: number;
-          level: number;
-          updated_at: string;
-          rank: number;
+          address_prefecture: string | null;
+          level: number | null;
+          name: string | null;
+          rank: number | null;
+          updated_at: string | null;
+          user_id: string | null;
+          xp: number | null;
         };
         Relationships: [];
       };

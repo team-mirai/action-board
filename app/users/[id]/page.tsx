@@ -1,3 +1,4 @@
+import Levels from "@/components/levels";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import UserAvatar from "@/components/user-avatar";
@@ -42,18 +43,43 @@ export default async function UserDetailPage({ params }: Props) {
     .eq("user_id", id);
 
   return (
-    <div className="flex flex-col items-center p-4 gap-4">
+    <div className="flex flex-col items-stretch max-w-xl gap-4 py-4">
+      <Levels userId={user.id} hideProgress />
       <div className="flex flex-col items-center">
-        <UserAvatar userProfile={user} size="2xl" />
-        <div className="text-xl font-bold mt-2">
-          {user.x_username || user.name}
-        </div>
-        <div className="flex items-center gap-1 text-gray-600 mt-1">
-          <MapPin size={20} className="mr-1" />
-          <span>{user.address_prefecture}</span>
-        </div>
+        {user.x_username && (
+          <div className="flex items-center gap-2 mt-2" style={{ height: 20 }}>
+            <img
+              src="/img/x_logo.png"
+              alt="Xのロゴ"
+              style={{
+                width: 16,
+                height: 16,
+                display: "block",
+              }}
+            />
+            <a
+              href={`https://x.com/${user.x_username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontWeight: 500,
+                fontFamily:
+                  "Chirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                fontSize: "18px",
+                lineHeight: "20px",
+                height: 20,
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+              }}
+              className="text-[#0F1419] hover:text-blue-600 hover:underline"
+            >
+              @{user.x_username}
+            </a>
+          </div>
+        )}
       </div>
-      <Card className="w-full max-w-xl p-4 mt-4">
+      <Card className="w-full p-4 mt-4">
         <div className="flex flex-row justify-between items-center mb-2">
           <span className="text-lg font-bold">活動タイムライン</span>
         </div>

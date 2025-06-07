@@ -1,15 +1,15 @@
-import { totalXp } from "@/lib/services/userLevel";
 import type { UserLevel } from "@/lib/services/userLevel";
+import { totalXp } from "@/lib/utils/utils";
 import React from "react";
 import { ProgressCircle } from "./ui/progress-circle";
 
 interface LevelProgressProps {
-  userLevel: UserLevel;
+  userLevel: UserLevel | null;
 }
 
 export function LevelProgress({ userLevel }: LevelProgressProps) {
-  const currentLevel = userLevel.level;
-  const currentXp = userLevel.xp;
+  const currentLevel = userLevel?.level ?? 1;
+  const currentXp = userLevel?.xp ?? 0;
 
   // 現在のレベルの開始XP（累計）
   const currentLevelStartXp = totalXp(currentLevel);
@@ -58,7 +58,7 @@ export function LevelProgress({ userLevel }: LevelProgressProps) {
             <span className="font-bold text-2xl">
               {currentXp.toLocaleString()}
             </span>
-            <span className="font-bold">ポイント</span>
+            <span className="font-bold ml-0.5">ポイント</span>
           </div>
         </div>
       </div>
