@@ -1,5 +1,6 @@
 "use client";
 
+import { markLevelUpSeenAction } from "@/app/actions/level-up";
 import type { UserLevel } from "@/lib/services/userLevel";
 import { calculateLevel, totalXp } from "@/lib/utils/utils";
 import { useCallback, useState } from "react";
@@ -137,9 +138,21 @@ export function useXpProgressAnimation({
     [onLevelUp],
   );
 
-  const handleLevelUpDialogClose = useCallback(() => {
+  const handleLevelUpDialogClose = useCallback(async () => {
     setIsLevelUpDialogOpen(false);
     setLevelUpData(null);
+
+    try {
+      const result = await markLevelUpSeenAction();
+      if (!result.success) {
+        console.error(
+          "Failed to mark level up notification as seen:",
+          result.error,
+        );
+      }
+    } catch (error) {
+      console.error("Error marking level up notification as seen:", error);
+    }
   }, []);
 
   const handleToastClose = useCallback(() => {
