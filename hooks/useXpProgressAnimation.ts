@@ -8,6 +8,15 @@ interface UseXpProgressAnimationProps {
   onLevelUp?: (newLevel: number, pointsToNextLevel: number) => void;
 }
 
+interface AnimationStage {
+  level: number;
+  startXp: number;
+  endXp: number;
+  levelStartXp: number;
+  nextLevelRequiredXp: number;
+  xpRangeForLevel: number;
+}
+
 export function useXpProgressAnimation({
   onLevelUp,
 }: UseXpProgressAnimationProps = {}) {
@@ -19,6 +28,9 @@ export function useXpProgressAnimation({
     startLevelStartXp: number;
     nextLevelRequiredXp: number;
     xpRangeForCurrentLevel: number;
+    isMultiLevel?: boolean;
+    stages?: AnimationStage[];
+    finalLevel?: number;
   } | null>(null);
   const [isLevelUpDialogOpen, setIsLevelUpDialogOpen] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{
@@ -29,19 +41,51 @@ export function useXpProgressAnimation({
   const startXpAnimation = useCallback(
     (userLevel: UserLevel, xpGranted: number) => {
       const startXp = userLevel.xp - xpGranted;
+      const endXp = userLevel.xp;
       const startLevel = calculateLevel(startXp);
-      const startLevelStartXp = totalXp(startLevel);
-      const nextLevelRequiredXp = totalXp(startLevel + 1);
-      const xpRangeForCurrentLevel = nextLevelRequiredXp - startLevelStartXp;
+      const finalLevel = calculateLevel(endXp);
 
-      setToastData({
-        userLevel,
-        xpGranted,
-        startLevel,
-        startLevelStartXp,
-        nextLevelRequiredXp,
-        xpRangeForCurrentLevel,
-      });
+      if (finalLevel > startLevel + 1) {
+        const stages: AnimationStage[] = [];
+        for (let level = startLevel; level < finalLevel; level++) {
+          const stageStartXp = Math.max(startXp, totalXp(level));
+          const stageEndXp = Math.min(endXp, totalXp(level + 1));
+          stages.push({
+            level,
+            startXp: stageStartXp,
+            endXp: stageEndXp,
+            levelStartXp: totalXp(level),
+            nextLevelRequiredXp: totalXp(level + 1),
+            xpRangeForLevel: totalXp(level + 1) - totalXp(level),
+          });
+        }
+
+        setToastData({
+          userLevel,
+          xpGranted,
+          startLevel,
+          startLevelStartXp: totalXp(startLevel),
+          nextLevelRequiredXp: totalXp(startLevel + 1),
+          xpRangeForCurrentLevel: totalXp(startLevel + 1) - totalXp(startLevel),
+          isMultiLevel: true,
+          stages,
+          finalLevel,
+        });
+      } else {
+        const startLevelStartXp = totalXp(startLevel);
+        const nextLevelRequiredXp = totalXp(startLevel + 1);
+        const xpRangeForCurrentLevel = nextLevelRequiredXp - startLevelStartXp;
+
+        setToastData({
+          userLevel,
+          xpGranted,
+          startLevel,
+          startLevelStartXp,
+          nextLevelRequiredXp,
+          xpRangeForCurrentLevel,
+          isMultiLevel: false,
+        });
+      }
       setIsToastOpen(true);
     },
     [],
@@ -57,17 +101,36 @@ export function useXpProgressAnimation({
   );
 
   const checkLevelUp = useCallback(
-    (currentXp: number, endXp: number, nextLevelRequiredXp: number) => {
-      if (currentXp >= nextLevelRequiredXp) {
-        const finalLevel = calculateLevel(endXp);
-        const finalLevelStartXp = totalXp(finalLevel);
-        const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
-        const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
+    (
+      currentXp: number,
+      endXp: number,
+      nextLevelRequiredXp: number,
+      isMultiLevel?: boolean,
+      finalLevel?: number,
+    ) => {
+      if (isMultiLevel && finalLevel) {
+        if (currentXp >= totalXp(finalLevel)) {
+          const finalLevelStartXp = totalXp(finalLevel);
+          const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
+          const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
 
-        setLevelUpData({ newLevel: finalLevel, pointsToNextLevel });
-        setIsLevelUpDialogOpen(true);
-        onLevelUp?.(finalLevel, pointsToNextLevel);
-        return true;
+          setLevelUpData({ newLevel: finalLevel, pointsToNextLevel });
+          setIsLevelUpDialogOpen(true);
+          onLevelUp?.(finalLevel, pointsToNextLevel);
+          return true;
+        }
+      } else {
+        if (currentXp >= nextLevelRequiredXp) {
+          const finalLevel = calculateLevel(endXp);
+          const finalLevelStartXp = totalXp(finalLevel);
+          const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
+          const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
+
+          setLevelUpData({ newLevel: finalLevel, pointsToNextLevel });
+          setIsLevelUpDialogOpen(true);
+          onLevelUp?.(finalLevel, pointsToNextLevel);
+          return true;
+        }
       }
       return false;
     },

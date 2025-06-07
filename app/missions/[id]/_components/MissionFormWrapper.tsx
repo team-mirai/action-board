@@ -194,6 +194,9 @@ export function MissionFormWrapper({
           startLevelStartXp={toastData.startLevelStartXp}
           nextLevelRequiredXp={toastData.nextLevelRequiredXp}
           xpRangeForCurrentLevel={toastData.xpRangeForCurrentLevel}
+          isMultiLevel={toastData.isMultiLevel}
+          stages={toastData.stages}
+          finalLevel={toastData.finalLevel}
           onLevelUp={checkLevelUp}
           onAnimationComplete={handleAnimationComplete}
         />
