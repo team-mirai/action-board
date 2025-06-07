@@ -31,11 +31,11 @@
       - いずれも管理者権限が必要
 
    - Hyper-Vの有効化
-      - 1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
-      - 2. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
-      - 3. PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
-      - 4. Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
-      - 5. Autoに変更したあとPCの再起動が必要です
+      1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
+      2. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
+      3. PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      4. Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      5. Autoに変更したあとPCの再起動が必要です
 
 #### インストール
 
@@ -47,14 +47,14 @@
    - Supabase CLI
       - cmd `npm install -g supabase`
          - E404エラーが出てインストールに失敗する場合
-            - Scoopをインストール
+            1. Scoopをインストール
             ```
             powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
             powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
             powershell -Command ".\install.ps1"
             ```
 
-            - Scoop で supabase をインストール
+            2. Scoop で supabase をインストール
             ```
             scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
             scoop install supabase
