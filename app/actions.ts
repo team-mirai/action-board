@@ -1,6 +1,6 @@
 "use server";
 
-import { initializeUserLevel } from "@/lib/services/userLevel";
+import { getOrInitializeUserLevel } from "@/lib/services/userLevel";
 import { createClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -91,7 +91,7 @@ export const signUpActionWithState = async (
 
   if (data.user?.id) {
     try {
-      await initializeUserLevel(data.user.id);
+      await getOrInitializeUserLevel(data.user.id);
     } catch (levelError) {
       console.error("Failed to initialize user level:", levelError);
     }
