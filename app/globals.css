@@ -94,6 +94,14 @@
     @apply bg-gradient-to-r from-teal-600 to-emerald-600;
   }
 
+  .bg-gradient-hero {
+    background: linear-gradient(90deg, #91e3cd, #b2ead2);
+  }
+
+  .bg-gradient-level {
+    background: linear-gradient(90deg, #30baa7, #47c991);
+  }
+
   /* 放射状グラデーション */
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));

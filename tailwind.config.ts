@@ -60,6 +60,7 @@ const config = {
       },
       fontSize: {
         xxs: "0.625rem", // 10px
+        xxl: "1.375rem",
       },
       keyframes: {
         "accordion-down": {

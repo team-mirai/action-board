@@ -2,6 +2,13 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
+import {
+  calculateLevel,
+  calculateMissionXp,
+  totalXp,
+  xpDelta,
+} from "../utils/utils";
+import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
 export type XpTransaction = Tables<"xp_transactions">;
@@ -10,19 +17,35 @@ export type XpTransactionInsert = TablesInsert<"xp_transactions">;
 /**
  * ユーザーのレベル情報を取得する
  */
+export async function getMyUserLevel(): Promise<UserLevel | null> {
+  const user = await getUser();
+  if (!user) {
+    console.error("User not found");
+    return null;
+  }
+
+  const supabase = await createServiceClient();
+
+  const { data } = await supabase
+    .from("user_levels")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return data;
+}
+
+/**
+ * ユーザーのレベル情報を取得する
+ */
 export async function getUserLevel(userId: string): Promise<UserLevel | null> {
   const supabase = await createServiceClient();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("user_levels")
     .select("*")
     .eq("user_id", userId)
     .single();
-
-  if (error) {
-    console.error("Failed to fetch user level:", error);
-    return null;
-  }
 
   return data;
 }
@@ -205,46 +228,13 @@ export async function getUserRank(userId: string): Promise<number | null> {
   return (count || 0) + 1; // より高いユーザー数 + 1 = 自分のランク
 }
 
-// L → L+1 の差分 XP
-export const xpDelta = (L: number) => {
-  if (L < 1) throw new Error("Level must be at least 1");
-  return 40 + 15 * (L - 1);
-};
-
-// レベル L 到達までの累計 XP
-export const totalXp = (L: number) => {
-  if (L < 1) throw new Error("Level must be at least 1");
-  return (L - 1) * (25 + (15 / 2) * L);
-};
-
-/**
- * XPに基づくレベル計算
- * 新しい式に基づく逆算
- */
-export function calculateLevel(xp: number): number {
-  if (xp < 0) return 1;
-
-  // 最大レベルを設定（計算の無限ループを防ぐため）
-  const maxLevel = 1000;
-
-  for (let level = 1; level <= maxLevel; level++) {
-    const requiredXp = totalXp(level + 1);
-    if (xp < requiredXp) {
-      return level;
-    }
-  }
-
-  return maxLevel;
-}
-
 /**
  * 次のレベルまでに必要なXP計算
  */
 export function getXpToNextLevel(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  const nextLevel = currentLevel + 1;
-  const nextLevelXp = xpDelta(nextLevel);
-  return nextLevelXp - currentXp;
+  const nextLevelTotalXp = totalXp(currentLevel + 1);
+  return Math.max(0, nextLevelTotalXp - currentXp);
 }
 
 /**
@@ -252,11 +242,9 @@ export function getXpToNextLevel(currentXp: number): number {
  */
 export function getLevelProgress(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  const currentLevelXp = xpDelta(currentLevel);
-  const nextLevelXp = xpDelta(currentLevel + 1);
-  const levelXpRange = nextLevelXp - currentLevelXp;
-  const progressXp = currentXp - currentLevelXp;
-  return Math.max(0, Math.min(1, progressXp / levelXpRange));
+  const xpToNext = getXpToNextLevel(currentXp);
+  const levelXpRange = xpDelta(currentLevel);
+  return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
 }
 
 /**
@@ -315,17 +303,178 @@ export async function grantMissionCompletionXp(
 }
 
 /**
- * ミッションの難易度に基づいてXPを計算する
+ * バッチ処理用：複数のユーザーに一括でXPを付与する
+ * N+1問題を回避し、パフォーマンスを最適化
  */
-export function calculateMissionXp(difficulty: number): number {
-  switch (difficulty) {
-    case 1:
-      return 50; // ★1 Easy
-    case 2:
-      return 100; // ★2 Normal
-    case 3:
-      return 200; // ★3 Hard
-    default:
-      return 50; // デフォルト（Easy相当）
+export async function grantXpBatch(
+  transactions: Array<{
+    userId: string;
+    xpAmount: number;
+    sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY";
+    sourceId?: string;
+    description?: string;
+  }>,
+): Promise<{
+  success: boolean;
+  results: Array<{
+    userId: string;
+    success: boolean;
+    error?: string;
+    newXp?: number;
+    newLevel?: number;
+  }>;
+  error?: string;
+}> {
+  const supabase = await createServiceClient();
+
+  if (!transactions || transactions.length === 0) {
+    return { success: true, results: [] };
+  }
+
+  try {
+    // 1. 全てのユーザーIDを収集（重複排除）
+    const userIdSet = new Set<string>();
+    for (const transaction of transactions) {
+      userIdSet.add(transaction.userId);
+    }
+    const userIds = Array.from(userIdSet);
+
+    // 2. 現在のユーザーレベル情報を一括取得
+    const { data: currentLevels, error: levelsError } = await supabase
+      .from("user_levels")
+      .select("*")
+      .in("user_id", userIds);
+
+    if (levelsError) {
+      console.error("Failed to fetch user levels:", levelsError);
+      return { success: false, error: levelsError.message, results: [] };
+    }
+
+    // 3. 現在のレベル情報をMapに変換（高速検索のため）
+    const levelMap = new Map(
+      currentLevels?.map((level) => [level.user_id, level]) || [],
+    );
+
+    // 4. 存在しないユーザーのレベル情報を初期化
+    const missingUserIds = userIds.filter((userId) => !levelMap.has(userId));
+
+    if (missingUserIds.length > 0) {
+      const { data: initializedLevels, error: initError } = await supabase
+        .from("user_levels")
+        .insert(
+          missingUserIds.map((userId) => ({
+            user_id: userId,
+            xp: 0,
+            level: 1,
+          })),
+        )
+        .select();
+
+      if (initError) {
+        console.error("Failed to initialize user levels:", initError);
+        return { success: false, error: initError.message, results: [] };
+      }
+
+      // 初期化されたレベルをMapに追加
+      for (const level of initializedLevels || []) {
+        levelMap.set(level.user_id, level);
+      }
+    }
+
+    // 5. XPトランザクションを一括挿入
+    const xpTransactions = transactions.map((transaction) => ({
+      user_id: transaction.userId,
+      xp_amount: transaction.xpAmount,
+      source_type: transaction.sourceType,
+      source_id: transaction.sourceId,
+      description:
+        transaction.description || `${transaction.sourceType}による経験値獲得`,
+    }));
+
+    const { error: transactionError } = await supabase
+      .from("xp_transactions")
+      .insert(xpTransactions);
+
+    if (transactionError) {
+      console.error("Failed to insert XP transactions:", transactionError);
+      return { success: false, error: transactionError.message, results: [] };
+    }
+
+    // 6. ユーザーごとのXP合計を計算
+    const userXpUpdates = new Map<string, number>();
+
+    for (const transaction of transactions) {
+      const currentTotal = userXpUpdates.get(transaction.userId) || 0;
+      userXpUpdates.set(
+        transaction.userId,
+        currentTotal + transaction.xpAmount,
+      );
+    }
+
+    // 7. ユーザーレベルを一括更新
+    const levelUpdates: Array<{
+      user_id: string;
+      xp: number;
+      level: number;
+      updated_at: string;
+    }> = [];
+
+    const results: Array<{
+      userId: string;
+      success: boolean;
+      error?: string;
+      newXp?: number;
+      newLevel?: number;
+    }> = [];
+
+    for (const [userId, xpChange] of Array.from(userXpUpdates.entries())) {
+      const currentLevel = levelMap.get(userId);
+      if (!currentLevel) {
+        results.push({
+          userId,
+          success: false,
+          error: "ユーザーレベル情報が見つかりません",
+        });
+        continue;
+      }
+
+      const newXp = currentLevel.xp + xpChange;
+      const newLevel = calculateLevel(newXp);
+
+      levelUpdates.push({
+        user_id: userId,
+        xp: newXp,
+        level: newLevel,
+        updated_at: new Date().toISOString(),
+      });
+
+      results.push({
+        userId,
+        success: true,
+        newXp,
+        newLevel,
+      });
+    }
+
+    // 8. レベル情報を一括更新（upsert）
+    if (levelUpdates.length > 0) {
+      const { error: updateError } = await supabase
+        .from("user_levels")
+        .upsert(levelUpdates, {
+          onConflict: "user_id",
+        });
+
+      if (updateError) {
+        console.error("Failed to update user levels:", updateError);
+        return { success: false, error: updateError.message, results: [] };
+      }
+    }
+
+    return { success: true, results };
+  } catch (error) {
+    console.error("Error in grantXpBatch:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "予期しないエラーが発生しました";
+    return { success: false, error: errorMessage, results: [] };
   }
 }

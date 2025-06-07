@@ -387,18 +387,21 @@ export type Database = {
       };
       user_levels: {
         Row: {
+          last_notified_level: number | null;
           level: number;
           updated_at: string;
           user_id: string;
           xp: number;
         };
         Insert: {
+          last_notified_level?: number | null;
           level?: number;
           updated_at?: string;
           user_id: string;
           xp?: number;
         };
         Update: {
+          last_notified_level?: number | null;
           level?: number;
           updated_at?: string;
           user_id?: string;
@@ -524,6 +527,18 @@ export type Database = {
         Row: {
           achievement_count: number | null;
           mission_id: string | null;
+        };
+        Relationships: [];
+      };
+      user_ranking_view: {
+        Row: {
+          address_prefecture: string | null;
+          level: number | null;
+          name: string | null;
+          rank: number | null;
+          updated_at: string | null;
+          user_id: string | null;
+          xp: number | null;
         };
         Relationships: [];
       };
