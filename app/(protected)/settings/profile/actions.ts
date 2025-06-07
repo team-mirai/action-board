@@ -247,8 +247,9 @@ export async function updateProfile(
     }
   }
 
-  //ユーザー別紹介コードの登録処理
-  const referralCode = nanoid(8);
+  // ユーザー別紹介コードの登録処理（重複時は最大5回リトライ）
+  const MAX_RETRY = 5;
+
   const { data: existingReferral } = await supabaseClient
     .from("user_referral")
     .select("user_id")
@@ -256,18 +257,36 @@ export async function updateProfile(
     .maybeSingle();
 
   if (!existingReferral) {
-    const { error: referralInsertError } = await supabaseClient
-      .from("user_referral")
-      .insert({
-        user_id: user.id,
-        referral_code: referralCode,
-      });
+    let success = false;
+    let lastError = null;
 
-    if (referralInsertError) {
-      console.error("紹介コード登録に失敗:", referralInsertError);
+    for (let attempt = 0; attempt < MAX_RETRY; attempt++) {
+      const referralCode = nanoid(8); // 8桁ランダムコード
+
+      const { error: referralInsertError } = await supabaseClient
+        .from("user_referral")
+        .insert({
+          user_id: user.id,
+          referral_code: referralCode,
+        });
+
+      if (!referralInsertError) {
+        success = true;
+        break;
+      }
+
+      // 重複ならリトライ、それ以外なら終了
+      if (referralInsertError.code !== "23505") {
+        lastError = referralInsertError;
+        break;
+      }
+    }
+
+    if (!success) {
+      console.error("紹介コード登録に失敗:", lastError);
       return {
         success: false,
-        error: "紹介コードの登録に失敗しました。",
+        error: "紹介コードの登録に失敗しました。（重複によるリトライ上限）",
       };
     }
   }
