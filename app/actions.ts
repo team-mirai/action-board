@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { initializeUserLevel } from "@/lib/services/userLevel";
 
 import {
   forgotPasswordFormSchema,
@@ -66,7 +67,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -86,6 +87,14 @@ export const signUpActionWithState = async (
       error: message,
       formData: currentFormData,
     };
+  }
+
+  if (data.user?.id) {
+    try {
+      await initializeUserLevel(data.user.id);
+    } catch (levelError) {
+      console.error("Failed to initialize user level:", levelError);
+    }
   }
 
   // 成功時はリダイレクトする
