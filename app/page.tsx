@@ -66,8 +66,8 @@ export default async function Home() {
       </section>
 
       {/* ランキングセクション */}
-      <section className="py-12 md:py-16 bg-gray-50">
-        <RankingTop limit={10} />
+      <section className="py-12 md:py-16 bg-white">
+        <RankingTop limit={10} showDetailedInfo={true} />
       </section>
 
       {/* アクティビティセクション */}
