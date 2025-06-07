@@ -45,10 +45,13 @@
       - ver22.16.0 (25/06/06時点)
       - npmも同時にインストールされます
 
+   - Docker
+      - [公式ドキュメント](https://docs.docker.jp/desktop/install/windows-install.html)を参照
+
    - Supabase CLI
       - cmd `npm install -g supabase`
          - E404エラーが出てインストールに失敗する場合
-            1. Scoopをインストール
+            1. Scoop をインストール
             ```
             powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
             powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
