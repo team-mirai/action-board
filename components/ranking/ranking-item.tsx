@@ -8,8 +8,10 @@ interface RankingItemProps {
   showDetailedInfo?: boolean; // フル版では詳細情報を表示
 }
 
-function getRankIcon(rank: number) {
-  switch (rank) {
+function getRankIcon(rank: number | null) {
+  const displayRank = rank ?? 0;
+
+  switch (displayRank) {
     case 1:
       return <Crown className="w-6 h-6 text-yellow-500" />;
     case 2:
@@ -19,17 +21,19 @@ function getRankIcon(rank: number) {
     default:
       return (
         <div className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold">
-          {rank}
+          {displayRank}
         </div>
       );
   }
 }
 
-function getLevelBadgeColor(level: number) {
-  if (level >= 40) return "bg-emerald-100 text-emerald-700";
-  if (level >= 30) return "bg-emerald-100 text-emerald-700";
-  if (level >= 20) return "bg-emerald-100 text-emerald-700";
-  if (level >= 10) return "bg-emerald-100 text-emerald-700";
+function getLevelBadgeColor(level: number | null) {
+  const displayLevel = level ?? 0;
+
+  if (displayLevel >= 40) return "bg-emerald-100 text-emerald-700";
+  if (displayLevel >= 30) return "bg-emerald-100 text-emerald-700";
+  if (displayLevel >= 20) return "bg-emerald-100 text-emerald-700";
+  if (displayLevel >= 10) return "bg-emerald-100 text-emerald-700";
   return "text-emerald-700 bg-emerald-100";
 }
 
@@ -56,7 +60,9 @@ export function RankingItem({
           Lv.{user.level}
         </Badge>
         <div className="text-right">
-          <div className="font-bold text-lg">{user.xp.toLocaleString()}pt</div>
+          <div className="font-bold text-lg">
+            {(user.xp ?? 0).toLocaleString()}pt
+          </div>
         </div>
       </div>
     </div>
