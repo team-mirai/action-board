@@ -3,6 +3,7 @@ import Hero from "@/components/hero";
 import { LevelUpCheck } from "@/components/level-up-check";
 import Metrics from "@/components/metrics";
 import Missions from "@/components/mission/missions";
+import RankingTop from "@/components/ranking/ranking-top";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
@@ -62,6 +63,11 @@ export default async function Home() {
       {/* ミッションセクション */}
       <section className="py-12 md:py-16 bg-white">
         <Missions userId={user?.id} showAchievedMissions={true} />
+      </section>
+
+      {/* ランキングセクション */}
+      <section className="py-12 md:py-16 bg-gray-50">
+        <RankingTop limit={10} />
       </section>
 
       {/* アクティビティセクション */}
