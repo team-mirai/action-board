@@ -16,7 +16,12 @@
 ### インストール for Mac
 
    - Node.jsのインストール `brew install node`
-   - Dockerのインストール [公式ドキュメント](https://docs.docker.jp/desktop/install/mac-install.html)
+   - Dockerのインストール
+   ```
+   $ sudo hdiutil attach Docker.dmg
+   $ sudo /Volumes/Docker/Docker.app/Contents/MacOS/install
+   $ sudo hdiutil detach /Volumes/Docker
+   ```
    - Supabase CLI `brew install supabase/tap/supabase`
 
 ### インストール for Windows
