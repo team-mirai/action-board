@@ -32,10 +32,10 @@
 
    - Hyper-Vの有効化
       1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
-      2. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
-      3. PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
-      4. Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
-      5. Autoに変更したあとPCの再起動が必要です
+      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
+      1. PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      1. Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      1. Autoに変更したあとPCの再起動が必要です
 
 #### インストール
 
@@ -54,7 +54,7 @@
             powershell -Command ".\install.ps1"
             ```
 
-            2. Scoop で supabase をインストール
+            1. Scoop で supabase をインストール
             ```
             scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
             scoop install supabase
