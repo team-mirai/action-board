@@ -22,18 +22,6 @@ export default async function RankingPage() {
     userRanking = data;
   }
 
-  if (user && !userRanking) {
-    userRanking = {
-      user_id: user.id,
-      name: user.user_metadata?.name || "みらいとら",
-      address_prefecture: user.user_metadata?.address_prefecture || "東京都",
-      updated_at: new Date().toISOString(),
-      rank: 100,
-      level: 5,
-      xp: 12345,
-    };
-  }
-
   return (
     <div className="flex flex-col min-h-screen py-4">
       {/* ユーザーのランキングカード */}
