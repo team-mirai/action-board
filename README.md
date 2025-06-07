@@ -25,15 +25,16 @@
 
    - PowerShell ver5.1以上 `PowerShell $PSVersionTable` で確認
 
-   - gitのインストール([公式サイト](https://gitforwindows.org/))
+   - gitのインストール([公式サイト](https://gitforwindows.org/)) `git --version` で確認
 
-   - WSL2のインストール `cmd wsl --install` または `PowerShell wsl --install`
+   - WSL2のインストール `wsl --version` で確認
+      - `cmd wsl --install` または `PowerShell wsl --install`
       - いずれも管理者権限が必要
 
    - Hyper-Vの有効化
       1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
       1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になってない場合があるので、以下で確認
-      1. PowerShell(管理者権限)でHyper-vが有効になってるか確認: コマンド `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      1. PowerShell(管理者権限)でHyper-vが有効になってるか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
       1. Offになってる場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
       1. Autoに変更したあとPCの再起動が必要です
 
