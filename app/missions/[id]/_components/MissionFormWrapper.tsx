@@ -69,7 +69,9 @@ export function MissionFormWrapper({
   };
 
   const completed =
-    hasReachedUserMaxAchievements && mission?.max_achievement_count !== null;
+    (hasReachedUserMaxAchievements &&
+      mission?.max_achievement_count !== null) ||
+    (userAchievementCount > 0 && mission.max_achievement_count === null);
 
   return (
     <>
