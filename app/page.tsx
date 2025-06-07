@@ -1,10 +1,12 @@
 import Activities from "@/components/activities";
 import Hero from "@/components/hero";
+import { LevelUpCheck } from "@/components/level-up-check";
 import Metrics from "@/components/metrics";
 import Missions from "@/components/mission/missions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
+import { checkLevelUpNotification } from "@/lib/services/levelUpNotification";
 import { createClient } from "@/lib/supabase/server";
 import { Edit3, MessageCircle } from "lucide-react";
 import Link from "next/link";
@@ -19,6 +21,10 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // レベルアップ通知をチェック
+  let levelUpNotification = null;
+
   if (user) {
     const { data: privateUser } = await supabase
       .from("private_users")
@@ -28,10 +34,21 @@ export default async function Home() {
     if (!privateUser) {
       redirect("/settings/profile?new=true");
     }
+
+    // レベルアップ通知をチェック
+    const levelUpCheck = await checkLevelUpNotification(user.id);
+    if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
+      levelUpNotification = levelUpCheck.levelUp;
+    }
   }
 
   return (
     <div className="flex flex-col min-h-screen py-4">
+      {/* レベルアップ通知 */}
+      {levelUpNotification && (
+        <LevelUpCheck levelUpData={levelUpNotification} />
+      )}
+
       {/* ヒーローセクション */}
       <section>
         <Hero />
