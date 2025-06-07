@@ -30,7 +30,7 @@ export async function getMyUserLevel(): Promise<UserLevel | null> {
     .from("user_levels")
     .select("*")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   return data;
 }
