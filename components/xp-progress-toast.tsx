@@ -7,7 +7,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast";
-import { totalXp } from "@/lib/utils/utils";
+import { calculateLevel, totalXp } from "@/lib/utils/utils";
 import React, { useEffect, useState } from "react";
 
 import type { UserLevel } from "@/lib/services/userLevel";
@@ -17,7 +17,15 @@ interface XpProgressToastProps {
   onOpenChange: (open: boolean) => void;
   userLevel: UserLevel;
   xpGranted: number;
-  onLevelUp?: (newLevel: number, pointsToNextLevel: number) => void;
+  startLevel: number;
+  startLevelStartXp: number;
+  nextLevelRequiredXp: number;
+  xpRangeForCurrentLevel: number;
+  onLevelUp?: (
+    currentXp: number,
+    endXp: number,
+    nextLevelRequiredXp: number,
+  ) => boolean;
   onAnimationComplete?: () => void;
 }
 
@@ -26,16 +34,15 @@ export function XpProgressToast({
   onOpenChange,
   userLevel,
   xpGranted,
+  startLevel,
+  startLevelStartXp,
+  nextLevelRequiredXp,
+  xpRangeForCurrentLevel,
   onLevelUp,
   onAnimationComplete,
 }: XpProgressToastProps) {
   const [animatedXp, setAnimatedXp] = useState(userLevel.xp - xpGranted);
   const [hasTriggeredLevelUp, setHasTriggeredLevelUp] = useState(false);
-
-  const currentLevel = userLevel.level;
-  const currentLevelStartXp = totalXp(currentLevel);
-  const nextLevelRequiredXp = totalXp(currentLevel + 1);
-  const xpRangeForCurrentLevel = nextLevelRequiredXp - currentLevelStartXp;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -54,26 +61,12 @@ export function XpProgressToast({
 
       setAnimatedXp(currentXp);
 
-      const animatedLevel =
-        Math.floor(
-          ((currentXp - currentLevelStartXp) / xpRangeForCurrentLevel) * 100,
-        ) / 100;
-      const targetLevel =
-        Math.floor(
-          ((endXp - currentLevelStartXp) / xpRangeForCurrentLevel) * 100,
-        ) / 100;
-
       if (
         !hasTriggeredLevelUp &&
-        currentXp >= nextLevelRequiredXp &&
-        onLevelUp
+        onLevelUp &&
+        onLevelUp(currentXp, endXp, nextLevelRequiredXp)
       ) {
         setHasTriggeredLevelUp(true);
-        const newLevel = currentLevel + 1;
-        const newLevelStartXp = totalXp(newLevel);
-        const newNextLevelRequiredXp = totalXp(newLevel + 1);
-        const pointsToNextLevel = newNextLevelRequiredXp - endXp;
-        onLevelUp(newLevel, pointsToNextLevel);
       }
 
       if (progress < 1) {
@@ -92,16 +85,13 @@ export function XpProgressToast({
     isOpen,
     userLevel.xp,
     xpGranted,
-    currentLevel,
-    currentLevelStartXp,
     nextLevelRequiredXp,
-    xpRangeForCurrentLevel,
     hasTriggeredLevelUp,
     onLevelUp,
     onAnimationComplete,
   ]);
 
-  const progressInCurrentLevel = Math.max(0, animatedXp - currentLevelStartXp);
+  const progressInCurrentLevel = Math.max(0, animatedXp - startLevelStartXp);
   const progressPercentage = Math.min(
     (progressInCurrentLevel / xpRangeForCurrentLevel) * 100,
     100,
@@ -119,7 +109,7 @@ export function XpProgressToast({
             {Math.max(0, Math.ceil(nextLevelRequiredXp - animatedXp))}XP
           </ToastDescription>
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-medium">Lv.{currentLevel}</span>
+            <span className="text-xs font-medium">Lv.{startLevel}</span>
             <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-100 ease-out"
@@ -128,7 +118,7 @@ export function XpProgressToast({
                 }}
               />
             </div>
-            <span className="text-xs font-medium">Lv.{currentLevel + 1}</span>
+            <span className="text-xs font-medium">Lv.{startLevel + 1}</span>
           </div>
         </div>
       </Toast>

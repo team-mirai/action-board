@@ -51,6 +51,7 @@ export function MissionFormWrapper({
     levelUpData,
     startXpAnimation,
     handleLevelUp,
+    checkLevelUp,
     handleLevelUpDialogClose,
     handleToastClose,
     handleAnimationComplete,
@@ -189,7 +190,11 @@ export function MissionFormWrapper({
           onOpenChange={handleToastClose}
           userLevel={toastData.userLevel}
           xpGranted={toastData.xpGranted}
-          onLevelUp={handleLevelUp}
+          startLevel={toastData.startLevel}
+          startLevelStartXp={toastData.startLevelStartXp}
+          nextLevelRequiredXp={toastData.nextLevelRequiredXp}
+          xpRangeForCurrentLevel={toastData.xpRangeForCurrentLevel}
+          onLevelUp={checkLevelUp}
           onAnimationComplete={handleAnimationComplete}
         />
       )}
