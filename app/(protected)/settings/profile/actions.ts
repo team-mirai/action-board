@@ -4,6 +4,7 @@ import { PREFECTURES } from "@/lib/address";
 import { AVATAR_MAX_FILE_SIZE } from "@/lib/avatar";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { encodedRedirect } from "@/lib/utils/utils";
+import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -242,6 +243,31 @@ export async function updateProfile(
       return {
         success: false,
         error: "ユーザー情報の更新に失敗しました",
+      };
+    }
+  }
+
+  //ユーザー別紹介コードの登録処理
+  const referralCode = nanoid(8);
+  const { data: existingReferral } = await supabaseClient
+    .from("user_referral")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!existingReferral) {
+    const { error: referralInsertError } = await supabaseClient
+      .from("user_referral")
+      .insert({
+        user_id: user.id,
+        referral_code: referralCode,
+      });
+
+    if (referralInsertError) {
+      console.error("紹介コード登録に失敗:", referralInsertError);
+      return {
+        success: false,
+        error: "紹介コードの登録に失敗しました。",
       };
     }
   }

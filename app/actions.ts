@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -10,6 +10,11 @@ import {
   signInAndLoginFormSchema,
   signUpAndLoginFormSchema,
 } from "@/lib/validation/auth";
+
+import {
+  isEmailAlreadyUsedInReferral,
+  isValidReferralCode,
+} from "@/lib/validation/referral";
 
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
@@ -33,6 +38,9 @@ export const signUpActionWithState = async (
   const terms_agreed = formData.get("terms_agreed")?.toString();
   const privacy_agreed = formData.get("privacy_agreed")?.toString();
 
+  //クエリストリングからリファラルコードを取得
+  const referralCode = formData.get("ref")?.toString().trim();
+
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
     email: email || "",
@@ -41,6 +49,28 @@ export const signUpActionWithState = async (
     terms_agreed: terms_agreed === "true",
     privacy_agreed: privacy_agreed === "true",
   };
+
+  //　リファラルコードがDBに存在するか突合チェック
+  if (referralCode) {
+    const isValid = await isValidReferralCode(referralCode);
+    if (!isValid) {
+      return {
+        error: "紹介コードが無効です。",
+        formData: currentFormData,
+      };
+    }
+  }
+
+  //  ログインユーザーのメールアドレスが既に徳六済みでないかチェック
+  const isDuplicate = await isEmailAlreadyUsedInReferral(
+    email?.toLowerCase() ?? "",
+  );
+  if (isDuplicate) {
+    return {
+      error: "このメールアドレスは既に紹介に使用されています。",
+      formData: currentFormData,
+    };
+  }
 
   const validatedFields = signUpAndLoginFormSchema.safeParse({
     email,
@@ -66,7 +96,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -76,16 +106,89 @@ export const signUpActionWithState = async (
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
+  //サインアップ完了後にuserIdを取得
+  const userId = data?.user?.id;
+  if (!userId) {
+    return { error: "ユーザー登録に失敗しました", formData: currentFormData };
+  }
 
-  if (error) {
-    let message = error.message;
-    if (error.code === "user_already_exists") {
-      message = "このメールアドレスはすでに使用されています。";
-    }
+  if (!userId) {
     return {
-      error: message,
+      error: "ユーザー登録に失敗しました",
       formData: currentFormData,
     };
+  }
+
+  //紹介URLから遷移した場合のみ以下を実行
+  if (referralCode) {
+    const supabase = await createServiceClient();
+    //紹介ミッション情報を取得
+    const { data: mission } = await supabase
+      .from("missions")
+      .select("id, required_artifact_type")
+      .eq("required_artifact_type", "REFERRAL")
+      .maybeSingle(); // REFERRALミッションが存在する前提
+
+    const { data: referrerRecord, error: referrerError } = await supabase
+      .from("user_referral")
+      .select("user_id")
+      .eq("referral_code", referralCode)
+      .single();
+
+    if (referrerError || !referrerRecord?.user_id) {
+      return {
+        error: "紹介者の情報取得に失敗しました",
+        formData: currentFormData,
+      };
+    }
+    const referrerUserId = referrerRecord.user_id;
+
+    if (!mission) {
+      return {
+        error: "紹介ミッションが存在しません",
+        formData: currentFormData,
+      };
+    }
+    //achivementsテーブルへ登録
+    const { data: achievement, error: achievementError } = await supabase
+      .from("achievements")
+      .insert({
+        user_id: referrerUserId,
+        mission_id: mission.id,
+      })
+      .select("id")
+      .single();
+
+    if (achievementError) {
+      return {
+        error: "ミッション達成の記録に失敗しました",
+        formData: currentFormData,
+      };
+    }
+
+    if (!mission) {
+      return {
+        error: "紹介ミッションが存在しません",
+        formData: currentFormData,
+      };
+    }
+    await supabase.from("mission_artifacts").insert({
+      user_id: referrerUserId,
+      achievement_id: achievement.id,
+      artifact_type: "REFERRAL",
+      text_content: email.toLowerCase(), // メールアドレスで追跡
+    });
+
+    if (error) {
+      let message = error.message;
+      if (error.code === "user_already_exists") {
+        message = "このメールアドレスはすでに使用されています。";
+      }
+      return {
+        error: message,
+        formData: currentFormData,
+      };
+    }
   }
 
   // 成功時はリダイレクトする

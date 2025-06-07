@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert } from "@/lib/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
 import { z } from "zod";
 
+const supabase = await createServiceClient(); // ← ここ！
+
 // 基本スキーマ（共通項目）
 const baseMissionFormSchema = z.object({
   missionId: z.string().nonempty({ message: "ミッションIDが必要です" }),
