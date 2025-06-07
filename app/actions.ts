@@ -1,10 +1,10 @@
 "use server";
 
+import { initializeUserLevel } from "@/lib/services/userLevel";
 import { createClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { initializeUserLevel } from "@/lib/services/userLevel";
 
 import {
   forgotPasswordFormSchema,
