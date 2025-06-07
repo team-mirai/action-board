@@ -93,10 +93,22 @@ export function useXpProgressAnimation({
   );
 
   const handleLevelUp = useCallback(
-    (newLevel: number, pointsToNextLevel: number) => {
+    async (newLevel: number, pointsToNextLevel: number) => {
       setLevelUpData({ newLevel, pointsToNextLevel });
       setIsLevelUpDialogOpen(true);
       onLevelUp?.(newLevel, pointsToNextLevel);
+
+      try {
+        const result = await markLevelUpSeenAction();
+        if (!result.success) {
+          console.error(
+            "Failed to mark level up notification as seen:",
+            result.error,
+          );
+        }
+      } catch (error) {
+        console.error("Error marking level up notification as seen:", error);
+      }
     },
     [onLevelUp],
   );
@@ -138,21 +150,9 @@ export function useXpProgressAnimation({
     [onLevelUp],
   );
 
-  const handleLevelUpDialogClose = useCallback(async () => {
+  const handleLevelUpDialogClose = useCallback(() => {
     setIsLevelUpDialogOpen(false);
     setLevelUpData(null);
-
-    try {
-      const result = await markLevelUpSeenAction();
-      if (!result.success) {
-        console.error(
-          "Failed to mark level up notification as seen:",
-          result.error,
-        );
-      }
-    } catch (error) {
-      console.error("Error marking level up notification as seen:", error);
-    }
   }, []);
 
   const handleToastClose = useCallback(() => {
