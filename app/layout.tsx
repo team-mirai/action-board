@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import Footer from "./footer";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastProvider, ToastViewport } from "@/components/ui/toast";
 import { generateRootMetadata } from "@/lib/metadata";
 import Script from "next/script";
 
@@ -56,6 +57,9 @@ export default function RootLayout({
           </main>
           <Footer />
           <Toaster />
+          <ToastProvider>
+            <ToastViewport />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
