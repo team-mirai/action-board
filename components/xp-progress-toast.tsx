@@ -192,7 +192,11 @@ export function XpProgressToast({
 
   return (
     <ToastProvider>
-      <Toast open={isOpen} onOpenChange={onOpenChange} className="w-full max-w-sm mx-auto">
+      <Toast
+        open={isOpen}
+        onOpenChange={onOpenChange}
+        className="w-full max-w-sm mx-auto"
+      >
         <div className="flex flex-col space-y-3 p-2">
           <ToastTitle className="text-base font-bold text-center">
             +{xpGranted}XP獲得！
