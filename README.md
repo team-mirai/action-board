@@ -55,7 +55,7 @@
             powershell -Command ".\install.ps1"
             ```
 
-            1. Scoop で supabase をインストール
+            2. Scoop で supabase をインストール
             ```
             scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
             scoop install supabase
