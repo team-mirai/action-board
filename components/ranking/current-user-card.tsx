@@ -5,7 +5,6 @@ import type { UserRanking } from "@/lib/services/ranking";
 import {
   formatUserDisplayName,
   formatUserPrefecture,
-  getLevelBadgeColor,
 } from "@/lib/utils/ranking-utils";
 import { User } from "lucide-react";
 
