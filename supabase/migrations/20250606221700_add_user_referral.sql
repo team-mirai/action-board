@@ -7,3 +7,13 @@ create table user_referral (
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
+
+alter table user_referral enable row level security;
+
+create policy "Users can SELECT their own referral" on user_referral
+for select
+using (auth.uid() = user_id);
+
+create policy "Users can INSERT their own referral" on user_referral
+for insert
+with check (auth.uid() = user_id);

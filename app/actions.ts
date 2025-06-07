@@ -2,6 +2,7 @@
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
+import { referralCodeSchema } from "@/lib/validation/referral";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -51,7 +52,7 @@ export const signUpActionWithState = async (
   };
 
   //　リファラルコードがDBに存在するか突合チェック
-  if (referralCode) {
+  /*if (referralCode) {
     const isValid = await isValidReferralCode(referralCode);
     if (!isValid) {
       return {
@@ -59,9 +60,19 @@ export const signUpActionWithState = async (
         formData: currentFormData,
       };
     }
+  }*/
+
+  if (referralCode) {
+    const result = referralCodeSchema.safeParse(referralCode);
+    if (!result.success) {
+      return {
+        error: result.error.errors.map((e) => e.message).join("\n"),
+        formData: currentFormData,
+      };
+    }
   }
 
-  //  ログインユーザーのメールアドレスが既に徳六済みでないかチェック
+  //  ログインユーザーのメールアドレスが既に登録済でないかチェック
   const isDuplicate = await isEmailAlreadyUsedInReferral(
     email?.toLowerCase() ?? "",
   );

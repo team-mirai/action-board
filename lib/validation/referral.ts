@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 export async function isValidReferralCode(code: string): Promise<boolean> {
   const supabase = await createClient();
@@ -7,7 +8,7 @@ export async function isValidReferralCode(code: string): Promise<boolean> {
     .select("user_id")
     .eq("referral_code", code)
     .eq("del_flg", false)
-    .single();
+    .maybeSingle();
   return !!data;
 }
 
@@ -22,3 +23,11 @@ export async function isEmailAlreadyUsedInReferral(
     .eq("text_content", email);
   return !!(data && data.length > 0);
 }
+
+const NANOID_REGEX = /^[a-zA-Z0-9@+*/#$%&!\-]{8}$/;
+
+export const referralCodeSchema = z
+  .string()
+  .refine((val) => NANOID_REGEX.test(val), {
+    message: "紹介リンクに誤りがあります。正しいリンクかどうかご確認ください。",
+  });
