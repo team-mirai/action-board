@@ -1,18 +1,10 @@
 // TOPページ用のランキングコンポーネント
 import { Badge } from "@/components/ui/badge";
+import type { UserRanking } from "@/lib/services/ranking";
 import { Crown, Medal, Trophy } from "lucide-react";
 
-interface RankingUser {
-  rank: number;
-  user_id: string;
-  name: string;
-  address_prefecture: string;
-  level: number;
-  xp: number;
-}
-
 interface RankingItemProps {
-  user: RankingUser;
+  user: UserRanking;
   showDetailedInfo?: boolean; // フル版では詳細情報を表示
 }
 
