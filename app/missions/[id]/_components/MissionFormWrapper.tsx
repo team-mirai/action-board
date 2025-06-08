@@ -71,6 +71,9 @@ export function MissionFormWrapper({
   const completed =
     hasReachedUserMaxAchievements && mission?.max_achievement_count !== null;
 
+  const isCompletedForUnlimitedMission =
+    userAchievementCount > 0 && mission.max_achievement_count === null;
+
   return (
     <>
       <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
@@ -88,7 +91,41 @@ export function MissionFormWrapper({
           </div>
         )}
 
-        {completed && (
+        {!hasReachedUserMaxAchievements &&
+          userAchievementCount > 0 &&
+          mission?.max_achievement_count !== null && (
+            <div className="rounded-lg border bg-muted/50 p-4 text-center">
+              <p className="text-sm font-medium text-muted-foreground">
+                あなたの達成回数: {userAchievementCount} /{" "}
+                {mission.max_achievement_count}回
+              </p>
+            </div>
+          )}
+
+        {!completed && (
+          <>
+            <ArtifactForm
+              key={formKey}
+              mission={mission}
+              authUser={authUser}
+              disabled={isButtonDisabled || isSubmitting}
+              submittedArtifactImagePath={null}
+            />
+            <SubmitButton
+              pendingText="登録中..."
+              size="lg"
+              disabled={isButtonDisabled || isSubmitting}
+            >
+              {buttonLabel}
+            </SubmitButton>
+            <p className="text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </p>
+          </>
+        )}
+
+        {(completed || isCompletedForUnlimitedMission) && (
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
             <p className="text-sm font-medium text-gray-800">
               このミッションは達成済みです。
@@ -104,41 +141,6 @@ export function MissionFormWrapper({
               シェアする
             </Button>
           </div>
-        )}
-
-        {!hasReachedUserMaxAchievements &&
-          userAchievementCount > 0 &&
-          mission?.max_achievement_count !== null && (
-            <div className="rounded-lg border bg-muted/50 p-4 text-center">
-              <p className="text-sm font-medium text-muted-foreground">
-                あなたの達成回数: {userAchievementCount} /{" "}
-                {mission.max_achievement_count}回
-              </p>
-            </div>
-          )}
-
-        <ArtifactForm
-          key={formKey}
-          mission={mission}
-          authUser={authUser}
-          disabled={isButtonDisabled || isSubmitting}
-          submittedArtifactImagePath={null}
-        />
-
-        {!completed && (
-          <>
-            <SubmitButton
-              pendingText="登録中..."
-              size="lg"
-              disabled={isButtonDisabled || isSubmitting}
-            >
-              {buttonLabel}
-            </SubmitButton>
-            <p className="text-sm text-muted-foreground">
-              ※
-              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
-            </p>
-          </>
         )}
       </form>
 
