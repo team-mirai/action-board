@@ -4,7 +4,6 @@ import { LevelUpDialog } from "@/components/level-up-dialog";
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
-
 import { useXpProgressAnimation } from "@/hooks/useXpProgressAnimation";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { UserLevel } from "@/lib/services/userLevel";
