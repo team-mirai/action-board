@@ -55,7 +55,18 @@ export function XpProgressToastContent({
 
   // レベルアップ処理
   const handleLevelUp = (newLevel: number) => {
-    console.log("Level up detected:", newLevel);
+    // 次の次のレベルまで上がるならそのままアニメーション継続
+    const newNextLevelXp = totalXp(newLevel + 1);
+    if (startXp + currentXpGained > newNextLevelXp) {
+      const xpUsed = endXp - startXp;
+      setLevelState({
+        currentLevel: newLevel,
+        currentXp: endXp,
+        currentXpGained: currentXpGained - xpUsed,
+      });
+      return;
+    }
+
     if (onLevelUp) {
       onLevelUp(newLevel);
     }

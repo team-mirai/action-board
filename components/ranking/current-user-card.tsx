@@ -32,7 +32,7 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="w-5 h-5 text-teal-600" />
-            あなたのランキング
+            あなたのランク
           </CardTitle>
         </CardHeader>
         <CardContent>

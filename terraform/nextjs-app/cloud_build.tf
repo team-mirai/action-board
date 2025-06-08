@@ -115,6 +115,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
     _NEXT_PUBLIC_SENTRY_DSN            = var.NEXT_PUBLIC_SENTRY_DSN
     _NEXT_PUBLIC_GA_ID                 = var.NEXT_PUBLIC_GA_ID
     _NEXT_PUBLIC_SENTRY_ENVIRONMENT    = var.environment
+    _NEXT_PUBLIC_APP_ORIGIN            = var.NEXT_PUBLIC_APP_ORIGIN
     _SUPABASE_PROJECT_ID               = var.SUPABASE_PROJECT_ID
     _SUPABASE_SMTP_HOST                = var.SUPABASE_SMTP_HOST
     _SUPABASE_SMTP_USER                = var.SUPABASE_SMTP_USER

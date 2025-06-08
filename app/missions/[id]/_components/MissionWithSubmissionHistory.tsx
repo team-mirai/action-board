@@ -151,7 +151,11 @@ export function MissionWithSubmissionHistory({
     }
   };
 
-  const signupUrl = `${process.env.NEXT_PUBLIC_APP_ORIGIN}/sign-up?ref=${referralCode}`;
+  // クライアントサイドでのみwindow.location.originを使用
+  const origin =
+    process.env.NEXT_PUBLIC_APP_ORIGIN ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  const signupUrl = `${origin}/sign-up?ref=${referralCode}`;
 
   return (
     <>
@@ -159,8 +163,15 @@ export function MissionWithSubmissionHistory({
         authUser &&
         referralCode && (
           <div className="bg-white rounded-xl border-2 p-6 flex flex-col items-center">
-            <p className="mb-2 font-semibold text-center text-lg">QRコード</p>
+            <p className="mb-2 font-semibold text-center text-lg">
+              あなた専用紹介URL
+            </p>
+            <p className="text-sm text-muted-foreground">
+              あなた専用の紹介URLを周りの人に共有して、紹介URLから登録が完了すると、自動でミッションクリア回数がカウントされます。
+            </p>
+            <p className="text-sm mt-4 font-bold">QRコードをスキャン</p>
             <QRCodeDisplay value={signupUrl} />
+            <p className="text-sm">または</p>
             <CopyReferralButton referralUrl={signupUrl} />
           </div>
         )}

@@ -73,7 +73,7 @@ export default async function Missions({
         <div className="text-center">
           <h2
             id="missions"
-            className="text-3xl md:text-4xl font-black text-gray-900 mb-2"
+            className="text-2xl md:text-4xl font-black text-gray-900 mb-2"
           >
             📈 ミッション
           </h2>
