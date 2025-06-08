@@ -1,7 +1,7 @@
 "use server";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { getOrInitializeUserLevel } from "@/lib/services/userLevel";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -189,7 +189,9 @@ export const signUpActionWithState = async (
         error: message,
         formData: currentFormData,
       };
-      
+    }
+  }
+
   if (data.user?.id) {
     try {
       await getOrInitializeUserLevel(data.user.id);
