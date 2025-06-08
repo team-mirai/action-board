@@ -108,6 +108,7 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   substitutions = {
     _REGION                            = var.region
     _SERVICE_NAME                      = "${var.app_name}-${var.environment}"
+    _ENVIRONMENT                       = var.environment
     _REPOSITORY_NAME                   = var.repository_name
     _NEXT_PUBLIC_SUPABASE_URL          = var.NEXT_PUBLIC_SUPABASE_URL
     _NEXT_PUBLIC_SUPABASE_ANON_KEY     = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
