@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import type { UserRanking } from "@/lib/services/ranking";
 import { Crown, Medal, Trophy } from "lucide-react";
+import Link from "next/link";
 
 interface RankingItemProps {
   user: UserRanking;
@@ -42,7 +43,10 @@ export function RankingItem({
   showDetailedInfo = false,
 }: RankingItemProps) {
   return (
-    <div className="flex items-center justify-between py-3">
+    <Link
+      href={`/users/${user.user_id}`}
+      className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors cursor-pointer"
+    >
       <div className="flex items-center gap-4">
         {getRankIcon(user.rank)}
         <div>
@@ -65,6 +69,6 @@ export function RankingItem({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

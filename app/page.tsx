@@ -24,7 +24,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   // レベルアップ通知をチェック
-  let levelUpNotification = null;
+  const levelUpNotification = null;
 
   if (user) {
     const { data: privateUser } = await supabase
@@ -37,10 +37,13 @@ export default async function Home() {
     }
 
     // レベルアップ通知をチェック
-    const levelUpCheck = await checkLevelUpNotification(user.id);
-    if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
-      levelUpNotification = levelUpCheck.levelUp;
-    }
+    // しばらく使う予定ないのでコメントアウト
+    // TODO: ミッションクリア時にlast_notified_levelを更新することによって、クリア時にレベルアップ通知が出たらトップページでは通知が出ないようにする
+    //
+    // const levelUpCheck = await checkLevelUpNotification(user.id);
+    // if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
+    //   levelUpNotification = levelUpCheck.levelUp;
+    // }
   }
 
   return (
@@ -60,14 +63,14 @@ export default async function Home() {
         <Metrics />
       </section>
 
+      {/* ランキングセクション */}
+      <section className="py-12 md:py-16 bg-white">
+        <RankingTop limit={5} showDetailedInfo={true} />
+      </section>
+
       {/* ミッションセクション */}
       <section className="py-12 md:py-16 bg-white">
         <Missions userId={user?.id} showAchievedMissions={true} />
-      </section>
-
-      {/* ランキングセクション */}
-      <section className="py-12 md:py-16 bg-white">
-        <RankingTop limit={10} showDetailedInfo={true} />
       </section>
 
       {/* アクティビティセクション */}

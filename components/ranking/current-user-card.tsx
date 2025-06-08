@@ -53,9 +53,9 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
             <div className="text-right">
               <div className="flex items-center gap-2 mb-1">
                 <LevelBadge level={displayUser.level} />
-              </div>
-              <div className="text-lg font-bold text-teal-600">
-                {displayUser.xp.toLocaleString()}pt
+                <div className="text-lg font-bold">
+                  {displayUser.xp.toLocaleString()}pt
+                </div>
               </div>
             </div>
           </div>
