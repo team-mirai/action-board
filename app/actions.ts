@@ -40,7 +40,9 @@ export const signUpActionWithState = async (
   const privacy_agreed = formData.get("privacy_agreed")?.toString();
 
   //クエリストリングからリファラルコードを取得
-  const referralCode = formData.get("ref")?.toString().trim();
+  const rawReferral = formData.get("ref");
+  const referralCode =
+    typeof rawReferral === "string" ? rawReferral.trim() : null;
 
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
@@ -50,28 +52,6 @@ export const signUpActionWithState = async (
     terms_agreed: terms_agreed === "true",
     privacy_agreed: privacy_agreed === "true",
   };
-
-  //　リファラルコードがDBに存在するか突合チェック
-  if (referralCode) {
-    const isValid = await isValidReferralCode(referralCode);
-    if (!isValid) {
-      return {
-        error: "紹介コードが無効です。",
-        formData: currentFormData,
-      };
-    }
-  }
-
-  //  ログインユーザーのメールアドレスが既に登録済でないかチェック
-  const isDuplicate = await isEmailAlreadyUsedInReferral(
-    email?.toLowerCase() ?? "",
-  );
-  if (isDuplicate) {
-    return {
-      error: "このメールアドレスは既に紹介に使用されています。",
-      formData: currentFormData,
-    };
-  }
 
   const validatedFields = signUpAndLoginFormSchema.safeParse({
     email,
@@ -113,82 +93,68 @@ export const signUpActionWithState = async (
     return { error: "ユーザー登録に失敗しました", formData: currentFormData };
   }
 
-  if (!userId) {
-    return {
-      error: "ユーザー登録に失敗しました",
-      formData: currentFormData,
-    };
-  }
-
   //紹介URLから遷移した場合のみ以下を実行
   if (referralCode) {
-    const supabase = await createServiceClient();
-    //紹介ミッション情報を取得
-    const { data: mission } = await supabase
-      .from("missions")
-      .select("id, required_artifact_type")
-      .eq("required_artifact_type", "REFERRAL")
-      .maybeSingle(); // REFERRALミッションが存在する前提
+    const serviceSupabase = await createServiceClient();
+    let shouldInsertReferral = false;
+    let referrerUserId: string | null = null;
+    let referralMissionId: string | null = null;
 
-    const { data: referrerRecord, error: referrerError } = await supabase
-      .from("user_referral")
-      .select("user_id")
-      .eq("referral_code", referralCode)
-      .single();
+    try {
+      const [isValid, isDuplicate] = await Promise.all([
+        isValidReferralCode(referralCode),
+        isEmailAlreadyUsedInReferral(email?.toLowerCase() ?? ""),
+      ]);
 
-    if (referrerError || !referrerRecord?.user_id) {
-      return {
-        error: "紹介者の情報取得に失敗しました",
-        formData: currentFormData,
-      };
-    }
-    const referrerUserId = referrerRecord.user_id;
+      if (isValid && !isDuplicate) {
+        const { data: mission } = await serviceSupabase
+          .from("missions")
+          .select("id")
+          .eq("required_artifact_type", "REFERRAL")
+          .maybeSingle();
 
-    if (!mission) {
-      return {
-        error: "紹介ミッションが存在しません",
-        formData: currentFormData,
-      };
-    }
-    //achivementsテーブルへ登録
-    const { data: achievement, error: achievementError } = await supabase
-      .from("achievements")
-      .insert({
-        user_id: referrerUserId,
-        mission_id: mission.id,
-      })
-      .select("id")
-      .single();
+        const { data: referrerRecord } = await serviceSupabase
+          .from("user_referral")
+          .select("user_id")
+          .eq("referral_code", referralCode)
+          .maybeSingle();
 
-    if (achievementError) {
-      return {
-        error: "ミッション達成の記録に失敗しました",
-        formData: currentFormData,
-      };
-    }
-
-    if (!mission) {
-      return {
-        error: "紹介ミッションが存在しません",
-        formData: currentFormData,
-      };
-    }
-    await supabase.from("mission_artifacts").insert({
-      user_id: referrerUserId,
-      achievement_id: achievement.id,
-      artifact_type: "REFERRAL",
-      text_content: email.toLowerCase(), // メールアドレスで追跡
-    });
-
-    if (error) {
-      let message = error.message;
-      if (error.code === "user_already_exists") {
-        message = "このメールアドレスはすでに使用されています。";
+        if (mission && referrerRecord?.user_id) {
+          shouldInsertReferral = true;
+          referrerUserId = referrerRecord.user_id;
+          referralMissionId = mission.id;
+        }
       }
-      return {
-        error: message,
-        formData: currentFormData,
-      };
+    } catch (e) {
+      // ログだけ残す（ユーザーには知らせない）
+      console.warn("紹介コード処理エラー:", e);
+    }
+
+    if (shouldInsertReferral && referrerUserId && referralMissionId) {
+      try {
+        const { data: achievement, error: achievementError } =
+          await serviceSupabase
+            .from("achievements")
+            .insert({
+              user_id: referrerUserId,
+              mission_id: referralMissionId,
+            })
+            .select("id")
+            .single();
+
+        if (achievement && !achievementError) {
+          await serviceSupabase.from("mission_artifacts").insert({
+            user_id: referrerUserId,
+            achievement_id: achievement.id,
+            artifact_type: "REFERRAL",
+            text_content: email.toLowerCase(),
+          });
+        } else {
+          console.warn("achievements挿入エラー:", achievementError);
+        }
+      } catch (e) {
+        console.warn("紹介ミッション登録処理に失敗:", e);
+      }
     }
   }
 
