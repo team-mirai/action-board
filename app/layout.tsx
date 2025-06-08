@@ -10,11 +10,7 @@ import Script from "next/script";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 //metadata.tsxでmetadataを管理
-export const metadata = {
-  title: "チームみらい アクションボード",
-  description:
-    "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
-};
+export const generateMetadata = generateRootMetadata;
 
 // Next.js 15でのviewport設定
 export const viewport = {
