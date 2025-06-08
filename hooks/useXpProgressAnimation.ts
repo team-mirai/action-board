@@ -18,10 +18,19 @@ interface AnimationStage {
   xpRangeForLevel: number;
 }
 
+// アニメーション状態を管理する列挙型
+enum AnimationState {
+  IDLE = "idle", // 何も表示していない
+  TOAST_SHOWING = "toast", // トーストを表示中
+  DIALOG_SHOWING = "dialog", // ダイアログを表示中
+}
+
 export function useXpProgressAnimation({
   onLevelUp,
 }: UseXpProgressAnimationProps = {}) {
-  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [animationState, setAnimationState] = useState<AnimationState>(
+    AnimationState.IDLE,
+  );
   const [toastData, setToastData] = useState<{
     userLevel: UserLevel;
     xpGranted: number;
@@ -39,6 +48,9 @@ export function useXpProgressAnimation({
     pointsToNextLevel: number;
   } | null>(null);
 
+  // レベルアップが発生するかどうかを事前に判定
+  const [willLevelUp, setWillLevelUp] = useState(false);
+
   const startXpAnimation = useCallback(
     (userLevel: UserLevel, xpGranted: number) => {
       const startXp = userLevel.xp - xpGranted;
@@ -46,7 +58,12 @@ export function useXpProgressAnimation({
       const startLevel = calculateLevel(startXp);
       const finalLevel = calculateLevel(endXp);
 
+      // レベルアップが発生するかを事前に判定
+      const levelUpWillOccur = finalLevel > startLevel;
+      setWillLevelUp(levelUpWillOccur);
+
       if (finalLevel > startLevel + 1) {
+        // マルチレベルアップの場合
         const stages: AnimationStage[] = [];
         for (let level = startLevel; level < finalLevel; level++) {
           const stageStartXp = Math.max(startXp, totalXp(level));
@@ -73,6 +90,7 @@ export function useXpProgressAnimation({
           finalLevel,
         });
       } else {
+        // 通常のレベルアップまたはレベルアップなしの場合
         const startLevelStartXp = totalXp(startLevel);
         const nextLevelRequiredXp = totalXp(startLevel + 1);
         const xpRangeForCurrentLevel = nextLevelRequiredXp - startLevelStartXp;
@@ -87,10 +105,59 @@ export function useXpProgressAnimation({
           isMultiLevel: false,
         });
       }
-      setIsToastOpen(true);
+      setAnimationState(AnimationState.TOAST_SHOWING);
     },
     [],
   );
+
+  // レベルアップダイアログを遅延表示する関数
+  const showLevelUpDialog = useCallback(
+    async (newLevel: number, pointsToNextLevel: number) => {
+      setLevelUpData({ newLevel, pointsToNextLevel });
+      setAnimationState(AnimationState.DIALOG_SHOWING);
+      onLevelUp?.(newLevel, pointsToNextLevel);
+
+      try {
+        const result = await markLevelUpSeenAction();
+        if (!result.success) {
+          console.error(
+            "Failed to mark level up notification as seen:",
+            result.error,
+          );
+        }
+      } catch (error) {
+        console.error("Error marking level up notification as seen:", error);
+      }
+    },
+    [onLevelUp],
+  );
+
+  // XPアニメーション完了時の処理
+  const handleAnimationComplete = useCallback(() => {
+    if (willLevelUp && toastData) {
+      // レベルアップが発生する場合は、トーストを閉じてからダイアログを表示
+      setTimeout(() => {
+        setAnimationState(AnimationState.IDLE);
+
+        // ダイアログ表示の準備
+        setTimeout(() => {
+          const endXp = toastData.userLevel.xp;
+          const finalLevel = calculateLevel(endXp);
+          const finalLevelStartXp = totalXp(finalLevel);
+          const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
+          const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
+
+          showLevelUpDialog(finalLevel, pointsToNextLevel);
+        }, 300); // 300ms待ってからダイアログを表示
+      }, 1000); // トーストを1秒間表示してから閉じる
+    } else {
+      // レベルアップがない場合は単純にトーストを閉じる
+      setTimeout(() => {
+        setAnimationState(AnimationState.IDLE);
+        setToastData(null);
+      }, 1000);
+    }
+  }, [willLevelUp, toastData, showLevelUpDialog]);
 
   const handleLevelUp = useCallback(
     async (newLevel: number, pointsToNextLevel: number) => {
@@ -113,6 +180,7 @@ export function useXpProgressAnimation({
     [onLevelUp],
   );
 
+  // レベルアップ判定（アニメーション中は実際の処理を行わず、フラグのみ返す）
   const checkLevelUp = useCallback(
     (
       currentXp: number,
@@ -121,38 +189,18 @@ export function useXpProgressAnimation({
       isMultiLevel?: boolean,
       finalLevel?: number,
     ) => {
-      if (isMultiLevel && finalLevel) {
-        if (currentXp >= totalXp(finalLevel)) {
-          const finalLevelStartXp = totalXp(finalLevel);
-          const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
-          const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
-
-          setLevelUpData({ newLevel: finalLevel, pointsToNextLevel });
-          setIsLevelUpDialogOpen(true);
-          onLevelUp?.(finalLevel, pointsToNextLevel);
-          return true;
-        }
-      } else {
-        if (currentXp >= nextLevelRequiredXp) {
-          const finalLevel = calculateLevel(endXp);
-          const finalLevelStartXp = totalXp(finalLevel);
-          const finalNextLevelRequiredXp = totalXp(finalLevel + 1);
-          const pointsToNextLevel = finalNextLevelRequiredXp - endXp;
-
-          setLevelUpData({ newLevel: finalLevel, pointsToNextLevel });
-          setIsLevelUpDialogOpen(true);
-          onLevelUp?.(finalLevel, pointsToNextLevel);
-          return true;
-        }
-      }
+      // アニメーション中はレベルアップダイアログを表示せず、
+      // アニメーション完了後に処理するためfalseを返す
       return false;
     },
-    [onLevelUp],
+    [],
   );
 
   const handleLevelUpDialogClose = useCallback(async () => {
-    setIsLevelUpDialogOpen(false);
+    setAnimationState(AnimationState.IDLE);
     setLevelUpData(null);
+    setWillLevelUp(false);
+
     // ダイアログを閉じる際に必ずmarkLevelUpSeenActionを呼び出す
     try {
       const result = await markLevelUpSeenAction();
@@ -168,24 +216,20 @@ export function useXpProgressAnimation({
   }, []);
 
   const handleToastClose = useCallback(() => {
-    setIsToastOpen(false);
-    setToastData(null);
-  }, []);
-
-  const handleAnimationComplete = useCallback(() => {
-    setTimeout(() => {
-      setIsToastOpen(false);
+    if (animationState === AnimationState.TOAST_SHOWING) {
+      setAnimationState(AnimationState.IDLE);
       setToastData(null);
-    }, 1000);
-  }, []);
+      setWillLevelUp(false);
+    }
+  }, [animationState]);
 
   return {
-    isToastOpen,
+    isToastOpen: animationState === AnimationState.TOAST_SHOWING,
     toastData,
-    isLevelUpDialogOpen,
+    isLevelUpDialogOpen: animationState === AnimationState.DIALOG_SHOWING,
     levelUpData,
     startXpAnimation,
-    handleLevelUp,
+    handleLevelUp: showLevelUpDialog, // 後方互換性のため
     checkLevelUp,
     handleLevelUpDialogClose,
     handleToastClose,
