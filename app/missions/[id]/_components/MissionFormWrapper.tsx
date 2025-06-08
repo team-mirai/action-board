@@ -4,7 +4,7 @@ import { LevelUpDialog } from "@/components/level-up-dialog";
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
-import { XpProgressToast } from "@/components/xp-progress-toast";
+
 import { useXpProgressAnimation } from "@/hooks/useXpProgressAnimation";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { UserLevel } from "@/lib/services/userLevel";
@@ -45,15 +45,11 @@ export function MissionFormWrapper({
   const formRef = useRef<HTMLFormElement>(null);
 
   const {
-    isToastOpen,
-    toastData,
     isLevelUpDialogOpen,
     levelUpData,
     startXpAnimation,
     handleLevelUp,
-    checkLevelUp,
     handleLevelUpDialogClose,
-    handleToastClose,
     handleAnimationComplete,
   } = useXpProgressAnimation();
 
@@ -183,24 +179,6 @@ export function MissionFormWrapper({
         onClose={handleDialogClose}
         mission={mission}
       />
-
-      {toastData && (
-        <XpProgressToast
-          isOpen={isToastOpen}
-          onOpenChange={handleToastClose}
-          userLevel={toastData.userLevel}
-          xpGranted={toastData.xpGranted}
-          startLevel={toastData.startLevel}
-          startLevelStartXp={toastData.startLevelStartXp}
-          nextLevelRequiredXp={toastData.nextLevelRequiredXp}
-          xpRangeForCurrentLevel={toastData.xpRangeForCurrentLevel}
-          isMultiLevel={toastData.isMultiLevel}
-          stages={toastData.stages}
-          finalLevel={toastData.finalLevel}
-          onLevelUp={checkLevelUp}
-          onAnimationComplete={handleAnimationComplete}
-        />
-      )}
 
       {levelUpData && (
         <LevelUpDialog
