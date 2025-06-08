@@ -45,6 +45,8 @@ steps:
       - 'SENTRY_RELEASE=${COMMIT_SHA}'
       - '--build-arg'
       - 'SENTRY_AUTH_TOKEN=$$SENTRY_AUTH_TOKEN'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_APP_ORIGIN=$$NEXT_PUBLIC_APP_ORIGIN'
       - '.'
     secretEnv:
       - SENTRY_AUTH_TOKEN

@@ -228,3 +228,37 @@ npm run storybook
 ```
 
 `stories`ディレクトリにstorybookのファイルを配置してください。
+
+## デプロイ
+
+## 環境変数のデプロイ
+1. Terraform Cloudへの招待をもらう
+
+   * [Terraform Cloud Workspaces](https://app.terraform.io/app/gamification/workspaces)
+
+2. 環境ごとの管理状況：
+
+   * **action-board-staging** → `release/infra/develop`
+   * **action-board-production** → `release/infra/production`
+
+3. トリガー時の挙動：
+
+   * 現状、Terraform Cloud側で自動で`plan`を実行し、`apply`はUIから手動確認後の実行となります。
+
+4. 環境変数追加手順：
+
+   * 通常の環境変数：
+
+     * `terraform/variables.tf`に追加
+     * `nextjs-app/variables.tf`に追加
+     * `nextjs-app/cloud_build.tf`の`substitutions`に追加
+     * `cloudbuild.yaml`の`arg`経由でDockerビルド時に渡す
+   * 秘匿情報の場合：
+
+     * `nextjs-app/secrets.tf`にSecret定義追加
+     * `nextjs-app/cloud_build.tf`でSecretへのアクセス権限設定
+
+5. Terraform変数（秘匿情報は`sensitive`チェック）の登録先：
+
+   * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
+   * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
