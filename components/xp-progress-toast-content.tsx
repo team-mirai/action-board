@@ -4,6 +4,7 @@ import { calculateLevel, getXpToNextLevel, totalXp } from "@/lib/utils/utils";
 import React, { useEffect, useState } from "react";
 import { LevelUpDialog } from "./level-up-dialog";
 import { ProgressBarAnimated } from "./ui/progress-bar-animated";
+import { ProgressBarSimple } from "./ui/progress-bar-simple";
 
 interface XpProgressToastContentProps {
   initialXp: number;
@@ -55,12 +56,6 @@ export function XpProgressToastContent({
   // レベルアップ処理
   const handleLevelUp = (newLevel: number) => {
     console.log("Level up detected:", newLevel);
-    const xpUsed = endXp - startXp;
-    setLevelState({
-      currentLevel: newLevel,
-      currentXp: endXp,
-      currentXpGained: currentXpGained - xpUsed,
-    });
     if (onLevelUp) {
       onLevelUp(newLevel);
     }
@@ -73,46 +68,50 @@ export function XpProgressToastContent({
   // レベルアップダイアログを閉じる
   const handleLevelUpDialogClose = () => {
     setLevelUpData(null);
+    const xpUsed = endXp - startXp;
+    setLevelState({
+      currentLevel: levelState.currentLevel + 1,
+      currentXp: endXp,
+      currentXpGained: currentXpGained - xpUsed,
+    });
   };
 
   return (
     <>
-      {levelUpData == null && (
-        <div className="p-6">
-          <div className="text-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">
-              {xpGained}ポイント獲得しました
-            </h3>
-          </div>
+      <div className="p-6">
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-bold text-gray-800 mb-2">
+            {xpGained}ポイント獲得しました！
+          </h3>
+        </div>
 
-          <ProgressBarAnimated
-            zeroValue={currentLevelStartXp}
-            maxValue={nextLevelTotalXp}
-            startValue={startXp}
-            endValue={endXp}
-            className="mb-4"
-            showText={false}
-            animationDuration={1000}
-            onAnimationComplete={() => {
-              if (endXp >= nextLevelTotalXp) {
-                const newLevel = currentLevel + 1;
-                handleLevelUp(newLevel);
-              } else {
-                setShowFinalState(true);
-              }
-            }}
-          />
+        <ProgressBarAnimated
+          zeroValue={currentLevelStartXp}
+          maxValue={nextLevelTotalXp}
+          startValue={startXp}
+          endValue={endXp}
+          className="mb-4"
+          showText={false}
+          animationDuration={1000}
+          onAnimationComplete={() => {
+            if (endXp >= nextLevelTotalXp) {
+              const newLevel = currentLevel + 1;
+              handleLevelUp(newLevel);
+            } else {
+              setShowFinalState(true);
+            }
+          }}
+        />
 
-          <div className="text-center">
-            <div className="text-xs text-gray-500">
-              レベル {currentLevel}
-              {showFinalState && (
-                <span> • 次のレベルまで{pointsToNextLevel}ポイント</span>
-              )}
-            </div>
+        <div className="text-center">
+          <div className="text-xs text-gray-500">
+            レベル {currentLevel}
+            {showFinalState && (
+              <span> • 次のレベルまで{pointsToNextLevel}ポイント🔥</span>
+            )}
           </div>
         </div>
-      )}
+      </div>
 
       {levelUpData && (
         <LevelUpDialog

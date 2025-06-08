@@ -110,7 +110,7 @@ export function MissionFormWrapper({
       {
         duration: Number.POSITIVE_INFINITY,
         position: "bottom-center",
-        style: { display: "none" },
+        className: "rounded-md",
       },
     );
   };
