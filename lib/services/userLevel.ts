@@ -2,12 +2,7 @@ import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
-import {
-  calculateLevel,
-  calculateMissionXp,
-  totalXp,
-  xpDelta,
-} from "../utils/utils";
+import { calculateLevel, calculateMissionXp } from "../utils/utils";
 import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
@@ -226,25 +221,6 @@ export async function getUserRank(userId: string): Promise<number | null> {
   }
 
   return (count || 0) + 1; // より高いユーザー数 + 1 = 自分のランク
-}
-
-/**
- * 次のレベルまでに必要なXP計算
- */
-export function getXpToNextLevel(currentXp: number): number {
-  const currentLevel = calculateLevel(currentXp);
-  const nextLevelTotalXp = totalXp(currentLevel + 1);
-  return Math.max(0, nextLevelTotalXp - currentXp);
-}
-
-/**
- * 現在レベルでの進捗率計算（0-1の値）
- */
-export function getLevelProgress(currentXp: number): number {
-  const currentLevel = calculateLevel(currentXp);
-  const xpToNext = getXpToNextLevel(currentXp);
-  const levelXpRange = xpDelta(currentLevel);
-  return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
 }
 
 /**
