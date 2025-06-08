@@ -151,7 +151,9 @@ export function MissionWithSubmissionHistory({
     }
   };
 
-  const signupUrl = `${process.env.NEXT_PUBLIC_APP_ORIGIN}/sign-up?ref=${referralCode}`;
+  // クライアントサイドでのみwindow.location.originを使用
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const signupUrl = `${origin}/sign-up?ref=${referralCode}`;
 
   return (
     <>
