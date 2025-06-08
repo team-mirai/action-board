@@ -102,16 +102,15 @@ export function MissionFormWrapper({
             </div>
           )}
 
-        <ArtifactForm
-          key={formKey}
-          mission={mission}
-          authUser={authUser}
-          disabled={isButtonDisabled || isSubmitting}
-          submittedArtifactImagePath={null}
-        />
-
         {!completed && (
           <>
+            <ArtifactForm
+              key={formKey}
+              mission={mission}
+              authUser={authUser}
+              disabled={isButtonDisabled || isSubmitting}
+              submittedArtifactImagePath={null}
+            />
             <SubmitButton
               pendingText="登録中..."
               size="lg"
