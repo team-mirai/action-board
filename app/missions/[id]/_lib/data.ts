@@ -1,5 +1,6 @@
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/types/supabase";
+import { nanoid } from "nanoid";
 import type {
   Achievement,
   MissionArtifact,
@@ -222,19 +223,40 @@ export async function getMissionPageData(
 }
 
 // ログインユーザーに紐づくリファラルコードの取得
-export async function getReferralCode(userId: string): Promise<string | null> {
+export async function getReferralCode(userId: string): Promise<string> {
   const supabase = await createServerClient();
 
   const { data, error } = await supabase
     .from("user_referral")
     .select("referral_code")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Referral code fetch error:", error.message);
-    return null;
+    throw new Error("紹介コードの取得に失敗しました");
   }
 
-  return data?.referral_code || null;
+  // データがなければ作成
+  if (data) {
+    return data.referral_code;
+  }
+
+  // ユーザーに紐づく紹介コードが存在しない場合は新規作成
+  const referralCode = nanoid(8); // 8桁ランダムコード
+
+  const { data: insertData, error: insertError } = await supabase
+    .from("user_referral")
+    .insert({
+      user_id: userId,
+      referral_code: referralCode,
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    console.error("Referral code insert error:", insertError.message);
+    throw new Error("紹介コードの作成に失敗しました");
+  }
+  return insertData.referral_code;
 }

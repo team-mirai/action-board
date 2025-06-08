@@ -1,6 +1,9 @@
 "use server";
 
-import { getOrInitializeUserLevel } from "@/lib/services/userLevel";
+import {
+  getOrInitializeUserLevel,
+  grantMissionCompletionXp,
+} from "@/lib/services/userLevel";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
@@ -149,6 +152,12 @@ export const signUpActionWithState = async (
             artifact_type: "REFERRAL",
             text_content: email.toLowerCase(),
           });
+          // ミッション達成時にXPを付与
+          await grantMissionCompletionXp(
+            referrerUserId,
+            referralMissionId,
+            achievement.id,
+          );
         } else {
           console.warn("achievements挿入エラー:", achievementError);
         }
