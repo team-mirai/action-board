@@ -125,43 +125,50 @@ describe("user_levels テーブルのRLSテスト", () => {
     expect(after?.[0].level).toBe(3);
   });
 
-  test("認証済みユーザーは自分のレベル情報を更新できる（last_notified_level更新のため）", async () => {
-    const { error } = await user1.client
+  test("認証済みユーザーはuser_levelsをUPDATEできない（バックエンド経由のみ許可）", async () => {
+    // 更新前の状態を確認
+    const { data: before } = await user1.client
       .from("user_levels")
-      .update({ xp: 200, level: 3 })
+      .select("*")
       .eq("user_id", user1.user.userId);
 
-    expect(error).toBeNull();
+    const { data, error } = await user1.client
+      .from("user_levels")
+      .update({ xp: 500, level: 5 })
+      .eq("user_id", user1.user.userId)
+      .select();
 
+    // UPDATEはポリシーがないため「成功」するが、実際には0行が更新される
+    expect(error).toBeNull(); // エラーは発生しない
+    expect(data).toEqual([]); // 0行更新 = 空配列
+
+    // 元の値が保持されていることを確認
     const { data: after } = await user1.client
       .from("user_levels")
       .select("*")
       .eq("user_id", user1.user.userId);
+
     expect(after).toBeTruthy();
-    expect(after?.[0].xp).toBe(200);
-    expect(after?.[0].level).toBe(3);
+    expect(after?.[0].xp).toBe(150); // 元の値のまま
+    expect(after?.[0].level).toBe(2); // 元の値のまま
+    expect(after?.[0].updated_at).toBe(before?.[0].updated_at); // updated_atも変更されていない
   });
 
-  test("認証済みユーザーは自分のuser_levelsレコードをINSERTできる", async () => {
+  test("認証済みユーザーはuser_levelsをINSERTできない（バックエンド経由のみ許可）", async () => {
     const testUserId = user1.user.userId;
 
     await adminClient.from("user_levels").delete().eq("user_id", testUserId);
 
-    const { error } = await user1.client.from("user_levels").insert({
+    const { data, error } = await user1.client.from("user_levels").insert({
       user_id: testUserId,
       xp: 100,
       level: 1,
     });
 
-    expect(error).toBeNull();
-
-    const { data: after } = await user1.client
-      .from("user_levels")
-      .select("*")
-      .eq("user_id", testUserId);
-    expect(after).toBeTruthy();
-    expect(after?.[0].xp).toBe(100);
-    expect(after?.[0].level).toBe(1);
+    // 挿入は拒否される
+    expect(data).toBeNull();
+    expect(error).toBeTruthy();
+    expect(error?.code).toBe("42501"); // RLS violation
   });
 
   test("認証済みユーザーはuser_levelsからDELETEできない", async () => {
