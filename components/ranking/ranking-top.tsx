@@ -35,7 +35,7 @@ export default async function RankingTop({
         </div>
 
         <Card className="border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 bg-white">
-          <div className="space-y-4">
+          <div className="space-y-1">
             {rankings.map((user) => (
               <RankingItem key={user.user_id} user={user} />
             ))}
