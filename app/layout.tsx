@@ -10,6 +10,7 @@ import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+//metadata.tsxでmetadataを管理
 export const metadata = {
   title: "チームみらい アクションボード",
   description:
