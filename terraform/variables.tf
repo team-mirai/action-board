@@ -147,3 +147,14 @@ variable "SENTRY_AUTH_TOKEN" {
   type        = string
   sensitive   = true
 }
+
+variable "NEXT_PUBLIC_APP_ORIGIN" {
+  description = "Application origin URL (public)"
+  type        = string
+}
+
+variable "BATCH_ADMIN_KEY" {
+  description = "Batch Admin Key for API authentication (sensitive)"
+  type        = string
+  sensitive   = true
+}
