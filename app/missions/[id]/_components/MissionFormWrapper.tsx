@@ -3,11 +3,13 @@
 import { ArtifactForm } from "@/components/mission/ArtifactForm";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
+import { XpProgressToastContent } from "@/components/xp-progress-toast-content";
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes";
 import type { Tables } from "@/lib/types/supabase";
 import type { User } from "@supabase/supabase-js";
 import { AlertCircle } from "lucide-react";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { useMissionSubmission } from "../_hooks/useMissionSubmission";
 import { achieveMissionAction } from "../actions";
 import { MissionCompleteDialog } from "./MissionCompleteDialog";
@@ -34,6 +36,12 @@ export function MissionFormWrapper({
   const [formKey, setFormKey] = useState(0);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // XPアニメーション関連の状態
+  const [xpAnimationData, setXpAnimationData] = useState<{
+    initialXp: number;
+    xpGained: number;
+  } | null>(null);
+
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     setErrorMessage(null);
@@ -46,6 +54,16 @@ export function MissionFormWrapper({
         formRef.current?.reset();
         // ArtifactFormのstateをクリアするためにkeyを更新
         setFormKey((prev) => prev + 1);
+
+        // XPアニメーションデータを保存
+        if (result.userLevel && result.xpGranted) {
+          const initialXp = result.userLevel.xp - result.xpGranted;
+          setXpAnimationData({
+            initialXp,
+            xpGained: result.xpGranted,
+          });
+        }
+
         // ダイアログを表示
         setIsDialogOpen(true);
       } else {
@@ -62,14 +80,46 @@ export function MissionFormWrapper({
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
+
+    // XPアニメーションを開始
+    if (xpAnimationData) {
+      startXpAnimation();
+    }
+
     // 達成履歴を更新
     if (onSubmissionSuccess) {
       onSubmissionSuccess();
     }
   };
 
+  // XPアニメーション開始
+  const startXpAnimation = () => {
+    if (!xpAnimationData) return;
+
+    toast.custom(
+      (t) => (
+        <XpProgressToastContent
+          initialXp={xpAnimationData.initialXp}
+          xpGained={xpAnimationData.xpGained}
+          onAnimationComplete={() => {
+            toast.dismiss(t);
+            setXpAnimationData(null);
+          }}
+        />
+      ),
+      {
+        duration: Number.POSITIVE_INFINITY,
+        position: "bottom-center",
+        className: "rounded-md",
+      },
+    );
+  };
+
   const completed =
     hasReachedUserMaxAchievements && mission?.max_achievement_count !== null;
+
+  const isCompletedForUnlimitedMission =
+    userAchievementCount > 0 && mission.max_achievement_count === null;
 
   return (
     <>
@@ -88,7 +138,41 @@ export function MissionFormWrapper({
           </div>
         )}
 
-        {completed && (
+        {!hasReachedUserMaxAchievements &&
+          userAchievementCount > 0 &&
+          mission?.max_achievement_count !== null && (
+            <div className="rounded-lg border bg-muted/50 p-4 text-center">
+              <p className="text-sm font-medium text-muted-foreground">
+                あなたの達成回数: {userAchievementCount} /{" "}
+                {mission.max_achievement_count}回
+              </p>
+            </div>
+          )}
+
+        {!completed && (
+          <>
+            <ArtifactForm
+              key={formKey}
+              mission={mission}
+              authUser={authUser}
+              disabled={isButtonDisabled || isSubmitting}
+              submittedArtifactImagePath={null}
+            />
+            <SubmitButton
+              pendingText="登録中..."
+              size="lg"
+              disabled={isButtonDisabled || isSubmitting}
+            >
+              {buttonLabel}
+            </SubmitButton>
+            <p className="text-sm text-muted-foreground">
+              ※
+              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
+            </p>
+          </>
+        )}
+
+        {(completed || isCompletedForUnlimitedMission) && (
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
             <p className="text-sm font-medium text-gray-800">
               このミッションは達成済みです。
@@ -104,41 +188,6 @@ export function MissionFormWrapper({
               シェアする
             </Button>
           </div>
-        )}
-
-        {!hasReachedUserMaxAchievements &&
-          userAchievementCount > 0 &&
-          mission?.max_achievement_count !== null && (
-            <div className="rounded-lg border bg-muted/50 p-4 text-center">
-              <p className="text-sm font-medium text-muted-foreground">
-                あなたの達成回数: {userAchievementCount} /{" "}
-                {mission.max_achievement_count}回
-              </p>
-            </div>
-          )}
-
-        <ArtifactForm
-          key={formKey}
-          mission={mission}
-          authUser={authUser}
-          disabled={isButtonDisabled || isSubmitting}
-          submittedArtifactImagePath={null}
-        />
-
-        {!completed && (
-          <>
-            <SubmitButton
-              pendingText="登録中..."
-              size="lg"
-              disabled={isButtonDisabled || isSubmitting}
-            >
-              {buttonLabel}
-            </SubmitButton>
-            <p className="text-sm text-muted-foreground">
-              ※
-              成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
-            </p>
-          </>
         )}
       </form>
 

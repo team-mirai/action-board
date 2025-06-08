@@ -32,7 +32,7 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="w-5 h-5 text-teal-600" />
-            あなたのランキング
+            あなたのランク
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -53,9 +53,9 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
             <div className="text-right">
               <div className="flex items-center gap-2 mb-1">
                 <LevelBadge level={displayUser.level} />
-              </div>
-              <div className="text-lg font-bold text-teal-600">
-                {displayUser.xp.toLocaleString()}pt
+                <div className="text-lg font-bold">
+                  {displayUser.xp.toLocaleString()}pt
+                </div>
               </div>
             </div>
           </div>

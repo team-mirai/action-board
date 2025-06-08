@@ -1,5 +1,6 @@
 import { grantXpBatch } from "@/lib/services/userLevel";
 import { createServiceClient } from "@/lib/supabase/server";
+import { executeChunkedQuery } from "@/lib/utils/supabase-utils";
 import { calculateMissionXp } from "@/lib/utils/utils";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -98,13 +99,19 @@ export async function POST(request: NextRequest) {
       (achievement) => achievement.id,
     );
 
-    // 全ての達成IDに対するXPトランザクションを一括取得
+    // 全ての達成IDに対するXPトランザクションを一括取得（チャンク分割）
     const { data: existingXpTransactions, error: xpBulkCheckError } =
-      await supabase
-        .from("xp_transactions")
-        .select("source_id")
-        .eq("source_type", "MISSION_COMPLETION")
-        .in("source_id", achievementIds);
+      await executeChunkedQuery<{ source_id: string }>(
+        achievementIds,
+        async (chunkIds) => {
+          return await supabase
+            .from("xp_transactions")
+            .select("source_id")
+            .eq("source_type", "MISSION_COMPLETION")
+            .in("source_id", chunkIds);
+        },
+        50,
+      );
 
     if (xpBulkCheckError) {
       console.error("XPトランザクションの一括取得でエラー:", xpBulkCheckError);
@@ -321,11 +328,19 @@ export async function GET() {
         (achievement) => achievement.id,
       );
 
-      const { data: existingXpTransactions } = await supabase
-        .from("xp_transactions")
-        .select("source_id")
-        .eq("source_type", "MISSION_COMPLETION")
-        .in("source_id", achievementIds);
+      const { data: existingXpTransactions } = await executeChunkedQuery<{
+        source_id: string;
+      }>(
+        achievementIds,
+        async (chunkIds) => {
+          return await supabase
+            .from("xp_transactions")
+            .select("source_id")
+            .eq("source_type", "MISSION_COMPLETION")
+            .in("source_id", chunkIds);
+        },
+        50,
+      );
 
       // XPが付与済みの達成IDのSetを作成
       const processedAchievementIds = new Set(
