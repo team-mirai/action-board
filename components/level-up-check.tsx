@@ -52,7 +52,6 @@ export function LevelUpCheck({ levelUpData }: LevelUpCheckProps) {
       isOpen={isDialogOpen}
       onClose={handleDialogClose}
       newLevel={levelUpData.newLevel}
-      pointsToNextLevel={levelUpData.pointsToNextLevel}
     />
   );
 }
