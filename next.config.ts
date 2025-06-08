@@ -55,10 +55,6 @@ export default withSentryConfig(nextConfig, {
 
   release: {
     name: process.env.SENTRY_RELEASE,
-    setCommits: {
-      auto: true,
-      ignoreMissing: true,
-      ignoreEmpty: true,
-    },
+    setCommits: false,
   },
 });
