@@ -25,29 +25,22 @@ steps:
 
   # Dockerイメージのビルド
   - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
     args:
-      - 'build'
-      - '-t'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:${COMMIT_SHA}'
-      - '-t'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL}'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_GA_ID=${_NEXT_PUBLIC_GA_ID}'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN}'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_SENTRY_ENVIRONMENT=${_NEXT_PUBLIC_SENTRY_ENVIRONMENT}'
-      - '--build-arg'
-      - 'SENTRY_RELEASE=${COMMIT_SHA}'
-      - '--build-arg'
-      - 'SENTRY_AUTH_TOKEN=$$SENTRY_AUTH_TOKEN'
-      - '--build-arg'
-      - 'NEXT_PUBLIC_APP_ORIGIN=$$NEXT_PUBLIC_APP_ORIGIN'
-      - '.'
+      - '-c'
+      - |
+        docker build \
+          -t ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:${COMMIT_SHA} \
+          -t ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL} \
+          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY} \
+          --build-arg NEXT_PUBLIC_GA_ID=${_NEXT_PUBLIC_GA_ID} \
+          --build-arg NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN} \
+          --build-arg NEXT_PUBLIC_SENTRY_ENVIRONMENT=${_NEXT_PUBLIC_SENTRY_ENVIRONMENT} \
+          --build-arg SENTRY_RELEASE=${COMMIT_SHA} \
+          --build-arg SENTRY_AUTH_TOKEN="$$SENTRY_AUTH_TOKEN" \
+          --build-arg NEXT_PUBLIC_APP_ORIGIN="$$NEXT_PUBLIC_APP_ORIGIN" \
+          .
     secretEnv:
       - SENTRY_AUTH_TOKEN
 
