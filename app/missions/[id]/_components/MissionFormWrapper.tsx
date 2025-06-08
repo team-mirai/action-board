@@ -69,9 +69,10 @@ export function MissionFormWrapper({
   };
 
   const completed =
-    (hasReachedUserMaxAchievements &&
-      mission?.max_achievement_count !== null) ||
-    (userAchievementCount > 0 && mission.max_achievement_count === null);
+    hasReachedUserMaxAchievements && mission?.max_achievement_count !== null;
+
+  const isCompletedForUnlimitedMission =
+    userAchievementCount > 0 && mission.max_achievement_count === null;
 
   return (
     <>
@@ -87,24 +88,6 @@ export function MissionFormWrapper({
           <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm">{errorMessage}</span>
-          </div>
-        )}
-
-        {completed && (
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
-            <p className="text-sm font-medium text-gray-800">
-              このミッションは達成済みです。
-            </p>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                setIsDialogOpen(true);
-              }}
-              className="mt-2"
-              variant="outline"
-            >
-              シェアする
-            </Button>
           </div>
         )}
 
@@ -141,6 +124,24 @@ export function MissionFormWrapper({
               成果物の内容が認められない場合、ミッションの達成が取り消される場合があります。正確な内容をご記入ください。
             </p>
           </>
+        )}
+
+        {(completed || isCompletedForUnlimitedMission) && (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+            <p className="text-sm font-medium text-gray-800">
+              このミッションは達成済みです。
+            </p>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDialogOpen(true);
+              }}
+              className="mt-2"
+              variant="outline"
+            >
+              シェアする
+            </Button>
+          </div>
         )}
       </form>
 
