@@ -3,11 +3,10 @@ import "server-only";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert } from "@/lib/types/supabase";
 import {
-  calculateLevel,
-  calculateMissionXp,
-  totalXp,
-  xpDelta,
-} from "../utils/utils";
+  executeChunkedInsert,
+  executeChunkedQuery,
+} from "@/lib/utils/supabase-utils";
+import { calculateLevel, calculateMissionXp } from "../utils/utils";
 import { getUser } from "./users";
 
 export type UserLevel = Tables<"user_levels">;
@@ -229,25 +228,6 @@ export async function getUserRank(userId: string): Promise<number | null> {
 }
 
 /**
- * 次のレベルまでに必要なXP計算
- */
-export function getXpToNextLevel(currentXp: number): number {
-  const currentLevel = calculateLevel(currentXp);
-  const nextLevelTotalXp = totalXp(currentLevel + 1);
-  return Math.max(0, nextLevelTotalXp - currentXp);
-}
-
-/**
- * 現在レベルでの進捗率計算（0-1の値）
- */
-export function getLevelProgress(currentXp: number): number {
-  const currentLevel = calculateLevel(currentXp);
-  const xpToNext = getXpToNextLevel(currentXp);
-  const levelXpRange = xpDelta(currentLevel);
-  return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
-}
-
-/**
  * ミッション達成時にXPを付与する
  */
 export async function grantMissionCompletionXp(
@@ -339,11 +319,18 @@ export async function grantXpBatch(
     }
     const userIds = Array.from(userIdSet);
 
-    // 2. 現在のユーザーレベル情報を一括取得
-    const { data: currentLevels, error: levelsError } = await supabase
-      .from("user_levels")
-      .select("*")
-      .in("user_id", userIds);
+    // 2. 現在のユーザーレベル情報を一括取得（チャンク分割）
+    const { data: currentLevels, error: levelsError } =
+      await executeChunkedQuery<UserLevel>(
+        userIds,
+        async (chunkIds) => {
+          return await supabase
+            .from("user_levels")
+            .select("*")
+            .in("user_id", chunkIds);
+        },
+        50,
+      );
 
     if (levelsError) {
       console.error("Failed to fetch user levels:", levelsError);
@@ -359,16 +346,18 @@ export async function grantXpBatch(
     const missingUserIds = userIds.filter((userId) => !levelMap.has(userId));
 
     if (missingUserIds.length > 0) {
-      const { data: initializedLevels, error: initError } = await supabase
-        .from("user_levels")
-        .insert(
+      const { data: initializedLevels, error: initError } =
+        await executeChunkedInsert(
           missingUserIds.map((userId) => ({
             user_id: userId,
             xp: 0,
             level: 1,
           })),
-        )
-        .select();
+          async (chunk) => {
+            return await supabase.from("user_levels").insert(chunk).select();
+          },
+          50,
+        );
 
       if (initError) {
         console.error("Failed to initialize user levels:", initError);
@@ -391,9 +380,13 @@ export async function grantXpBatch(
         transaction.description || `${transaction.sourceType}による経験値獲得`,
     }));
 
-    const { error: transactionError } = await supabase
-      .from("xp_transactions")
-      .insert(xpTransactions);
+    const { error: transactionError } = await executeChunkedInsert(
+      xpTransactions,
+      async (chunk) => {
+        return await supabase.from("xp_transactions").insert(chunk);
+      },
+      50,
+    );
 
     if (transactionError) {
       console.error("Failed to insert XP transactions:", transactionError);

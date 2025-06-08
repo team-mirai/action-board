@@ -72,6 +72,11 @@ variable "NEXT_PUBLIC_GA_ID" {
   type        = string
 }
 
+variable "NEXT_PUBLIC_APP_ORIGIN" {
+  description = "Application origin URL for referral missions (public)"
+  type        = string
+}
+
 variable "SUPABASE_SERVICE_ROLE_KEY" {
   description = "Supabase Service Role Key (sensitive)"
   type        = string
@@ -128,6 +133,12 @@ variable "SUPABASE_SITE_URL" {
 
 variable "SENTRY_AUTH_TOKEN" {
   description = "Sentry Auth Token (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "BATCH_ADMIN_KEY" {
+  description = "Batch Admin Key for API authentication (sensitive)"
   type        = string
   sensitive   = true
 }

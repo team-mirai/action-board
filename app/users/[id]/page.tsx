@@ -1,10 +1,6 @@
 import Levels from "@/components/levels";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import UserAvatar from "@/components/user-avatar";
-import { getAvatarUrl } from "@/lib/avatar";
 import { createClient } from "@/lib/supabase/client";
-import { MapPin } from "lucide-react";
 import UserDetailActivities from "./user-detail-activities";
 
 const PAGE_SIZE = 20;
@@ -43,7 +39,7 @@ export default async function UserDetailPage({ params }: Props) {
     .eq("user_id", id);
 
   return (
-    <div className="flex flex-col items-stretch max-w-xl gap-4 py-4">
+    <div className="flex flex-col items-stretch max-w-xl gap-4 py-8">
       <Levels userId={user.id} hideProgress />
       <div className="flex flex-col items-center">
         {user.x_username && (

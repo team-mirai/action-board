@@ -15,6 +15,11 @@ resource "google_secret_manager_secret_iam_member" "supabase_access_token_access
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.cloud_run.email}"
 }
+resource "google_secret_manager_secret_iam_member" "batch_admin_key_access" {
+  secret_id = google_secret_manager_secret.batch_admin_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run.email}"
+}
 
 # Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
@@ -63,6 +68,12 @@ resource "google_cloud_run_v2_service" "default" {
         name  = "NEXT_PUBLIC_GA_ID"
         value = var.NEXT_PUBLIC_GA_ID
       }
+
+      env {
+        name  = "NEXT_PUBLIC_APP_ORIGIN"
+        value = var.NEXT_PUBLIC_APP_ORIGIN
+      }
+
       env {
         name  = "NEXT_PUBLIC_SITE_URL"
         value = var.SUPABASE_SITE_URL
@@ -82,6 +93,15 @@ resource "google_cloud_run_v2_service" "default" {
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.supabase_access_token.id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "BATCH_ADMIN_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.batch_admin_key.id
             version = "latest"
           }
         }

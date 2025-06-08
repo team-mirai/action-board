@@ -24,10 +24,10 @@ export default async function Levels({
   const userLevel = await getUserLevel(userId);
 
   return (
-    <section className="bg-gradient-hero flex justify-center pt-10 pb-6 px-4">
-      <div className="w-full max-w-md flex flex-col items-stretch">
-        <div className="flex items-stretch">
-          <MyAvatar className="w-24 h-24" />
+    <section className="bg-gradient-hero flex justify-center py-6 px-4">
+      <div className="w-full max-w-md flex flex-col items-stretch bg-white rounded-md p-6">
+        <div className="flex items-center">
+          <MyAvatar className="w-16 h-16" />
           <div className="flex flex-col ml-6">
             <div className="text-lg font-bold leading-none">{profile.name}</div>
             <div className="flex items-center mt-2">
@@ -45,18 +45,8 @@ export default async function Levels({
           </div>
         </div>
         {!hideProgress && (
-          <div className="mt-6 bg-white py-8 px-4 rounded-md flex flex-col items-center">
+          <div className="mt-4 flex flex-col items-start">
             <LevelProgress userLevel={userLevel} />
-            <Link href="/#missions">
-              <Button
-                variant="tertiary"
-                size="lg"
-                className="rounded-full font-normal flex items-center mt-4"
-              >
-                ミッションをさがす
-                <ChevronRight className="w-5 h-5 ml-1" />
-              </Button>
-            </Link>
           </div>
         )}
       </div>
