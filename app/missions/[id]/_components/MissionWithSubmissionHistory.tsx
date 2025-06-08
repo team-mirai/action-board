@@ -152,7 +152,9 @@ export function MissionWithSubmissionHistory({
   };
 
   // クライアントサイドでのみwindow.location.originを使用
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin =
+    process.env.NEXT_PUBLIC_APP_ORIGIN ||
+    (typeof window !== "undefined" ? window.location.origin : "");
   const signupUrl = `${origin}/sign-up?ref=${referralCode}`;
 
   return (
