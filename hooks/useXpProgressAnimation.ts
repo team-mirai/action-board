@@ -150,9 +150,21 @@ export function useXpProgressAnimation({
     [onLevelUp],
   );
 
-  const handleLevelUpDialogClose = useCallback(() => {
+  const handleLevelUpDialogClose = useCallback(async () => {
     setIsLevelUpDialogOpen(false);
     setLevelUpData(null);
+    // ダイアログを閉じる際に必ずmarkLevelUpSeenActionを呼び出す
+    try {
+      const result = await markLevelUpSeenAction();
+      if (!result.success) {
+        console.error(
+          "Failed to mark level up notification as seen:",
+          result.error,
+        );
+      }
+    } catch (error) {
+      console.error("Error marking level up notification as seen:", error);
+    }
   }, []);
 
   const handleToastClose = useCallback(() => {

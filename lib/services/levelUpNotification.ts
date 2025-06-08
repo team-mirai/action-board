@@ -61,7 +61,7 @@ export async function markLevelUpNotificationAsSeen(
     // 現在のレベルを取得
     const { data: userLevel, error: fetchError } = await supabase
       .from("user_levels")
-      .select("level")
+      .select("level, last_notified_level, xp")
       .eq("user_id", userId)
       .single();
 
