@@ -79,6 +79,26 @@ mainブランチはリリース可能な状態に保ちましょう。
 * 各機能ごとに、developブランチからfeat/xxxブランチを作り、developブランチにマージ
 * developで統合テストをしてからmainブランチに反映
 
+### PR作成
+
+権限管理のコストを踏まえて、各自forkしたリポジトリからオリジナルのリポジトリにPRを作成いただく運用としています。
+
+#### ローカルで開発いただくケース
+
+1. 開発対象のリポジトリをご自身のアカウントにforkしてください。
+2. forkしたリポジトリのdevelopブランチからfeatureブランチを作成し、開発を行ってください。
+3. commitを作成後、pushをする前にオリジナル（fork元）のリポジトリのdevelopブランチに入った変更を取り込み、必要であればコンフリクトを解消してください。
+4. コンフリクトを解消後、リモートリポジトリにpushを行ってください。
+5. `fork先:feature -> fork元:develop`のPRを作成してください。
+6. 開発スレッドにてレビュー依頼をお願いします。
+
+#### slackチャネルでDevinを使用して開発するケース
+
+1. slackチャネル`9_devinと人間の部屋`で過去のやり取りを参考に、Devinに開発を依頼してください。
+2. Devinの修正内容に不足がある場合は、slackでのやりとりを継続、もしくはスレッド内(open webapp)のリンクからGUIにてやりとり、修正を継続してください。
+3. コンフリクトが発生している場合は解消を依頼してください。
+4. 開発スレッドにてレビュー依頼をお願いします。
+
 
 ### migrationファイル追加後の型定義生成
 
@@ -208,3 +228,37 @@ npm run storybook
 ```
 
 `stories`ディレクトリにstorybookのファイルを配置してください。
+
+## デプロイ
+
+## 環境変数のデプロイ
+1. Terraform Cloudへの招待をもらう
+
+   * [Terraform Cloud Workspaces](https://app.terraform.io/app/gamification/workspaces)
+
+2. 環境ごとの管理状況：
+
+   * **action-board-staging** → `release/infra/develop`
+   * **action-board-production** → `release/infra/production`
+
+3. トリガー時の挙動：
+
+   * 現状、Terraform Cloud側で自動で`plan`を実行し、`apply`はUIから手動確認後の実行となります。
+
+4. 環境変数追加手順：
+
+   * 通常の環境変数：
+
+     * `terraform/variables.tf`に追加
+     * `nextjs-app/variables.tf`に追加
+     * `nextjs-app/cloud_build.tf`の`substitutions`に追加
+     * `cloudbuild.yaml`の`arg`経由でDockerビルド時に渡す
+   * 秘匿情報の場合：
+
+     * `nextjs-app/secrets.tf`にSecret定義追加
+     * `nextjs-app/cloud_build.tf`でSecretへのアクセス権限設定
+
+5. Terraform変数（秘匿情報は`sensitive`チェック）の登録先：
+
+   * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
+   * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)

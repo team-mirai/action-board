@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: "standalone",
+  output: process.env.STANDALONE_BUILD ? "standalone" : undefined,
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
@@ -17,9 +17,10 @@ export default withSentryConfig(nextConfig, {
 
   org: "team-mirai",
   project: "action-board",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
+  // Suppress logs unless UPLOAD_SOURCEMAPS is set
+  silent: !process.env.UPLOAD_SOURCEMAPS,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
@@ -41,4 +42,19 @@ export default withSentryConfig(nextConfig, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: false,
+
+  // Upload source maps to enable readable stack traces in errors
+  // See the following for more information:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/sourcemaps/
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/build/#source-maps-options
+  sourcemaps: {
+    disable: !process.env.UPLOAD_SOURCEMAPS,
+    ignore: ["**/node_modules/**", "**/.next/cache/**", "**/tests/**"],
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  release: {
+    name: process.env.SENTRY_RELEASE,
+    setCommits: undefined,
+  },
 });

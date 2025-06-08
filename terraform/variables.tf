@@ -141,3 +141,20 @@ variable "SUPABASE_SITE_URL" {
   description = "Supabase Site URL"
   type        = string
 }
+
+variable "SENTRY_AUTH_TOKEN" {
+  description = "Sentry Auth Token (sensitive)"
+  type        = string
+  sensitive   = true
+}
+
+variable "NEXT_PUBLIC_APP_ORIGIN" {
+  description = "Application origin URL (public)"
+  type        = string
+}
+
+variable "BATCH_ADMIN_KEY" {
+  description = "Batch Admin Key for API authentication (sensitive)"
+  type        = string
+  sensitive   = true
+}

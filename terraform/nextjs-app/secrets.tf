@@ -47,3 +47,27 @@ resource "google_secret_manager_secret_version" "supabase_smtp_pass" {
   secret_data_wo = var.SUPABASE_SMTP_PASS
 }
 
+resource "google_secret_manager_secret" "sentry_auth_token" {
+  secret_id = "${var.app_name}-${var.environment}-sentry-auth-token"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "sentry_auth_token" {
+  secret         = google_secret_manager_secret.sentry_auth_token.id
+  secret_data_wo = var.SENTRY_AUTH_TOKEN
+}
+
+resource "google_secret_manager_secret" "batch_admin_key" {
+  secret_id = "${var.app_name}-${var.environment}-batch-admin-key"
+
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "batch_admin_key" {
+  secret         = google_secret_manager_secret.batch_admin_key.id
+  secret_data_wo = var.BATCH_ADMIN_KEY
+}
+

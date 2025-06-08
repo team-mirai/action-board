@@ -46,6 +46,12 @@ resource "google_secret_manager_secret_iam_member" "supabase_smtp_pass_accessor"
   member    = "serviceAccount:${google_service_account.cloud_build.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "sentry_auth_token_accessor" {
+  secret_id = google_secret_manager_secret.sentry_auth_token.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_build.email}"
+}
+
 
 # Cloud Build trigger
 resource "google_cloudbuild_trigger" "build_and_deploy" {
@@ -102,12 +108,14 @@ resource "google_cloudbuild_trigger" "build_and_deploy" {
   substitutions = {
     _REGION                            = var.region
     _SERVICE_NAME                      = "${var.app_name}-${var.environment}"
+    _ENVIRONMENT                       = var.environment
     _REPOSITORY_NAME                   = var.repository_name
     _NEXT_PUBLIC_SUPABASE_URL          = var.NEXT_PUBLIC_SUPABASE_URL
     _NEXT_PUBLIC_SUPABASE_ANON_KEY     = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
     _NEXT_PUBLIC_SENTRY_DSN            = var.NEXT_PUBLIC_SENTRY_DSN
     _NEXT_PUBLIC_GA_ID                 = var.NEXT_PUBLIC_GA_ID
     _NEXT_PUBLIC_SENTRY_ENVIRONMENT    = var.environment
+    _NEXT_PUBLIC_APP_ORIGIN            = var.NEXT_PUBLIC_APP_ORIGIN
     _SUPABASE_PROJECT_ID               = var.SUPABASE_PROJECT_ID
     _SUPABASE_SMTP_HOST                = var.SUPABASE_SMTP_HOST
     _SUPABASE_SMTP_USER                = var.SUPABASE_SMTP_USER
