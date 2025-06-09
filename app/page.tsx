@@ -24,7 +24,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   // レベルアップ通知をチェック
-  const levelUpNotification = null;
+  let levelUpNotification = null;
 
   if (user) {
     const { data: privateUser } = await supabase
@@ -37,13 +37,11 @@ export default async function Home() {
     }
 
     // レベルアップ通知をチェック
-    // しばらく使う予定ないのでコメントアウト
-    // TODO: ミッションクリア時にlast_notified_levelを更新することによって、クリア時にレベルアップ通知が出たらトップページでは通知が出ないようにする
-    //
-    // const levelUpCheck = await checkLevelUpNotification(user.id);
-    // if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
-    //   levelUpNotification = levelUpCheck.levelUp;
-    // }
+    // 自動ミッション（紹介など）でレベルアップした場合の通知を表示するため有効化
+    const levelUpCheck = await checkLevelUpNotification(user.id);
+    if (levelUpCheck.shouldNotify && levelUpCheck.levelUp) {
+      levelUpNotification = levelUpCheck.levelUp;
+    }
   }
 
   return (
