@@ -96,7 +96,11 @@ export async function getOrInitializeUserLevel(
 async function processXpTransaction(
   userId: string,
   xpAmount: number,
-  sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY",
+  sourceType:
+    | "MISSION_COMPLETION"
+    | "BONUS"
+    | "PENALTY"
+    | "MISSION_CANCELLATION",
   sourceId?: string,
   description?: string,
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
@@ -162,7 +166,11 @@ async function processXpTransaction(
 export async function grantXp(
   userId: string,
   xpAmount: number,
-  sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY" = "BONUS",
+  sourceType:
+    | "MISSION_COMPLETION"
+    | "BONUS"
+    | "PENALTY"
+    | "MISSION_CANCELLATION" = "BONUS",
   sourceId?: string,
   description?: string,
 ): Promise<{ success: boolean; userLevel?: UserLevel; error?: string }> {
@@ -290,7 +298,11 @@ export async function grantXpBatch(
   transactions: Array<{
     userId: string;
     xpAmount: number;
-    sourceType: "MISSION_COMPLETION" | "BONUS" | "PENALTY";
+    sourceType:
+      | "MISSION_COMPLETION"
+      | "BONUS"
+      | "PENALTY"
+      | "MISSION_CANCELLATION";
     sourceId?: string;
     description?: string;
   }>,

@@ -1,11 +1,11 @@
 "use server";
 
 import { ARTIFACT_TYPES } from "@/lib/artifactTypes"; // パス変更
-import { grantMissionCompletionXp } from "@/lib/services/userLevel";
-import { createClient } from "@/lib/supabase/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { grantMissionCompletionXp, grantXp } from "@/lib/services/userLevel";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { calculateMissionXp } from "@/lib/utils/utils";
 
-import type { TablesInsert } from "@/lib/types/supabase"; // ARTIFACT_TYPESのimportより前に移動
+import type { TablesInsert } from "@/lib/types/supabase";
 import { z } from "zod";
 
 // 基本スキーマ（共通項目）
@@ -435,7 +435,7 @@ export const cancelSubmissionAction = async (formData: FormData) => {
   // 達成記録が存在し、ユーザーのものかチェック
   const { data: achievement, error: achievementFetchError } = await supabase
     .from("achievements")
-    .select("id, user_id")
+    .select("id, user_id, mission_id")
     .eq("id", validatedAchievementId)
     .eq("user_id", authUser.id)
     .single();
@@ -445,6 +445,29 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     return {
       success: false,
       error: "達成記録が見つからないか、アクセス権限がありません。",
+    };
+  }
+
+  // mission_idがnullでないことを確認
+  if (!achievement.mission_id) {
+    return {
+      success: false,
+      error: "ミッションIDが見つかりません。",
+    };
+  }
+
+  // ミッション情報を取得してXP計算のための難易度を確認
+  const { data: missionData, error: missionFetchError } = await supabase
+    .from("missions")
+    .select("difficulty, title")
+    .eq("id", achievement.mission_id)
+    .single();
+
+  if (missionFetchError || !missionData) {
+    console.error("Mission fetch error:", missionFetchError);
+    return {
+      success: false,
+      error: "ミッション情報の取得に失敗しました。",
     };
   }
 
@@ -462,5 +485,29 @@ export const cancelSubmissionAction = async (formData: FormData) => {
     };
   }
 
-  return { success: true, message: "達成を取り消しました。" };
+  // XPを減算する（ミッション達成時に付与されたXPを取り消し）
+  const xpToRevoke = calculateMissionXp(missionData.difficulty);
+  const xpResult = await grantXp(
+    authUser.id,
+    -xpToRevoke, // 負の値でXPを減算
+    "MISSION_CANCELLATION",
+    validatedAchievementId,
+    `ミッション「${missionData.title}」の提出取り消しによる経験値減算`,
+  );
+
+  if (!xpResult.success) {
+    console.error("XP減算に失敗しました:", xpResult.error);
+    // XP減算の失敗はエラーとして扱うが、達成記録は既に削除済み
+    return {
+      success: false,
+      error: `達成の取り消しは完了しましたが、経験値の減算に失敗しました: ${xpResult.error}`,
+    };
+  }
+
+  return {
+    success: true,
+    message: "達成を取り消しました。",
+    xpRevoked: xpToRevoke,
+    userLevel: xpResult.userLevel,
+  };
 };
