@@ -68,20 +68,6 @@ export type Database = {
             referencedRelation: "missions";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "achievements_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "achievements_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "public_user_profiles";
-            referencedColumns: ["id"];
-          },
         ];
       };
       daily_action_summary: {
@@ -258,20 +244,6 @@ export type Database = {
             referencedRelation: "activity_timeline_view";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "mission_artifacts_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "mission_artifacts_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "public_user_profiles";
-            referencedColumns: ["id"];
-          },
         ];
       };
       missions: {
@@ -409,6 +381,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_referral: {
+        Row: {
+          created_at: string | null;
+          del_flg: boolean;
+          referral_code: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          del_flg?: boolean;
+          referral_code: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          del_flg?: boolean;
+          referral_code?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       weekly_event_count_by_prefecture_summary: {
         Row: {
           count: number;
@@ -477,37 +473,6 @@ export type Database = {
           xp_amount?: number;
         };
         Relationships: [];
-      };
-      user_referral: {
-        Row: {
-          user_id: string;
-          referral_code: string;
-          del_flg: boolean;
-          created_at: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          user_id: string;
-          referral_code: string;
-          del_flg?: boolean;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          referral_code?: string;
-          del_flg?: boolean;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "user_referral_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
-        ];
       };
     };
     Views: {
