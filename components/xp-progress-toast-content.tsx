@@ -1,10 +1,10 @@
 "use client";
 
+import { markLevelUpSeenAction } from "@/app/actions/level-up";
 import { calculateLevel, getXpToNextLevel, totalXp } from "@/lib/utils/utils";
 import React, { useEffect, useState } from "react";
 import { LevelUpDialog } from "./level-up-dialog";
 import { ProgressBarAnimated } from "./ui/progress-bar-animated";
-import { ProgressBarSimple } from "./ui/progress-bar-simple";
 
 interface XpProgressToastContentProps {
   initialXp: number;
@@ -77,8 +77,22 @@ export function XpProgressToastContent({
   };
 
   // レベルアップダイアログを閉じる
-  const handleLevelUpDialogClose = () => {
+  const handleLevelUpDialogClose = async () => {
     setLevelUpData(null);
+
+    // レベルアップ通知を確認済みとしてマーク
+    try {
+      const result = await markLevelUpSeenAction();
+      if (!result.success) {
+        console.error(
+          "Failed to mark level up notification as seen:",
+          result.error,
+        );
+      }
+    } catch (error) {
+      console.error("Error marking level up notification as seen:", error);
+    }
+
     const xpUsed = endXp - startXp;
     setLevelState({
       currentLevel: levelState.currentLevel + 1,
