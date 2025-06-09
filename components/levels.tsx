@@ -1,10 +1,8 @@
 import { getUserLevel } from "@/lib/services/userLevel";
 import { getProfile } from "@/lib/services/users";
-import { ChevronRight, MapPin } from "lucide-react";
-import Link from "next/link";
+import { MapPin } from "lucide-react";
 import { LevelProgress } from "./level-progress";
-import MyAvatar from "./my-avatar";
-import { Button } from "./ui/button";
+import UserAvatar from "./user-avatar";
 
 interface LevelsProps {
   userId: string;
@@ -27,7 +25,7 @@ export default async function Levels({
     <section className="bg-gradient-hero flex justify-center py-6 px-4">
       <div className="w-full max-w-md flex flex-col items-stretch bg-white rounded-md p-6">
         <div className="flex items-center">
-          <MyAvatar className="w-16 h-16" />
+          <UserAvatar userProfile={profile} size="lg" />
           <div className="flex flex-col ml-6">
             <div className="text-lg font-bold leading-none">{profile.name}</div>
             <div className="flex items-center mt-2">
