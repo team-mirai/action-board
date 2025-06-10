@@ -47,12 +47,12 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">達成報告フォーム</CardTitle>
+        <CardTitle className="text-lg">ミッション完了を記録しよう</CardTitle>
         <p className="text-sm text-muted-foreground">
-          ミッションを完了したら、達成報告しましょう！
+          ミッションを完了したら、達成を記録しましょう！
         </p>
         <p className="text-sm text-muted-foreground">
-          ※ フォームの内容は他の人に公開されることはありません。
+          ※ 入力した内容は、外部に公開されることはありません。
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
