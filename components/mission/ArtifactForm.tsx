@@ -85,6 +85,48 @@ export function ArtifactForm({
           </div>
         )}
 
+        {/* ポスティング入力フォーム */}
+        {artifactConfig.key === ARTIFACT_TYPES.POSTING.key && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="postingCount">
+                ポスティング枚数 <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="number"
+                name="postingCount"
+                id="postingCount"
+                min="1"
+                max="1000"
+                required
+                disabled={disabled}
+                placeholder="例：50"
+              />
+              <p className="text-xs text-gray-500">
+                配布した枚数を入力してください（1枚＝5ポイント）
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="locationText">
+                ポスティング場所 <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="text"
+                name="locationText"
+                id="locationText"
+                required
+                maxLength={100}
+                disabled={disabled}
+                placeholder="例：東京都世田谷区代田1丁目"
+              />
+              <p className="text-xs text-gray-500">
+                市区町村レベルまでの住所を入力してください
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* 画像アップロードフォーム */}
         {(artifactConfig.key === ARTIFACT_TYPES.IMAGE.key ||
           artifactConfig.key === ARTIFACT_TYPES.IMAGE_WITH_GEOLOCATION.key) && (

@@ -19,7 +19,8 @@ test.describe("認証フロー", () => {
     await assertAuthState(page, false);
 
     // 2. サインアップページに移動
-    if (await page.getByRole("menu").isVisible()) {
+    if (await page.getByTestId("navmenubutton").isVisible()) {
+      await page.getByTestId("navmenubutton").click();
       await page.getByRole("menuitem", { name: "サインアップ" }).click();
     } else {
       await page.getByRole("link", { name: "サインアップ" }).click();
@@ -84,7 +85,7 @@ test.describe("認証フロー", () => {
     await assertAuthState(page, true);
 
     // 11. ログアウト
-    await page.getByRole("menu").click();
+    await page.getByTestId("usermenubutton").click();
     await page.getByTestId("sign-out").click();
 
     // 12. ログイン画面にリダイレクトされること
