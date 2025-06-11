@@ -6,12 +6,16 @@ export type MissionsProps = {
   userId?: string;
   maxSize?: number;
   showAchievedMissions: boolean;
+  filterFeatured?: boolean;
+  title?: string;
 };
 
 export default async function Missions({
   userId,
   maxSize,
   showAchievedMissions,
+  filterFeatured,
+  title = "📈 ミッション",
 }: MissionsProps) {
   const supabase = await createClient();
 
@@ -61,6 +65,9 @@ export default async function Missions({
     .select()
     .order("difficulty", { ascending: true })
     .order("created_at", { ascending: false });
+  if (filterFeatured) {
+    query = query.eq("is_featured", true);
+  }
 
   if (!showAchievedMissions) {
     query = query.not("id", "in", `("${achievedMissionIds.join('","')}")`);
@@ -75,7 +82,7 @@ export default async function Missions({
             id="missions"
             className="text-2xl md:text-4xl font-black text-gray-900 mb-2"
           >
-            📈 ミッション
+            {title}
           </h2>
         </div>
 
