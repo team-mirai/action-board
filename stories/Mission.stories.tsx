@@ -28,6 +28,7 @@ const dummyMission: Tables<"missions"> = {
   required_artifact_type: "NONE",
   ogp_image_url: null,
   artifact_label: null,
+  is_featured: false,
 };
 
 export const Default: Story = {

@@ -260,6 +260,7 @@ export type Database = {
           required_artifact_type: string;
           title: string;
           updated_at: string;
+          is_featured: boolean;
         };
         Insert: {
           artifact_label?: string | null;
@@ -274,6 +275,7 @@ export type Database = {
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
+          is_featured: boolean;
         };
         Update: {
           artifact_label?: string | null;
@@ -288,6 +290,7 @@ export type Database = {
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;
+          is_featured: boolean;
         };
         Relationships: [];
       };
