@@ -72,7 +72,10 @@ export function ImageUploader({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="artifactImage">画像ファイル</Label>
+      <Label htmlFor="artifactImage">
+        画像ファイル
+        <span className="text-sm artifactDescription">(必須)</span>
+      </Label>
       <Input
         type="file"
         id="artifactImage"
