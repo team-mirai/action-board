@@ -18,8 +18,17 @@ interface PostingPageClientProps {
   userId: string;
 }
 
-export default function PostingPageClient({ userId }: PostingPageClientProps) {
-  const [mapInstance, setMapInstance] = useState<any>(null);
+// Type definitions for Leaflet and Geoman
+type LeafletMap = any; // Complex leaflet type
+type LeafletLayer = any; // Complex leaflet layer type
+type GeomanEvent = {
+  layer?: LeafletLayer;
+  target?: LeafletLayer;
+};
+type LeafletWindow = Window & { L: any };
+
+export default function PostingPageClient(_props: PostingPageClientProps) {
+  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
   const autoSave = true;
 
@@ -64,7 +73,7 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
 
       console.log("Geoman controls added successfully");
 
-      mapInstance.on("pm:create", async (e: any) => {
+      mapInstance.on("pm:create", async (e: GeomanEvent) => {
         console.log("Shape created:", e.layer);
         if (e.layer) {
           await saveOrUpdateLayer(e.layer);
@@ -73,7 +82,7 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
         }
       });
 
-      mapInstance.on("pm:remove", async (e: any) => {
+      mapInstance.on("pm:remove", async (e: GeomanEvent) => {
         console.log("Shape removed:", e.layer);
         const layer = e.layer;
         const sid = getShapeId(layer);
@@ -83,20 +92,20 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
         updateShapeCount();
       });
 
-      mapInstance.on("pm:update", async (e: any) => {
+      mapInstance.on("pm:update", async (e: GeomanEvent) => {
         console.log("Shape updated:", e.layer);
         await saveOrUpdateLayer(e.layer);
       });
 
-      mapInstance.on("pm:cut", (e: any) => {
+      mapInstance.on("pm:cut", (e: GeomanEvent) => {
         console.log("Shape cut:", e);
       });
 
-      mapInstance.on("pm:undo", (e: any) => {
+      mapInstance.on("pm:undo", (e: GeomanEvent) => {
         console.log("Undo action:", e);
       });
 
-      mapInstance.on("pm:redo", (e: any) => {
+      mapInstance.on("pm:redo", (e: GeomanEvent) => {
         console.log("Redo action:", e);
       });
 
@@ -113,9 +122,9 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
         const savedShapes = await loadMapShapes();
         const L = (await import("leaflet")).default;
 
-        savedShapes.forEach((shape: any) => {
+        for (const shape of savedShapes) {
           try {
-            let layer;
+            let layer: LeafletLayer;
 
             if (
               shape.type === "text" ||
@@ -127,7 +136,7 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
                 textMarker: true,
                 text,
               });
-              (layer as any)._shapeId = shape.id; // preserve id
+              (layer as LeafletLayer)._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
             } else if (
               shape.coordinates.type === "Point" &&
@@ -136,11 +145,11 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
               const [lng, lat] = shape.coordinates.coordinates;
               const radius = shape.properties.radius || 100;
               layer = L.circle([lat, lng], { radius });
-              (layer as any)._shapeId = shape.id; // preserve id
+              (layer as LeafletLayer)._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
             } else {
               layer = L.geoJSON(shape.coordinates);
-              (layer as any)._shapeId = shape.id; // preserve id
+              (layer as LeafletLayer)._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
             }
 
@@ -163,7 +172,7 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
               layerError,
             );
           }
-        });
+        }
 
         console.log("Loaded existing shapes:", savedShapes.length);
         updateShapeCount();
@@ -178,10 +187,10 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
   const getAllDrawnLayers = () => {
     if (!mapInstance) return [];
 
-    const L = (window as any).L;
-    const allLayers: any[] = [];
+    const L = (window as LeafletWindow).L;
+    const allLayers: LeafletLayer[] = [];
 
-    mapInstance.eachLayer((layer: any) => {
+    mapInstance.eachLayer((layer: LeafletLayer) => {
       if (layer instanceof L.Path || layer instanceof L.Marker) {
         if (layer.pm && !layer._url) {
           allLayers.push(layer);
@@ -198,101 +207,6 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
     console.log("Shape count updated:", drawnLayers.length);
   };
 
-  const saveCurrentMapState = async () => {
-    if (!mapInstance) return;
-
-    try {
-      const existingShapes = await loadMapShapes();
-      for (const shape of existingShapes) {
-        await deleteMapShape(shape.id);
-      }
-
-      const L = (window as any).L;
-      const drawnLayers: any[] = [];
-
-      mapInstance.eachLayer((layer: any) => {
-        if (
-          (layer instanceof L.Path || layer instanceof L.Marker) &&
-          layer.pm &&
-          !layer._url
-        ) {
-          drawnLayers.push(layer);
-        }
-      });
-
-      if (drawnLayers.length === 0) {
-        console.log("No shapes to save - clearing database");
-        return;
-      }
-
-      const savedShapes = [];
-      for (const layer of drawnLayers) {
-        let shape: MapShapeData;
-
-        const shapeName = layer.pm?.getShape ? layer.pm.getShape() : undefined;
-
-        if (shapeName === "Text") {
-          const center = layer.getLatLng();
-          const textContent = layer.pm?.getText ? layer.pm.getText() : "";
-
-          shape = {
-            type: "text",
-            coordinates: {
-              type: "Point",
-              coordinates: [center.lng, center.lat],
-            },
-            properties: {
-              text: textContent,
-              originalType: "Text",
-            },
-          };
-        } else if (layer instanceof L.Circle) {
-          const center = layer.getLatLng();
-          const radius = layer.getRadius();
-
-          shape = {
-            type: "circle",
-            coordinates: {
-              type: "Point",
-              coordinates: [center.lng, center.lat],
-            },
-            properties: {
-              radius: radius,
-              originalType: "Circle",
-            },
-          };
-        } else {
-          const geoJSON = layer.toGeoJSON();
-          shape = {
-            type: geoJSON.geometry.type.toLowerCase() as MapShapeData["type"],
-            coordinates: geoJSON.geometry,
-            properties: {
-              ...geoJSON.properties,
-              originalType: geoJSON.geometry.type,
-            },
-          };
-        }
-
-        const savedShape = await saveMapShape(shape);
-        savedShapes.push(savedShape);
-      }
-
-      console.log(`Saved ${savedShapes.length} shapes to database`);
-    } catch (error) {
-      console.error("Failed to save map state:", error);
-    }
-  };
-
-  const saveAllShapes = async () => {
-    const layers = getAllDrawnLayers();
-    for (const l of layers) {
-      await saveOrUpdateLayer(l);
-    }
-    console.log("Manual save complete");
-  };
-
-  const unsavedCount = autoSave ? 0 : shapeCount;
-
   const textMarkerStyles = `
     .pm-text {
       font-size:14px;
@@ -300,27 +214,27 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
     }
   `;
 
-  function attachTextEvents(layer: any) {
+  function attachTextEvents(layer: LeafletLayer) {
     if (!layer || !layer.pm) return;
 
     layer.off("pm:textchange");
     layer.off("pm:textblur");
 
     layer.on("pm:textchange", () => {
-      (layer as any)._textDirty = true;
+      (layer as LeafletLayer)._textDirty = true;
     });
 
     layer.on("pm:textblur", () => {
-      if ((layer as any)._textDirty) {
+      if ((layer as LeafletLayer)._textDirty) {
         console.log("Text layer changed -> saving");
-        (layer as any)._textDirty = false;
+        (layer as LeafletLayer)._textDirty = false;
         if (autoSave) saveOrUpdateLayer(layer);
       }
     });
   }
 
-  const extractShapeData = (layer: any): MapShapeData => {
-    const L = (window as any).L;
+  const extractShapeData = (layer: LeafletLayer): MapShapeData => {
+    const L = (window as LeafletWindow).L;
     if (!L) throw new Error("Leaflet not loaded");
 
     const shapeName = layer.pm?.getShape ? layer.pm.getShape() : undefined;
@@ -359,7 +273,7 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
     };
   };
 
-  const saveOrUpdateLayer = async (layer: any) => {
+  const saveOrUpdateLayer = async (layer: LeafletLayer) => {
     const shapeData = extractShapeData(layer);
     const sid = getShapeId(layer);
     if (sid) {
@@ -374,35 +288,23 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
     }
   };
 
-  const saveOrUpdateShapeRecord = async (layer: any, shape: MapShapeData) => {
-    const sid = getShapeId(layer);
-    if (sid) {
-      return await updateMapShape(sid, {
-        coordinates: shape.coordinates,
-        properties: shape.properties,
-      });
-    } else {
-      const saved = await saveMapShape(shape);
-      propagateShapeId(layer, saved.id);
-      return saved;
-    }
-  };
-
-  function propagateShapeId(layer: any, id: string) {
+  function propagateShapeId(layer: LeafletLayer, id: string) {
     if (!layer) return;
-    (layer as any)._shapeId = id;
-    if (layer.options) (layer.options as any).shapeId = id;
-    if (layer.feature && layer.feature.properties) {
+    (layer as LeafletLayer)._shapeId = id;
+    if (layer.options) (layer.options as LeafletLayer).shapeId = id;
+    if (layer.feature?.properties) {
       layer.feature.properties._shapeId = id;
     }
     if (layer.getLayers) {
-      layer.getLayers().forEach((sub: any) => propagateShapeId(sub, id));
+      for (const sub of layer.getLayers()) {
+        propagateShapeId(sub, id);
+      }
     }
 
     attachPersistenceEvents(layer);
   }
 
-  function attachPersistenceEvents(layer: any) {
+  function attachPersistenceEvents(layer: LeafletLayer) {
     if (!layer || !layer.pm) return;
 
     layer.off("pm:change", onLayerChange);
@@ -412,14 +314,14 @@ export default function PostingPageClient({ userId }: PostingPageClientProps) {
     layer.on("pm:dragend", onLayerChange);
   }
 
-  const onLayerChange = async (e: any) => {
+  const onLayerChange = async (e: GeomanEvent) => {
     const layer = e.layer || e.target;
-    await saveOrUpdateLayer(layer);
+    if (layer) await saveOrUpdateLayer(layer);
   };
 
-  const getShapeId = (layer: any): string | undefined => {
+  const getShapeId = (layer: LeafletLayer): string | undefined => {
     return (
-      (layer as any)._shapeId ||
+      (layer as LeafletLayer)._shapeId ||
       layer?.options?.shapeId ||
       layer?.feature?.properties?._shapeId
     );

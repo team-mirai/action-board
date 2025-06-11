@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import type { Json } from "@/lib/types/supabase";
 
 export interface MapShape {
   id?: string;
@@ -12,8 +13,8 @@ export interface MapShape {
     | "point"
     | "linestring"
     | "text";
-  coordinates: any;
-  properties?: any;
+  coordinates: Json;
+  properties?: Json;
   created_at?: string;
   updated_at?: string;
 }

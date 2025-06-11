@@ -2,14 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
+// Type definition for the Leaflet map instance
+type LeafletMap = any; // Complex leaflet type
+
 interface GeomanMapProps {
-  onMapReady?: (map: any) => void;
+  onMapReady?: (map: LeafletMap) => void;
   className?: string;
 }
 
 export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -27,7 +30,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       await import("@geoman-io/leaflet-geoman-free");
 
       // Fix Leaflet default markers in Next.js
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      (L.Icon.Default.prototype as LeafletMap)._getIconUrl = undefined;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet/dist/images/marker-icon-2x.png",
@@ -36,7 +39,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       });
 
       // Create map
-      const map = L.map(mapRef.current!).setView([35.6762, 139.6503], 10);
+      const map = L.map(mapRef.current).setView([35.6762, 139.6503], 10);
       mapInstanceRef.current = map;
 
       console.log("Map created, pm available:", !!map.pm);
@@ -59,7 +62,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [onMapReady]);
 
   return (
     <div
