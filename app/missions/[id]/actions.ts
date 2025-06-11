@@ -150,6 +150,10 @@ export const achieveMissionAction = async (formData: FormData) => {
     .eq("id", validatedMissionId)
     .single();
 
+  console.log("validatedMissionId", validatedMissionId);
+  console.log("missionData", missionData);
+  console.log("missionFetchError", missionFetchError);
+
   if (missionFetchError) {
     console.error(`Mission fetch error: ${missionFetchError.message}`);
     return {
