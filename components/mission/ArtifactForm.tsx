@@ -60,6 +60,7 @@ export function ArtifactForm({
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
             <Label htmlFor="artifactLink">{mission.artifact_label}</Label>
+            <span className="artifactText">(必須)</span>
             <Input
               type="url"
               name="artifactLink"
@@ -74,7 +75,10 @@ export function ArtifactForm({
         {/* テキスト入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.TEXT.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactText">{mission.artifact_label}</Label>
+            <Label htmlFor="artifactText">
+              {mission.artifact_label}
+              <span className="artifactText">(必須)</span>
+            </Label>
             <Input
               name="artifactText"
               id="artifactText"
