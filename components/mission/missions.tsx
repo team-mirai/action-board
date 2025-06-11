@@ -63,6 +63,7 @@ export default async function Missions({
   let query = supabase
     .from("missions")
     .select()
+    .eq("is_hidden", false) // 非表示のミッションを除外
     .order("difficulty", { ascending: true })
     .order("created_at", { ascending: false });
   if (filterFeatured) {
