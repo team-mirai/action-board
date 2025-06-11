@@ -30,6 +30,7 @@ export default async function Navbar() {
         </div>
         <div className="gap-6 items-center font-semibold hidden sm:flex">
           <Link href="/">ダッシュボード</Link>
+          <Link href="/map/posting">配布マップ</Link>
           {/* <Link href="/missions">ミッション</Link> */}
           <HeaderAuth />
         </div>
@@ -50,6 +51,9 @@ export default async function Navbar() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild>
                     <Link href="/">ダッシュボード</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/map/posting">配布マップ</Link>
                   </DropdownMenuItem>
                   {/*
                   <DropdownMenuItem asChild>

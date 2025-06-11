@@ -319,6 +319,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      posting_shapes: {
+        Row: {
+          coordinates: Json;
+          created_at: string | null;
+          id: string;
+          properties: Json | null;
+          type: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          coordinates: Json;
+          created_at?: string | null;
+          id?: string;
+          properties?: Json | null;
+          type: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          coordinates?: Json;
+          created_at?: string | null;
+          id?: string;
+          properties?: Json | null;
+          type?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       private_users: {
         Row: {
           address_prefecture: string;
