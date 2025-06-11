@@ -15,7 +15,7 @@ export default async function Missions({
   maxSize,
   showAchievedMissions,
   filterFeatured,
-  title = "📈 ミッション", // ← デフォルト値つけると安全
+  title = "📈 ミッション",
 }: MissionsProps) {
   const supabase = await createClient();
 
