@@ -47,12 +47,14 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">達成報告フォーム</CardTitle>
+        <CardTitle className="text-lg text-center">
+          ミッション完了を記録しよう
+        </CardTitle>
         <p className="text-sm text-muted-foreground">
-          ミッションを完了したら、達成報告しましょう！
+          ミッションを完了したら、達成を記録しましょう！
         </p>
         <p className="text-sm text-muted-foreground">
-          ※ フォームの内容は他の人に公開されることはありません。
+          ※ 入力した内容は、外部に公開されることはありません。
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -60,6 +62,7 @@ export function ArtifactForm({
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
             <Label htmlFor="artifactLink">{mission.artifact_label}</Label>
+            <span className="artifactText">(必須)</span>
             <Input
               type="url"
               name="artifactLink"
@@ -74,7 +77,10 @@ export function ArtifactForm({
         {/* テキスト入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.TEXT.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactText">{mission.artifact_label}</Label>
+            <Label htmlFor="artifactText">
+              {mission.artifact_label}
+              <span className="artifactText">(必須)</span>
+            </Label>
             <Input
               name="artifactText"
               id="artifactText"
