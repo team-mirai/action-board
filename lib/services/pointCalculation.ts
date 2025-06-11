@@ -36,7 +36,7 @@ export async function updatePointSetting(
     },
     {
       onConflict: "mission_type",
-    }
+    },
   );
 
   if (error) {

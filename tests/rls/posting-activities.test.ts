@@ -95,10 +95,7 @@ describe("posting_activities テーブルのRLSテスト", () => {
       .from("mission_artifacts")
       .delete()
       .eq("id", missionArtifactId);
-    await adminClient
-      .from("achievements")
-      .delete()
-      .eq("id", achievementId);
+    await adminClient.from("achievements").delete().eq("id", achievementId);
     await adminClient.from("missions").delete().eq("id", missionId);
     await cleanupTestUser(user1.user.userId);
     await cleanupTestUser(user2.user.userId);
@@ -171,7 +168,9 @@ describe("posting_activities テーブルのRLSテスト", () => {
       .from("achievements")
       .insert(user2AchievementData);
     if (user2AchievementError) {
-      throw new Error(`user2達成記録作成エラー: ${user2AchievementError.message}`);
+      throw new Error(
+        `user2達成記録作成エラー: ${user2AchievementError.message}`,
+      );
     }
 
     // user2の成果物を作成
