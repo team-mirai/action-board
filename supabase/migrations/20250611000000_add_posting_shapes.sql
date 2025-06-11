@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS public.posting_shapes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  type TEXT NOT NULL CHECK (type IN ('marker', 'rectangle', 'polyline', 'polygon', 'circle', 'point', 'linestring', 'text')),
+  type TEXT NOT NULL CHECK (type IN ('polygon', 'text')),
   coordinates JSONB NOT NULL,
   properties JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW(),

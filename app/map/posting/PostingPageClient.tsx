@@ -48,14 +48,14 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.pm.addControls({
         position: "topleft",
-        // 以下はデフォルトでtrue
+        // Only enable polygon and text drawing
         drawMarker: false,
         drawCircleMarker: false,
         drawPolyline: false,
         drawRectangle: false,
-        drawPolygon: true,
+        drawPolygon: true,  // Enable polygon drawing
         drawCircle: false,
-        drawText: true,
+        drawText: true,     // Enable text drawing
         // modes
         editMode: true,
         dragMode: true,
@@ -67,8 +67,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         drawControls: true,
         editControls: true,
         optionsControls: false,
-        customControls: false, // これ何か不明
-        // 以下はデフォルトでfalse
+        customControls: false,
       });
 
       console.log("Geoman controls added successfully");
@@ -126,10 +125,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           try {
             let layer: LeafletLayer;
 
-            if (
-              shape.type === "text" ||
-              shape.properties?.originalType === "Text"
-            ) {
+            if (shape.type === "text") {
               const [lng, lat] = shape.coordinates.coordinates;
               const text = shape.properties?.text || "";
               layer = L.marker([lat, lng], {
@@ -138,19 +134,9 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
               });
               (layer as LeafletLayer)._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
-            } else if (
-              shape.coordinates.type === "Point" &&
-              shape.properties?.originalType === "Circle"
-            ) {
-              const [lng, lat] = shape.coordinates.coordinates;
-              const radius = shape.properties.radius || 100;
-              layer = L.circle([lat, lng], { radius });
-              (layer as LeafletLayer)._shapeId = shape.id; // preserve id
-              attachTextEvents(layer);
-            } else {
+            } else if (shape.type === "polygon") {
               layer = L.geoJSON(shape.coordinates);
               (layer as LeafletLayer)._shapeId = shape.id; // preserve id
-              attachTextEvents(layer);
             }
 
             layer.addTo(mapInstance);
@@ -234,9 +220,6 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   }
 
   const extractShapeData = (layer: LeafletLayer): MapShapeData => {
-    const L = (window as LeafletWindow).L;
-    if (!L) throw new Error("Leaflet not loaded");
-
     const shapeName = layer.pm?.getShape ? layer.pm.getShape() : undefined;
 
     if (shapeName === "Text") {
@@ -248,28 +231,16 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
           type: "Point",
           coordinates: [center.lng, center.lat],
         },
-        properties: { text: textContent, originalType: "Text" },
+        properties: { text: textContent },
       };
     }
 
-    if (layer instanceof L.Circle) {
-      const center = layer.getLatLng();
-      const radius = layer.getRadius();
-      return {
-        type: "circle",
-        coordinates: { type: "Point", coordinates: [center.lng, center.lat] },
-        properties: { radius, originalType: "Circle" },
-      };
-    }
-
+    // Default to polygon for all other shapes
     const geoJSON = layer.toGeoJSON();
     return {
-      type: geoJSON.geometry.type.toLowerCase() as MapShapeData["type"],
+      type: "polygon",
       coordinates: geoJSON.geometry,
-      properties: {
-        ...geoJSON.properties,
-        originalType: geoJSON.geometry.type,
-      },
+      properties: geoJSON.properties || {},
     };
   };
 

@@ -4,15 +4,7 @@ import type { Json } from "@/lib/types/supabase";
 export interface MapShape {
   id?: string;
   user_id?: string;
-  type:
-    | "marker"
-    | "rectangle"
-    | "polyline"
-    | "polygon"
-    | "circle"
-    | "point"
-    | "linestring"
-    | "text";
+  type: "polygon" | "text";
   coordinates: Json;
   properties?: Json;
   created_at?: string;
