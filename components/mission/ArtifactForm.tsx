@@ -47,7 +47,9 @@ export function ArtifactForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">ミッション完了を記録しよう</CardTitle>
+        <CardTitle className="text-lg text-center">
+          ミッション完了を記録しよう
+        </CardTitle>
         <p className="text-sm text-muted-foreground">
           ミッションを完了したら、達成を記録しましょう！
         </p>
