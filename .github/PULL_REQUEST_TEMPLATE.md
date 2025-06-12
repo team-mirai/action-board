@@ -3,6 +3,7 @@
 
 # 変更の背景
 - ここに変更が必要となった背景を記載してください
+- closes #<issue番号>
 
 # CLAへの同意
 - 本リポジトリへのコントリビュートには、[コントリビューターライセンス契約（CLA）](https://github.com/team-mirai/action-board/blob/develop/CLA.md)に同意することが必須です。
