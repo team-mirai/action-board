@@ -29,9 +29,7 @@ export default async function RankingMission({
         <div className="">
           <h2 className="text-2xl md:text-4xl text-gray-900 mb-2 text-center">
             🏅ミッション別トップ{limit}
-            {mission && (
-              <div className="ml-2 text-blue-700 text-lg">{mission.title}</div>
-            )}
+            {mission && <div className="ml-2 text-lg">{mission.title}</div>}
           </h2>
         </div>
 

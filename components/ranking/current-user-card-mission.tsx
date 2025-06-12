@@ -32,7 +32,7 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="w-5 h-5 text-teal-600" />
             あなたのランク
-            <span className="ml-2 text-sm text-blue-600">{mission.title}</span>
+            <span className="ml-2 text-sm">{mission.title}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
