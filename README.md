@@ -106,13 +106,13 @@
 3. ローカルデータベースの初期化（テストユーザー付き）:
 
    ```bash
-   npm run db:reset-with-test-users
+   npm run db:reset
    ```
 
-   または、データベースリセットのみ:
+   または、データベースリセットのみ（テストユーザーなし）:
 
    ```bash
-   npm run db:reset
+   npm run db:reset-only
    ```
 
   supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。

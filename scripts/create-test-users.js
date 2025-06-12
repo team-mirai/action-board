@@ -5,10 +5,13 @@
  *
  * 使用方法:
  * 1. 環境変数を設定: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
- * 2. node scripts/create-test-users.js
+ * 2. 個別実行: node scripts/create-test-users.js
+ * 3. DB リセット + テストユーザー作成: npm run db:reset-with-test-users
  */
 
 const { createClient } = require("@supabase/supabase-js");
+
+const DB_READY_WAIT_TIME = 3;
 
 if (
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -28,7 +31,7 @@ const adminClient = createClient(
 
 const testUsers = [
   {
-    email: "takahiroanno@example.com",
+    email: "test.takahiro@example.com",
     password: "password123",
     name: "安野たかひろ",
     address_prefecture: "東京都",
@@ -36,7 +39,7 @@ const testUsers = [
     postcode: "1000001",
   },
   {
-    email: "tanaka.hanako@example.com",
+    email: "test.hanako@example.com",
     password: "password123",
     name: "田中花子",
     address_prefecture: "大阪府",
@@ -44,7 +47,7 @@ const testUsers = [
     postcode: "5400001",
   },
   {
-    email: "sato.taro@example.com",
+    email: "test.taro@example.com",
     password: "password123",
     name: "佐藤太郎",
     address_prefecture: "愛知県",
@@ -52,7 +55,7 @@ const testUsers = [
     postcode: "4600001",
   },
   {
-    email: "suzuki.misaki@example.com",
+    email: "test.misaki@example.com",
     password: "password123",
     name: "鈴木美咲",
     address_prefecture: "福岡県",
@@ -60,7 +63,7 @@ const testUsers = [
     postcode: "8100001",
   },
   {
-    email: "takahashi.ken@example.com",
+    email: "test.ken@example.com",
     password: "password123",
     name: "高橋健一",
     address_prefecture: "北海道",
@@ -84,7 +87,15 @@ async function createTestUser(userData) {
       });
 
     if (authError || !authData.user) {
-      throw new Error(`Auth ユーザー作成失敗: ${authError?.message}`);
+      console.error("   🔍 詳細エラー情報:", {
+        message: authError?.message,
+        status: authError?.status,
+        code: authError?.code,
+        details: authError?.details,
+      });
+      throw new Error(
+        `Auth ユーザー作成失敗: ${authError?.message || "Unknown error"}`,
+      );
     }
 
     const authId = authData.user.id;
@@ -151,13 +162,68 @@ async function cleanupExistingUsers() {
   for (const user of testUsersToDelete) {
     try {
       await adminClient.from("private_users").delete().eq("id", user.id);
-
       await adminClient.auth.admin.deleteUser(user.id);
-
       console.log(`   ✅ ${user.email} を削除しました`);
     } catch (error) {
       console.error(`   ❌ ${user.email} の削除に失敗:`, error.message);
     }
+  }
+
+  console.log("🗑️  seed.sqlで作成されたユーザーをクリーンアップ中...");
+
+  try {
+    const { data: allUsers, error: listError } =
+      await adminClient.auth.admin.listUsers();
+
+    if (listError) {
+      console.log(`   ⚠️  ユーザー一覧取得エラー: ${listError.message}`);
+      return;
+    }
+
+    const seedUsers = allUsers.users.filter(
+      (user) =>
+        user.email?.startsWith("test.") && user.email.endsWith("@example.com"),
+    );
+
+    console.log(`   📋 削除対象のseedユーザー: ${seedUsers.length}件`);
+
+    for (const user of seedUsers) {
+      try {
+        await adminClient.from("private_users").delete().eq("id", user.id);
+
+        await adminClient.auth.admin.deleteUser(user.id);
+
+        console.log(`   ✅ ${user.email} を削除しました`);
+      } catch (deleteError) {
+        console.log(`   ⚠️  ${user.email} 削除エラー: ${deleteError.message}`);
+      }
+    }
+
+    console.log("   ✅ seed.sqlユーザーのクリーンアップ完了");
+  } catch (error) {
+    console.log(`   ⚠️  seed.sqlクリーンアップエラー: ${error.message}`);
+  }
+}
+
+/**
+ * データベースの準備完了を待機
+ */
+async function waitForDatabaseReady() {
+  console.log(`⏳ データベースの準備完了を待機中... (${DB_READY_WAIT_TIME}秒)`);
+  await new Promise((resolve) =>
+    setTimeout(resolve, DB_READY_WAIT_TIME * 1000),
+  );
+
+  try {
+    const { data, error } = await adminClient.auth.admin.listUsers();
+    if (error) {
+      throw new Error(`データベース接続テスト失敗: ${error.message}`);
+    }
+    console.log("✅ データベース接続確認完了");
+    return true;
+  } catch (error) {
+    console.error("❌ データベース接続テスト失敗:", error.message);
+    return false;
   }
 }
 
@@ -166,6 +232,15 @@ async function cleanupExistingUsers() {
  */
 async function main() {
   console.log("🚀 テスト用seedユーザー作成スクリプト開始\n");
+
+  const isReady = await waitForDatabaseReady();
+  if (!isReady) {
+    console.error(
+      "💥 データベースが準備できていません。しばらく待ってから再実行してください。",
+    );
+    process.exit(1);
+  }
+  console.log("");
 
   await cleanupExistingUsers();
   console.log("");

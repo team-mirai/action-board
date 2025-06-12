@@ -18,8 +18,8 @@
     "test:rls": "jest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "db:reset": "supabase db reset",
-    "db:reset-with-test-users": "supabase db reset && node scripts/create-test-users.js",
+    "db:reset": "supabase db reset && sleep 2 && node scripts/create-test-users.js",
+    "db:reset-only": "supabase db reset",
     "seed:test-users": "node scripts/create-test-users.js"
   },
   "dependencies": {

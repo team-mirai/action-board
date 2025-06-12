@@ -25,21 +25,21 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### 2. スクリプトの実行
 
-#### 推奨方法: データベースリセット + テストユーザー作成
+#### 推奨方法: データベースリセット + テストユーザー作成（自動統合）
 
 ```bash
-npm run db:reset-with-test-users
+npm run db:reset
 ```
 
-このコマンドは以下を実行します：
+このコマンドは以下を自動実行します：
 1. `supabase db reset` - データベースをリセットし、マイグレーションとseedデータを適用
-2. `node scripts/create-test-users.js` - テストユーザーを作成
+2. `node scripts/create-test-users.js` - テストユーザーを自動作成
 
 #### その他の方法
 
 ```bash
-# データベースリセットのみ
-npm run db:reset
+# データベースリセットのみ（テストユーザーなし）
+npm run db:reset-only
 
 # テストユーザーのみ作成
 npm run seed:test-users
@@ -52,11 +52,11 @@ node scripts/create-test-users.js
 
 | メールアドレス | パスワード | 名前 | 都道府県 |
 |---|---|---|---|
-| takahiroanno@example.com | password123 | 安野たかひろ | 東京都 |
-| tanaka.hanako@example.com | password123 | 田中花子 | 大阪府 |
-| sato.taro@example.com | password123 | 佐藤太郎 | 愛知県 |
-| suzuki.misaki@example.com | password123 | 鈴木美咲 | 福岡県 |
-| takahashi.ken@example.com | password123 | 高橋健一 | 北海道 |
+| test.takahiro@example.com | password123 | 安野たかひろ | 東京都 |
+| test.hanako@example.com | password123 | 田中花子 | 大阪府 |
+| test.taro@example.com | password123 | 佐藤太郎 | 愛知県 |
+| test.misaki@example.com | password123 | 鈴木美咲 | 福岡県 |
+| test.ken@example.com | password123 | 高橋健一 | 北海道 |
 
 ## スクリプトの機能
 
