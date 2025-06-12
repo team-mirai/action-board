@@ -104,43 +104,7 @@ CREATE POLICY "Users can manage their own posting activities"
     )
   );
 
--- 6. ポイント設定管理テーブルの作成
-CREATE TABLE mission_point_settings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    mission_type TEXT NOT NULL UNIQUE,
-    points_per_unit INTEGER NOT NULL CHECK (points_per_unit > 0),
-    description TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
 
-COMMENT ON TABLE mission_point_settings IS 'ミッションタイプ別ポイント設定';
-COMMENT ON COLUMN mission_point_settings.id IS '設定ID';
-COMMENT ON COLUMN mission_point_settings.mission_type IS 'ミッションタイプ (POSTING, REFERRAL等)';
-COMMENT ON COLUMN mission_point_settings.points_per_unit IS '1単位あたりのポイント';
-COMMENT ON COLUMN mission_point_settings.description IS '設定の説明';
-COMMENT ON COLUMN mission_point_settings.created_at IS '作成日時(UTC)';
-COMMENT ON COLUMN mission_point_settings.updated_at IS '更新日時(UTC)';
-
--- 7. 初期ポイント設定データ
-INSERT INTO mission_point_settings (mission_type, points_per_unit, description)
-VALUES ('POSTING', 5, 'ポスティング1枚あたりのポイント');
-
--- 8. RLS設定
-ALTER TABLE mission_point_settings ENABLE ROW LEVEL SECURITY;
-
--- 認証済みユーザーは設定を閲覧可能
-CREATE POLICY "Authenticated users can view point settings"
-  ON mission_point_settings FOR SELECT
-  TO authenticated
-  USING (true);
-
--- 管理者のみが設定を作成・更新・削除可能（service_roleでのみアクセス可能）
-CREATE POLICY "Only service role can manage point settings"
-  ON mission_point_settings FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
 
 -- 9. ポスティングミッションのサンプル追加
 INSERT INTO missions (
