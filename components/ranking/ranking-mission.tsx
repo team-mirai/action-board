@@ -39,6 +39,7 @@ export default async function RankingMission({
               <RankingItem
                 key={user.user_id}
                 user={user}
+                userWithMission={user}
                 mission={
                   mission ? { id: mission.id, name: mission.title } : undefined
                 }

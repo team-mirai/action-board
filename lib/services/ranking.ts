@@ -10,7 +10,6 @@ export interface UserRanking {
   rank: number | null;
   updated_at: string | null;
   xp: number | null;
-  user_achievement_count?: number | null;
 }
 
 export async function getRanking(limit = 10): Promise<UserRanking[]> {

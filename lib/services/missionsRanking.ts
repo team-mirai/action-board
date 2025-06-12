@@ -3,10 +3,14 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { UserRanking } from "./ranking";
 
+export interface UserMissionRanking extends UserRanking {
+  user_achievement_count: number | null;
+}
+
 export async function getMissionRanking(
   missionId: string,
   limit = 10,
-): Promise<UserRanking[]> {
+): Promise<UserMissionRanking[]> {
   try {
     const supabase = await createClient();
 
@@ -78,7 +82,7 @@ export async function getMissionRanking(
         xp: null,
         updated_at: null,
         user_achievement_count: allUserCounts.get(userId) ?? 0,
-      };
+      } as UserMissionRanking;
     });
   } catch (error) {
     console.error("Mission ranking service error:", error);

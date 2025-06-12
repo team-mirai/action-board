@@ -1,11 +1,13 @@
 // TOPページ用のランキングコンポーネント
 import { Badge } from "@/components/ui/badge";
+import type { UserMissionRanking } from "@/lib/services/missionsRanking";
 import type { UserRanking } from "@/lib/services/ranking";
 import { Crown, Medal, Trophy } from "lucide-react";
 import Link from "next/link";
 
 interface RankingItemProps {
   user: UserRanking;
+  userWithMission?: UserMissionRanking;
   showDetailedInfo?: boolean; // フル版では詳細情報を表示
   mission?: {
     id: string;
@@ -44,6 +46,7 @@ function getLevelBadgeColor(level: number | null) {
 
 export function RankingItem({
   user,
+  userWithMission,
   showDetailedInfo = false,
   mission,
 }: RankingItemProps) {
@@ -68,7 +71,10 @@ export function RankingItem({
           <>
             <div className="text-right">
               <div className="font-bold text-lg">
-                {(user.user_achievement_count ?? 0).toLocaleString()}回
+                {(
+                  userWithMission?.user_achievement_count ?? 0
+                ).toLocaleString()}
+                回
               </div>
             </div>
           </>

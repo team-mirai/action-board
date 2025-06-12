@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { UserRanking } from "@/lib/services/ranking";
+import type { UserMissionRanking } from "@/lib/services/missionsRanking";
 import type { Tables } from "@/lib/types/supabase";
 import {
   formatUserDisplayName,
@@ -8,7 +8,7 @@ import {
 import { User } from "lucide-react";
 
 interface CurrentUserCardProps {
-  currentUser: UserRanking | null;
+  currentUser: UserMissionRanking | null;
   mission: Tables<"missions">;
 }
 
