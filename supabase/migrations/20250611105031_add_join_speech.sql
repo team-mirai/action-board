@@ -10,5 +10,5 @@ VALUES
     'TEXT',
     1,
     'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png',
-    '参加した演説の場所'
+    '参加した街頭演説の場所と日付'
   )
