@@ -4,7 +4,7 @@ VALUES
     gen_random_uuid(),
     '開発者向け: Githubでプルリクエストを出そう',
     '/img/mission_fallback.svg',
-    '<a href="https://policy.team-mir.ai/view/README.md" target="_blank" rel="noopener noreferrer">チームみらいのマニフェスト</a>を読んで、プルリクエストであなたの意見を提案しよう！チームみらいではマニフェストを皆さんと共に議論し、どんどんアップデート（改善）をしてゆきます。',
+    'チームみらいのプロジェクトでプルリクエストを出そう！チームみらいでは、アクションボードやファクトチェッカー、AIあんのなど様々なオープンソースプロジェクトの開発を、多くのサポーターが参加して進めています。まずは<a href="https://join.slack.com/t/team-mirai-volunteer/shared_invite/zt-36k0jx72s-EUWYKNTYTjbZhUnNjCqduA" target="_blank" rel="noopener noreferrer">チームみらいのSlack</a>に参加して、気になるプロジェクトを探してみてください！',
     2,
     NULL,
     'LINK',
