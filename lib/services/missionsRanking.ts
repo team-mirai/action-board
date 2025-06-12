@@ -33,8 +33,26 @@ export async function getMissionRanking(
       }
     }
 
+    // 全てのユーザーを取得
+    const { data: allProfiles, error: allProfilesError } = await supabase
+      .from("public_user_profiles")
+      .select("id, name, address_prefecture");
+
+    if (allProfilesError) {
+      console.error("Failed to fetch all user profiles:", allProfilesError);
+      throw new Error(
+        `ユーザープロファイルの取得に失敗しました: ${allProfilesError.message}`,
+      );
+    }
+
+    // 全てのユーザーに対して達成回数を設定（未達成の場合は0）
+    const allUserCounts = new Map<string, number>();
+    for (const profile of allProfiles || []) {
+      allUserCounts.set(profile.id, userCounts.get(profile.id) || 0);
+    }
+
     // 達成回数でソート
-    const sortedUserIds = Array.from(userCounts.entries())
+    const sortedUserIds = Array.from(allUserCounts.entries())
       .sort(([, countA], [, countB]) => countB - countA)
       .slice(0, limit)
       .map(([userId]) => userId);
@@ -43,22 +61,9 @@ export async function getMissionRanking(
       return [];
     }
 
-    // ユーザープロファイル情報を取得
-    const { data: profiles, error: profilesError } = await supabase
-      .from("public_user_profiles")
-      .select("id, name, address_prefecture")
-      .in("id", sortedUserIds);
-
-    if (profilesError) {
-      console.error("Failed to fetch user profiles:", profilesError);
-      throw new Error(
-        `ユーザープロファイルの取得に失敗しました: ${profilesError.message}`,
-      );
-    }
-
     // プロファイル情報をマップに変換
     const profileMap = new Map(
-      (profiles || []).map((profile) => [profile.id, profile]),
+      (allProfiles || []).map((profile) => [profile.id, profile]),
     );
 
     // 最終的なランキングデータを作成
@@ -72,7 +77,7 @@ export async function getMissionRanking(
         level: null,
         xp: null,
         updated_at: null,
-        user_achievement_count: userCounts.get(userId) ?? 0,
+        user_achievement_count: allUserCounts.get(userId) ?? 0,
       };
     });
   } catch (error) {

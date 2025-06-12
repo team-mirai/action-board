@@ -14,7 +14,13 @@ export function MissionSelect({ missions }: MissionSelectProps) {
   const [selectedMissionId, setSelectedMissionId] = useState<string>("");
 
   useEffect(() => {
-    if (missions.length > 0 && !selectedMissionId) {
+    // URLからmissionIdパラメータを取得
+    const params = new URLSearchParams(window.location.search);
+    const missionIdFromUrl = params.get("missionId");
+
+    if (missionIdFromUrl) {
+      setSelectedMissionId(missionIdFromUrl);
+    } else if (missions.length > 0 && !selectedMissionId) {
       setSelectedMissionId(missions[0].id);
     }
   }, [missions, selectedMissionId]);

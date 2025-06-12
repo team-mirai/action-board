@@ -6,11 +6,14 @@ import { getMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
-  searchParams: { missionId?: string };
+  searchParams: Promise<{
+    missionId?: string;
+  }>;
 }
 
 export default async function RankingMissionPage({ searchParams }: PageProps) {
   const supabase = await createClient();
+  const resolvedSearchParams = await searchParams;
 
   // ユーザー情報取得
   const {
@@ -30,8 +33,8 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   }
 
   // 選択されたミッションまたは最新のミッションを取得
-  const selectedMission = searchParams.missionId
-    ? missions.find((m) => m.id === searchParams.missionId)
+  const selectedMission = resolvedSearchParams.missionId
+    ? missions.find((m) => m.id === resolvedSearchParams.missionId)
     : missions[0];
 
   if (!selectedMission) {
