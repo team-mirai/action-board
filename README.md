@@ -103,10 +103,16 @@
    NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
    ```
 
-3. ローカルデータベースの初期化:
+3. ローカルデータベースの初期化（テストユーザー付き）:
 
    ```bash
-   supabase db reset
+   npm run db:reset-with-test-users
+   ```
+
+   または、データベースリセットのみ:
+
+   ```bash
+   npm run db:reset
    ```
 
   supabase/migrations以下にあるマイグレーションを実行し、supabase/seed.sqlにあるシードデータをローカルデータベースに流し込みみます。

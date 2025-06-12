@@ -17,7 +17,10 @@
     "test:e2e:debug": "playwright test --debug",
     "test:rls": "jest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "db:reset": "supabase db reset",
+    "db:reset-with-test-users": "supabase db reset && node scripts/create-test-users.js",
+    "seed:test-users": "node scripts/create-test-users.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.10",
