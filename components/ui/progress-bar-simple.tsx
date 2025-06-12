@@ -1,22 +1,21 @@
 "use client";
 
-import { cn } from "@/lib/utils/utils";
+import { cn, getLevelProgress, getXpToNextLevel } from "@/lib/utils/utils";
 import React from "react";
 
 interface ProgressBarSimpleProps {
-  current: number;
-  max: number;
+  currentXp: number;
   className?: string;
   showText?: boolean;
 }
 
 export function ProgressBarSimple({
-  current,
-  max,
+  currentXp,
   className,
   showText = true,
 }: ProgressBarSimpleProps) {
-  const percentage = Math.min((current / max) * 100, 100);
+  const xpToNextLevel = getXpToNextLevel(currentXp);
+  const progressPercentage = getLevelProgress(currentXp) * 100;
 
   return (
     <div className={cn("w-full", className)}>
@@ -24,7 +23,7 @@ export function ProgressBarSimple({
         <div className="flex text-sm mb-2">
           <span>次のレベルまで</span>
           <span className="font-bold">
-            {Math.round(current).toLocaleString()}
+            {Math.round(xpToNextLevel).toLocaleString()}
             ポイント🔥
           </span>
         </div>
@@ -32,7 +31,7 @@ export function ProgressBarSimple({
       <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
         <div
           className="bg-gradient-to-r from-[#30baa7] to-[#47c991] h-3 rounded-full shadow-sm"
-          style={{ width: `${percentage}%` }}
+          style={{ width: `${progressPercentage}%` }}
         />
       </div>
     </div>
