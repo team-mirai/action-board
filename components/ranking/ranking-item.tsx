@@ -7,6 +7,10 @@ import Link from "next/link";
 interface RankingItemProps {
   user: UserRanking;
   showDetailedInfo?: boolean; // フル版では詳細情報を表示
+  mission?: {
+    id: string;
+    name: string;
+  };
 }
 
 function getRankIcon(rank: number | null) {
@@ -41,6 +45,7 @@ function getLevelBadgeColor(level: number | null) {
 export function RankingItem({
   user,
   showDetailedInfo = false,
+  mission,
 }: RankingItemProps) {
   return (
     <Link
@@ -58,16 +63,29 @@ export function RankingItem({
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <Badge
-          className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full`}
-        >
-          Lv.{user.level}
-        </Badge>
-        <div className="text-right">
-          <div className="font-bold text-lg">
-            {(user.xp ?? 0).toLocaleString()}pt
-          </div>
-        </div>
+        {/* ミッション別ランキングの場合は達成回数を表示 */}
+        {mission ? (
+          <>
+            <div className="text-right">
+              <div className="font-bold text-lg">
+                {(user.user_achievement_count ?? 0).toLocaleString()}回
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <Badge
+              className={`${getLevelBadgeColor(user.level)} px-3 py-1 rounded-full`}
+            >
+              Lv.{user.level}
+            </Badge>
+            <div className="text-right">
+              <div className="font-bold text-lg">
+                {(user.xp ?? 0).toLocaleString()}pt
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </Link>
   );

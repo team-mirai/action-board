@@ -1,4 +1,6 @@
 import { MissionDetails } from "@/components/mission/MissionDetails";
+import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
+import RankingMission from "@/components/ranking/ranking-mission";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
+import { getMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import Link from "next/link";
@@ -42,20 +45,46 @@ export default async function MissionPage({ params }: Props) {
     referralCode,
   } = pageData;
 
+  // ユーザーのランキング情報を取得
+  const rankings = user ? await getMissionRanking(id, 1) : [];
+  const userRanking = user
+    ? (rankings.find((r) => r.user_id === user.id) ?? null)
+    : null;
+
   return (
     <div className="container mx-auto max-w-4xl p-4">
       <div className="flex flex-col gap-6 max-w-lg mx-auto">
         <MissionDetails mission={mission} />
 
         {user ? (
-          <MissionWithSubmissionHistory
-            mission={mission}
-            authUser={user}
-            referralCode={referralCode}
-            initialUserAchievementCount={userAchievementCount}
-            initialSubmissions={submissions}
-            missionId={id}
-          />
+          <>
+            <MissionWithSubmissionHistory
+              mission={mission}
+              authUser={user}
+              referralCode={referralCode}
+              initialUserAchievementCount={userAchievementCount}
+              initialSubmissions={submissions}
+              missionId={id}
+            />
+            {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
+            {mission.max_achievement_count === null && (
+              <>
+                <div className="mt-6">
+                  <CurrentUserCardMission
+                    currentUser={userRanking}
+                    mission={mission}
+                  />
+                </div>
+                <div className="mt-6">
+                  <RankingMission
+                    limit={10}
+                    showDetailedInfo={true}
+                    mission={mission}
+                  />
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <Card className="border-dashed border-2 border-muted-foreground/25">
             <CardHeader className="text-center">
