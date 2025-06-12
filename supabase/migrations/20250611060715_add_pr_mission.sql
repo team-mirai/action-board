@@ -9,6 +9,6 @@ VALUES
     NULL,
     'LINK',
     NULL,
-    '',
+    'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//14_github_pull_request.png',
     'あなたが作成したプルリクエストのURL'
   )
