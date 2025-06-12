@@ -7,8 +7,8 @@ VALUES
     '「チームみらい」の街頭演説を一緒に盛り上げよう！あなたの声援が力になります。<br/><a href="https://team-mirai.notion.site/1fef6f56bae180fe9560d8ef50d3e44a?v=1fef6f56bae1802c8f15000c3f0195e0" target="_blank" rel="noopener noreferrer">イベントスケジュールはこちら</a>',
     1,
     NULL,
-    'LINK',
+    'TEXT',
     1,
-    'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//10_share_manifest_feedback.png', //TODO
+    'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//17_street_speech.png',
     '参加した演説の場所'
   )
