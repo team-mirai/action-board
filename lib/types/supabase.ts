@@ -246,6 +246,33 @@ export type Database = {
           },
         ];
       };
+      mission_point_settings: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          mission_type: string;
+          points_per_unit: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          mission_type: string;
+          points_per_unit: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          mission_type?: string;
+          points_per_unit?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       missions: {
         Row: {
           artifact_label: string | null;
@@ -293,6 +320,41 @@ export type Database = {
           is_featured: boolean;
         };
         Relationships: [];
+      };
+      posting_activities: {
+        Row: {
+          created_at: string;
+          id: string;
+          location_text: string;
+          mission_artifact_id: string;
+          posting_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          location_text: string;
+          mission_artifact_id: string;
+          posting_count: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          location_text?: string;
+          mission_artifact_id?: string;
+          posting_count?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posting_activities_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       private_users: {
         Row: {
