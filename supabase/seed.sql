@@ -1,18 +1,18 @@
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
-INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'tanaka.hanako@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'sato.taro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'suzuki.misaki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'takahashi.ken@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'ito.aiko@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'yamada.jiro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'nakamura.sakura@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'kobayashi.naoto@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 'kato.miyuki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), now());
+  ('00000000-0000-0000-0000-000000000000', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'authenticated', 'authenticated', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'authenticated', 'authenticated', 'tanaka.hanako@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'authenticated', 'authenticated', 'sato.taro@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'suzuki.misaki@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'takahashi.ken@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'ito.aiko@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'yamada.jiro@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'nakamura.sakura@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'kobayashi.naoto@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'kato.miyuki@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
 
 -- ユーザー
 INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
