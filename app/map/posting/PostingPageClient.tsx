@@ -53,9 +53,9 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
         drawCircleMarker: false,
         drawPolyline: false,
         drawRectangle: false,
-        drawPolygon: true,  // Enable polygon drawing
+        drawPolygon: true, // Enable polygon drawing
         drawCircle: false,
-        drawText: true,     // Enable text drawing
+        drawText: true, // Enable text drawing
         // modes
         editMode: true,
         dragMode: true,
