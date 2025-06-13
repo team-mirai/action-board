@@ -28,17 +28,21 @@ export default async function Navbar() {
             <div className="text-lg">アクションボード（α版）</div>
           </Link>
         </div>
-        <div className="gap-6 items-center font-semibold hidden sm:flex">
-          <Link href="/">ダッシュボード</Link>
-          <Link href="/map/posting">配布マップ</Link>
-          {/* <Link href="/missions">ミッション</Link> */}
-          <HeaderAuth />
-        </div>
-        <div className="flex gap-6 items-center font-semibold sm:hidden">
-          {user ? (
+        {user ? (
+          <div className="flex gap-6 items-center">
+            <div className="font-semibold hidden sm:flex">
+              <Link href="/">ダッシュボード</Link>
+            </div>
             <HeaderAuth />
-          ) : (
-            <DropdownMenu>
+          </div>
+        ) : (
+          <>
+            <div className="gap-6 items-center font-semibold hidden sm:flex">
+              <Link href="/">ダッシュボード</Link>
+              <HeaderAuth />
+            </div>
+            <div className="flex gap-6 items-center font-semibold sm:hidden">
+              <DropdownMenu>
                 <DropdownMenuTrigger
                   aria-label="ナビゲーションメニューを開く"
                   data-testid="navmenubutton"
@@ -61,14 +65,13 @@ export default async function Navbar() {
                     <Link href="/sign-in">ログイン</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/map/posting">配布マップ</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                     <Link href="/sign-up">サインアップ</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-          )}
+            </div>
+          </>
+        )}
       </div>
     </nav>
   );
