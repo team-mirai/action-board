@@ -341,7 +341,9 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       "/reset-password",
-      "パスワードの更新に失敗しました",
+      error.code === "same_password"
+        ? "新しいパスワードは現在のパスワードと異なるものを設定してください"
+        : "パスワードの更新に失敗しました",
     );
   }
 
