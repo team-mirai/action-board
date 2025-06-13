@@ -22,7 +22,10 @@ export default async function AuthButton() {
   return user /* && profile */ ? (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger role="menu" aria-label="ユーザーメニューを開く">
+        <DropdownMenuTrigger
+          aria-label="ユーザーメニューを開く"
+          data-testid="usermenubutton"
+        >
           <MyAvatar className="w-8 h-8" />
         </DropdownMenuTrigger>
         <DropdownMenuContent

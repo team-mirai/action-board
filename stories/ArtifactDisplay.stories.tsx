@@ -177,6 +177,34 @@ const imageArtifactWithoutImage: MissionArtifact = {
   updated_at: "2024-01-01T00:00:00Z",
 };
 
+// ポスティングアーティファクトのダミーデータ
+const postingArtifact: MissionArtifact = {
+  id: "artifact-9",
+  achievement_id: "achievement-9",
+  user_id: "user-9",
+  artifact_type: "POSTING",
+  image_storage_path: null,
+  link_url: null,
+  text_content: "50枚を東京都世田谷区代田1丁目に配布",
+  description: "住宅街を中心に配布しました。反応も良好でした。",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
+// 説明なしのポスティングアーティファクト
+const postingArtifactWithoutDescription: MissionArtifact = {
+  id: "artifact-10",
+  achievement_id: "achievement-10",
+  user_id: "user-10",
+  artifact_type: "POSTING",
+  image_storage_path: null,
+  link_url: null,
+  text_content: "25枚を大阪府大阪市中央区に配布",
+  description: null,
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
 export const TextArtifact: Story = {
   args: {
     artifact: textArtifact,
@@ -192,5 +220,17 @@ export const TextArtifactWithoutDescription: Story = {
 export const ImageArtifactWithoutImage: Story = {
   args: {
     artifact: imageArtifactWithoutImage,
+  },
+};
+
+export const PostingArtifact: Story = {
+  args: {
+    artifact: postingArtifact,
+  },
+};
+
+export const PostingArtifactWithoutDescription: Story = {
+  args: {
+    artifact: postingArtifactWithoutDescription,
   },
 };
