@@ -82,6 +82,8 @@ export function calculateMissionXp(difficulty: number): number {
       return 100; // ★2 Normal
     case 3:
       return 200; // ★3 Hard
+    case 4:
+      return 400; // ★4 Super hard
     default:
       return 50; // デフォルト（Easy相当）
   }
