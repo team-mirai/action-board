@@ -1,6 +1,10 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import {
+  getOrInitializeUserLevel,
+  grantMissionCompletionXp,
+} from "@/lib/services/userLevel";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { calculateAge, encodedRedirect } from "@/lib/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -10,6 +14,11 @@ import {
   signInAndLoginFormSchema,
   signUpAndLoginFormSchema,
 } from "@/lib/validation/auth";
+
+import {
+  isEmailAlreadyUsedInReferral,
+  isValidReferralCode,
+} from "@/lib/validation/referral";
 
 // useActionState用のサインアップアクション
 export const signUpActionWithState = async (
@@ -32,6 +41,11 @@ export const signUpActionWithState = async (
   const date_of_birth = formData.get("date_of_birth")?.toString();
   const terms_agreed = formData.get("terms_agreed")?.toString();
   const privacy_agreed = formData.get("privacy_agreed")?.toString();
+
+  //クエリストリングからリファラルコードを取得
+  const rawReferral = formData.get("ref");
+  const referralCode =
+    typeof rawReferral === "string" ? rawReferral.trim() : null;
 
   // フォームデータを保存（エラー時の状態復元用）
   const currentFormData = {
@@ -66,7 +80,7 @@ export const signUpActionWithState = async (
     };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -76,16 +90,89 @@ export const signUpActionWithState = async (
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
+  //サインアップ完了後にuserIdを取得
+  const userId = data?.user?.id;
+  if (!userId) {
+    return { error: "ユーザー登録に失敗しました", formData: currentFormData };
+  }
 
-  if (error) {
-    let message = error.message;
-    if (error.code === "user_already_exists") {
-      message = "このメールアドレスはすでに使用されています。";
+  //紹介URLから遷移した場合のみ以下を実行
+  if (referralCode) {
+    const serviceSupabase = await createServiceClient();
+    let shouldInsertReferral = false;
+    let referrerUserId: string | null = null;
+    let referralMissionId: string | null = null;
+
+    try {
+      const [isValid, isDuplicate] = await Promise.all([
+        isValidReferralCode(referralCode),
+        isEmailAlreadyUsedInReferral(email?.toLowerCase() ?? ""),
+      ]);
+
+      if (isValid && !isDuplicate) {
+        const { data: mission } = await serviceSupabase
+          .from("missions")
+          .select("id")
+          .eq("required_artifact_type", "REFERRAL")
+          .maybeSingle();
+
+        const { data: referrerRecord } = await serviceSupabase
+          .from("user_referral")
+          .select("user_id")
+          .eq("referral_code", referralCode)
+          .maybeSingle();
+
+        if (mission && referrerRecord?.user_id) {
+          shouldInsertReferral = true;
+          referrerUserId = referrerRecord.user_id;
+          referralMissionId = mission.id;
+        }
+      }
+    } catch (e) {
+      // ログだけ残す（ユーザーには知らせない）
+      console.warn("紹介コード処理エラー:", e);
     }
-    return {
-      error: message,
-      formData: currentFormData,
-    };
+
+    if (shouldInsertReferral && referrerUserId && referralMissionId) {
+      try {
+        const { data: achievement, error: achievementError } =
+          await serviceSupabase
+            .from("achievements")
+            .insert({
+              user_id: referrerUserId,
+              mission_id: referralMissionId,
+            })
+            .select("id")
+            .single();
+
+        if (achievement && !achievementError) {
+          await serviceSupabase.from("mission_artifacts").insert({
+            user_id: referrerUserId,
+            achievement_id: achievement.id,
+            artifact_type: "REFERRAL",
+            text_content: email.toLowerCase(),
+          });
+          // ミッション達成時にXPを付与
+          await grantMissionCompletionXp(
+            referrerUserId,
+            referralMissionId,
+            achievement.id,
+          );
+        } else {
+          console.warn("achievements挿入エラー:", achievementError);
+        }
+      } catch (e) {
+        console.warn("紹介ミッション登録処理に失敗:", e);
+      }
+    }
+  }
+
+  if (data.user?.id) {
+    try {
+      await getOrInitializeUserLevel(data.user.id);
+    } catch (levelError) {
+      console.error("Failed to initialize user level:", levelError);
+    }
   }
 
   // 成功時はリダイレクトする

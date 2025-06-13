@@ -7,13 +7,71 @@
 
 * プロジェクトへのコントリビュートの際には、[コントリビューターライセンス契約（CLA）](./CLA.md)への同意が必須となります。ご了承ください。
 
+- Issue はどなたでも起票いただけます。ツール利用時に感じた改善点やバグについてぜひ Issue を作成してください
+- Issue への自己アサイン（担当者設定）は、Issue コメントに以下のコマンドを記載することで行えます：
+  - `/assign` - 自分自身を Issue のアサインに追加
+  - `/unassign` - 自分自身を Issue のアサインから削除
+- 初めての貢献に適したタスクには`good first issue`ラベルが付いています
+
 ## 必要な環境
 
-- Node.js  
-  - Macの場合 `brew install node` でインストール
-- Docker  
-- Supabase CLI  
-  - Macの場合 `brew install supabase/tap/supabase` でインストール
+- Node.js
+- Docker
+- Supabase CLI
+
+### インストール for Mac
+
+   - Node.jsのインストール `brew install node`
+   - Dockerのインストール ([公式サイト](https://docs.docker.jp/desktop/install/mac-install.html))
+   - Supabase CLI `brew install supabase/tap/supabase`
+
+### インストール for Windows
+
+#### 事前準備
+
+   - PowerShell ver5.1以上 `PowerShell $PSVersionTable` で確認
+
+   - gitのインストール([公式サイト](https://gitforwindows.org/)) `git --version` で確認
+
+   - WSL2のインストール `wsl --version` で確認
+      - `cmd wsl --install` または `PowerShell wsl --install`
+      - いずれも管理者権限が必要
+
+   - Hyper-Vの有効化
+      1. コントロールパネル > プログラムと機能 > Windowsの機能の有効化または無効化 > Windows ハイパーバイザープラットフォーム > チェックが入っているか確認 (デフォルトでは有効化)
+      1. 入ってない場合、チェックマークをつける。チェックマークをつけてもHyper-vが有効になっていない場合があるので、以下で確認
+      1. PowerShell(管理者権限)でHyper-vが有効になっているか確認 : `bcdedit` > hypervisorlaunchtype を参照 (AutoであればOK)
+      1. Offになっている場合、Hyper-vをAuto(有効)に変更 `bcdedit /set hypervisorlaunchtype auto`
+      1. Autoに変更したあとPCの再起動が必要です
+
+#### インストール
+
+   - Node.js
+      - [公式サイト](https://nodejs.org/ja)からインストーラーをダウンロードし、実行
+      - ver22.16.0 (25/06/06時点)
+      - npmも同時にインストールされます
+
+   - Docker
+      - [公式ドキュメント](https://docs.docker.jp/desktop/install/windows-install.html)を参照
+
+   - Supabase CLI
+      - cmd `npm install -g supabase`
+         - E404エラーが出てインストールに失敗する場合
+            1. Scoop をインストール
+            ```
+            powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+            powershell -Command "Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1"
+            powershell -Command ".\install.ps1"
+            ```
+
+            2. Scoop で supabase をインストール
+            ```
+            scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+            scoop install supabase
+            ```
+
+      - インストールされているか確認: `supabase --version`
+
 
 ## サービスの起動方法
 
@@ -79,6 +137,45 @@ mainブランチはリリース可能な状態に保ちましょう。
 * 各機能ごとに、developブランチからfeat/xxxブランチを作り、developブランチにマージ
 * developで統合テストをしてからmainブランチに反映
 
+### PR作成
+
+権限管理のコストを踏まえて、各自forkしたリポジトリからオリジナルのリポジトリにPRを作成いただく運用としています。
+
+#### ローカルで開発いただくケース
+
+1. 開発対象のリポジトリをご自身のアカウントにforkしてください。
+2. forkしたリポジトリのdevelopブランチからfeatureブランチを作成し、開発を行ってください。
+3. commitを作成後、pushをする前にオリジナル（fork元）のリポジトリのdevelopブランチに入った変更を取り込み、必要であればコンフリクトを解消してください。
+4. コンフリクトを解消後、リモートリポジトリにpushを行ってください。
+5. `fork先:feature -> fork元:develop`のPRを作成してください。
+6. 開発スレッドにてレビュー依頼をお願いします。
+
+#### slackチャネルでDevinを使用して開発するケース
+
+1. slackチャネル`9_devinと人間の部屋`で過去のやり取りを参考に、Devinに開発を依頼してください。
+2. Devinの修正内容に不足がある場合は、slackでのやりとりを継続、もしくはスレッド内(open webapp)のリンクからGUIにてやりとり、修正を継続してください。
+3. コンフリクトが発生している場合は解消を依頼してください。
+4. 開発スレッドにてレビュー依頼をお願いします。
+
+### migrationファイル追加手順
+
+#### migrationファイル新規作成
+
+下記コマンドで `supabase/migrations/` ディレクトリに `20250612123456_{名前}.sql` という名前の空ファイルが作成されます。このファイルに SQL を記述してください。
+
+```bash
+supabase migration new {名前}
+```
+
+※ `{名前}` はmigrationの内容を表す英語名（例: `add_mission_join_slack` ）
+
+#### migrationの適用
+
+作成したmigrationファイルがまだ適用されていない場合、下記コマンドでローカルDBに反映できます。
+
+```bash
+supabase migration up
+```
 
 ### migrationファイル追加後の型定義生成
 
@@ -119,7 +216,7 @@ npx supabase gen types typescript --local > utils/types/supabase.ts
    npm run test:e2e -- --project=chromium
    npm run test:e2e -- --project=firefox
    npm run test:e2e -- --project=webkit
-   
+
    # モバイルデバイス
    npm run test:e2e -- --project=mobile-chrome
    npm run test:e2e -- --project=mobile-safari
@@ -208,3 +305,37 @@ npm run storybook
 ```
 
 `stories`ディレクトリにstorybookのファイルを配置してください。
+
+## デプロイ
+
+## 環境変数のデプロイ
+1. Terraform Cloudへの招待をもらう
+
+   * [Terraform Cloud Workspaces](https://app.terraform.io/app/gamification/workspaces)
+
+2. 環境ごとの管理状況：
+
+   * **action-board-staging** → `release/infra/develop`
+   * **action-board-production** → `release/infra/production`
+
+3. トリガー時の挙動：
+
+   * 現状、Terraform Cloud側で自動で`plan`を実行し、`apply`はUIから手動確認後の実行となります。
+
+4. 環境変数追加手順：
+
+   * 通常の環境変数：
+
+     * `terraform/variables.tf`に追加
+     * `nextjs-app/variables.tf`に追加
+     * `nextjs-app/cloud_build.tf`の`substitutions`に追加
+     * `cloudbuild.yaml`の`arg`経由でDockerビルド時に渡す
+   * 秘匿情報の場合：
+
+     * `nextjs-app/secrets.tf`にSecret定義追加
+     * `nextjs-app/cloud_build.tf`でSecretへのアクセス権限設定
+
+5. Terraform変数（秘匿情報は`sensitive`チェック）の登録先：
+
+   * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
+   * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)

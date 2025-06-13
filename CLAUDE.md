@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 このファイルは、このリポジトリでコードを操作する際のClaude Code (claude.ai/code) への指針を提供します。
 
 ## 開発コマンド
@@ -16,6 +18,7 @@
 - `npm run test:e2e` - Playwright E2Eテストを実行
 - `npm run test:e2e:ui` - デバッグ用UIモードでE2Eテストを実行
 - `npm run test:e2e:debug` - デバッグモードでE2Eテストを実行
+- `npm run test:ci` - GitHub Actions用CIレポーター付きでテストを実行
 
 ### データベース型生成
 - `npm run types` - SupabaseスキーマからTypeScript型を生成 (lib/types/supabase.tsに出力)
@@ -39,7 +42,7 @@
 - **コード品質**: Biome (formatter/linter), Lefthook (git hooks)
 - **テスト**: Jest (unit/RLS), Playwright (E2E), Storybook (component)
 
-### ディレクトリ構造
+### 主要ディレクトリ構造
 
 #### `/app` - Next.js App Router
 - `(auth-pages)/` - 認証ルート (sign-in, sign-up, forgot-password)
@@ -50,7 +53,7 @@
 #### `/components` - 再利用可能なUIコンポーネント
 - `ui/` - ベースUIコンポーネント (Radix UIベース)
 - `mission/` - ミッション固有のコンポーネント
-- `typography/` - テキスト装飾コンポーネント
+- `ranking/` - ランキングシステムコンポーネント
 
 #### `/lib` - 共有ユーティリティ
 - `supabase/` - データベースクライアント設定とミドルウェア
@@ -65,7 +68,7 @@
 
 ### データベーススキーマとセキュリティ
 - 行レベルセキュリティ (RLS) が有効なSupabaseを使用
-- 主要テーブル: `missions`, `achievements`, `private_users`, `public_user_profiles`
+- 主要テーブル: `missions`, `achievements`, `private_users`, `public_user_profiles`, `user_levels`, `xp_transactions`
 - RLSポリシーは `/tests/rls/` で広範囲にテスト
 - 生成されたTypeScript型による型安全性の強化
 
@@ -87,6 +90,12 @@
 - ソーシャル共有機能 (Facebook, Twitter, LINE)
 - 成果物タイプ: LINK, TEXT, IMAGE, IMAGE_WITH_GEOLOCATION, NONE
 
+### ユーザーレベルとXPシステム
+- `xp_transactions`テーブルを通じた経験値 (XP) 追跡
+- 自動レベルアップ通知付きレベル進行
+- リーダーボード付きランキングシステム
+- ユーザー獲得のための紹介システム
+
 ## 環境設定
 
 必須環境変数 (`.env.example`を参照):
@@ -100,7 +109,7 @@
 
 ### ブランチ戦略
 - `main` - 本番準備完了コード
-- `develop` - 機能統合ブランチ
+- `develop` - 機能統合ブランチ (PRのデフォルトブランチ)
 - `feat/xxx` - 機能ブランチ (`develop`から分岐、`develop`にマージ)
 
 ### コード品質ツール
@@ -114,3 +123,10 @@
 - **RLSテスト**: セキュリティポリシー用直接Supabaseテスト
 - **E2Eテスト**: ユーザーワークフロー用Playwright
 - **コンポーネントテスト**: UIコンポーネント分離用Storybook
+
+### 重要な開発ノート
+- データベーススキーマ変更後は必ず `npm run types` を実行
+- Pre-commitフックがBiomeで自動的にコードをフォーマット
+- 新しいデータベーステーブルにはRLSポリシーのテストが必須
+- 新しいUIコンポーネントにはStorybookストーリーを作成
+- 新しいベースコンポーネントは `/components/ui/` の既存パターンに従う

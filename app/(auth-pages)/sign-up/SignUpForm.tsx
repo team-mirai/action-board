@@ -20,6 +20,7 @@ import { useFormStatus } from "react-dom";
 
 interface SignUpFormProps {
   searchParams: Message;
+  referralCode: string | null;
 }
 
 // フォームコンポーネントを分離してuseFormStatusを使用
@@ -257,7 +258,10 @@ function SignUpFormContent({
   );
 }
 
-export default function SignUpForm({ searchParams }: SignUpFormProps) {
+export default function SignUpForm({
+  searchParams,
+  referralCode,
+}: SignUpFormProps) {
   // useActionStateを使用してフォームの状態とメッセージを管理
   const [state, formAction] = useActionState(signUpActionWithState, null);
 
@@ -351,6 +355,7 @@ export default function SignUpForm({ searchParams }: SignUpFormProps) {
       action={formAction}
       className="flex flex-col min-w-72 max-w-72 mx-auto"
     >
+      <input type="hidden" name="ref" value={referralCode ?? ""} />
       <h1 className="text-2xl font-medium text-center mb-2">
         アカウントを作成する
       </h1>

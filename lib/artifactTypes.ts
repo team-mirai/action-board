@@ -24,6 +24,16 @@ export const ARTIFACT_TYPES = {
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
     maxFileSizeMB: 10,
   },
+  REFERRAL: {
+    key: "REFERRAL",
+    displayName: "紹介ミッション",
+    prompt: "このミッションでは紹介が完了すると自動で達成されます。",
+  },
+  POSTING: {
+    key: "POSTING",
+    displayName: "ポスティング",
+    prompt: "ポスティングした枚数と場所を入力してください。",
+  },
   NONE: {
     key: "NONE",
     displayName: "添付データ不要",
@@ -53,4 +63,6 @@ export type MissionRequiredArtifactType =
   | "TEXT"
   | "IMAGE"
   | "IMAGE_WITH_GEOLOCATION"
+  | "REFERRAL"
+  | "POSTING"
   | "NONE";

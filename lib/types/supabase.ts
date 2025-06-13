@@ -68,20 +68,6 @@ export type Database = {
             referencedRelation: "missions";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "achievements_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "achievements_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "public_user_profiles";
-            referencedColumns: ["id"];
-          },
         ];
       };
       daily_action_summary: {
@@ -258,21 +244,34 @@ export type Database = {
             referencedRelation: "activity_timeline_view";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "mission_artifacts_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "activity_timeline_view";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "mission_artifacts_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "public_user_profiles";
-            referencedColumns: ["id"];
-          },
         ];
+      };
+      mission_point_settings: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          mission_type: string;
+          points_per_unit: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          mission_type: string;
+          points_per_unit: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          mission_type?: string;
+          points_per_unit?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       missions: {
         Row: {
@@ -288,6 +287,7 @@ export type Database = {
           required_artifact_type: string;
           title: string;
           updated_at: string;
+          is_featured: boolean;
         };
         Insert: {
           artifact_label?: string | null;
@@ -302,6 +302,7 @@ export type Database = {
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
+          is_featured: boolean;
         };
         Update: {
           artifact_label?: string | null;
@@ -316,6 +317,7 @@ export type Database = {
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;
+          is_featured: boolean;
         };
         Relationships: [];
       };
@@ -348,6 +350,41 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      posting_activities: {
+        Row: {
+          created_at: string;
+          id: string;
+          location_text: string;
+          mission_artifact_id: string;
+          posting_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          location_text: string;
+          mission_artifact_id: string;
+          posting_count: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          location_text?: string;
+          mission_artifact_id?: string;
+          posting_count?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posting_activities_mission_artifact_id_fkey";
+            columns: ["mission_artifact_id"];
+            isOneToOne: false;
+            referencedRelation: "mission_artifacts";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       private_users: {
         Row: {
@@ -436,6 +473,30 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
           xp?: number;
+        };
+        Relationships: [];
+      };
+      user_referral: {
+        Row: {
+          created_at: string | null;
+          del_flg: boolean;
+          referral_code: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          del_flg?: boolean;
+          referral_code: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          del_flg?: boolean;
+          referral_code?: string;
+          updated_at?: string | null;
+          user_id?: string;
         };
         Relationships: [];
       };

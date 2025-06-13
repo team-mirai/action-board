@@ -82,7 +82,28 @@ export function calculateMissionXp(difficulty: number): number {
       return 100; // ★2 Normal
     case 3:
       return 200; // ★3 Hard
+    case 4:
+      return 400; // ★4 Super hard
     default:
       return 50; // デフォルト（Easy相当）
   }
+}
+
+/**
+ * 次のレベルまでに必要なXP計算
+ */
+export function getXpToNextLevel(currentXp: number): number {
+  const currentLevel = calculateLevel(currentXp);
+  const nextLevelTotalXp = totalXp(currentLevel + 1);
+  return Math.max(0, nextLevelTotalXp - currentXp);
+}
+
+/**
+ * 現在レベルでの進捗率計算（0-1の値）
+ */
+export function getLevelProgress(currentXp: number): number {
+  const currentLevel = calculateLevel(currentXp);
+  const xpToNext = getXpToNextLevel(currentXp);
+  const levelXpRange = xpDelta(currentLevel);
+  return Math.max(0, Math.min(1, (levelXpRange - xpToNext) / levelXpRange));
 }

@@ -1,18 +1,18 @@
 -- auth.usersテーブルにユーザーを追加（外部キー制約のため）
-INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, email_change, email_change_token_new, recovery_token, confirmation_token, confirmation_sent_at, created_at, updated_at)
 VALUES
-  ('622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'tanaka.hanako@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'sato.taro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'suzuki.misaki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'takahashi.ken@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'ito.aiko@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'yamada.jiro@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'nakamura.sakura@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'kobayashi.naoto@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b816-9dad-11d1-80b4-00c04fd430c8', 'kato.miyuki@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), now()),
-  ('6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), now());
+  ('00000000-0000-0000-0000-000000000000', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'authenticated', 'authenticated', 'takahiroanno@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'authenticated', 'authenticated', 'tanaka.hanako@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'authenticated', 'authenticated', 'sato.taro@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'suzuki.misaki@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'takahashi.ken@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'ito.aiko@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'yamada.jiro@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'nakamura.sakura@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b815-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'kobayashi.naoto@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b816-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'kato.miyuki@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b817-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'watanabe.yuichi@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '6ba7b818-9dad-11d1-80b4-00c04fd430c8', 'authenticated', 'authenticated', 'matsumoto.kana@example.com', crypt('password123', gen_salt('bf')), now(), now(), '{"provider": "email", "providers": ["email"]}', '{"email_verified": true}', '', '', '', '', now(), now(), now());
 
 -- ユーザー
 INSERT INTO private_users (id, name, address_prefecture, date_of_birth, x_username, postcode)
@@ -68,33 +68,40 @@ VALUES
   ('5546205f-933f-4a86-83af-dbf6bb6cde93', '日付付きミッション１ (成果物不要, 上限1回)', '/img/mission_fallback_icon.png', 'テスト用のミッションです。<a href="/">link test</a>', 5, '2025-05-01', 'NONE', 1),
   ('e5348472-d054-4ef4-81af-772c6323b669', 'Xのニックネームを入力しよう(テキスト提出)', NULL, 'Xのニックネームを入力しよう', 1, NULL, 'TEXT', NULL);  
 
+--★#278対応にて、achievementsとmission_artifactsのuser_idのFKをpublic_user_profileからauth.usersへ変更
+--★seed.sql実行時点でauth.usersデータを作れず、上記2テーブルがFK違反になることから、INSERT処理はコメントアウト
+
+-- (オプション) mission_artifacts と mission_artifact_geolocations のサンプルデータ
+-- これらはアプリケーションロジック経由で作成されるのが主だが、テスト用に直接挿入も可能
+--INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) VALUES ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです');
+
 -- ミッション達成（複数ユーザーの多様な達成パターン）
-INSERT INTO achievements (id, mission_id, user_id)
-VALUES
+--INSERT INTO achievements (id, mission_id, user_id)
+--VALUES
   -- 安野たかひろの達成（トップユーザーらしく多数達成）
-  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
-  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
-  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
+--  ('17ea2e6e-9ccf-4d2d-a3b4-f34d1a612439', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
+--  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '2246205f-933f-4a86-83af-dbf6bb6cde90', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
+--  ('37ea2e6e-9ccf-4d2d-a3b4-f34d1a612441', '3346205f-933f-4a86-83af-dbf6bb6cde91', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19'),
   
   -- 田中花子の達成
-  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f'),
+-- ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2246205f-933f-4a86-83af-dbf6bb6cde90', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f'),
   
   -- 佐藤太郎の達成（2位らしく積極的）
-  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
-  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
+--  ('47ea2e6e-9ccf-4d2d-a3b4-f34d1a612442', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
+--  ('57ea2e6e-9ccf-4d2d-a3b4-f34d1a612443', 'e5348472-d054-4ef4-81af-772c6323b669', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'),
   
   -- 鈴木美咲の達成
-  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
-  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
+--  ('67ea2e6e-9ccf-4d2d-a3b4-f34d1a612444', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
+--  ('77ea2e6e-9ccf-4d2d-a3b4-f34d1a612445', '3346205f-933f-4a86-83af-dbf6bb6cde91', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'),
   
   -- 高橋健一の達成
-  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'),
+--  ('87ea2e6e-9ccf-4d2d-a3b4-f34d1a612446', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'),
   
   -- 山田次郎の達成
-  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8'),
+--  ('97ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', 'e2898d7e-903f-4f9a-8b1b-93f783c9afac', '6ba7b813-9dad-11d1-80b4-00c04fd430c8'),
   
   -- 小林直人の達成
-  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8');
+--  ('a7ea2e6e-9ccf-4d2d-a3b4-f34d1a612448', 'e5348472-d054-4ef4-81af-772c6323b669', '6ba7b815-9dad-11d1-80b4-00c04fd430c8');
 
 -- XPトランザクション履歴（ミッション達成に対応）
 INSERT INTO xp_transactions (id, user_id, xp_amount, source_type, source_id, description, created_at)
@@ -115,10 +122,10 @@ VALUES
   ('99ea2e6e-9ccf-4d2d-a3b4-f34d1a612447', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 5, 'BONUS', NULL, '調整', '2025-05-20T12:00:00Z');
   
 -- ミッション成果物のサンプルデータ
-INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
-VALUES 
-  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです'),
-  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'LINK', 'https://example.com/anno-blog', '政治活動についての考察記事');
+--INSERT INTO mission_artifacts (achievement_id, user_id, artifact_type, link_url, description) 
+--VALUES 
+--  ('953bcc49-56c4-4913-8ce4-f6d721e3c4ef', '2c23c05b-8e25-4d0d-9e68-d3be74e4ae8f', 'LINK', 'https://example.com/my-activity-blog', '活動報告ブログです'),
+--  ('27ea2e6e-9ccf-4d2d-a3b4-f34d1a612440', '622d6984-2f8a-41df-9ac3-cd4dcceb8d19', 'LINK', 'https://example.com/anno-blog', '政治活動についての考察記事');
 
 -- イベント
 INSERT INTO events (id, title, url, starts_at)
@@ -145,3 +152,12 @@ INSERT INTO daily_dashboard_registration_by_prefecture_summary (date, prefecture
   ('2025-05-01', '宮城県', 1),
   ('2025-05-01', '広島県', 1),
   ('2025-05-01', '沖縄県', 1);
+
+
+-- missionsテーブルのフューチャードフラグをON
+update public.missions
+set is_featured = true
+where id in (
+  'e2898d7e-903f-4f9a-8b1b-93f783c9afac',
+  '4446205f-933f-4a86-83af-dbf6bb6cde92'
+);

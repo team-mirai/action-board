@@ -39,39 +39,36 @@ export default async function Navbar() {
             <HeaderAuth />
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger aria-label="ナビゲーションメニューを開く">
-                <Menu role="menu" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuGroup>
+                <DropdownMenuTrigger
+                  aria-label="ナビゲーションメニューを開く"
+                  data-testid="navmenubutton"
+                >
+                  <Menu />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
+                >
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Link href="/">ダッシュボード</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/">ダッシュボード</Link>
+                    <Link href="/sign-in">ログイン</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/map/posting">配布マップ</Link>
                   </DropdownMenuItem>
-                  {/*
                   <DropdownMenuItem asChild>
-                    <Link href="/missions">ミッション</Link>
+                    <Link href="/sign-up">サインアップ</Link>
                   </DropdownMenuItem>
-                  */}
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/sign-in">ログイン</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/sign-up">サインアップ</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
           )}
-        </div>
       </div>
     </nav>
   );

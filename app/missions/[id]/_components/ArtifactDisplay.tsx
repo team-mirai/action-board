@@ -89,6 +89,30 @@ const TextArtifact: React.FC<{ artifact: MissionArtifact }> = ({
   </div>
 );
 
+const PostingArtifact: React.FC<{ artifact: MissionArtifact }> = ({
+  artifact,
+}) => (
+  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+    <div className="flex items-center gap-2 mb-2">
+      <span className="text-lg">📮</span>
+      <h4 className="font-semibold text-green-800">ポスティング活動報告</h4>
+    </div>
+    <div className="text-sm space-y-1">
+      {artifact.text_content && (
+        <p>
+          <span className="font-medium">内容:</span> {artifact.text_content}
+        </p>
+      )}
+      {artifact.description && (
+        <p>
+          <span className="font-medium">補足:</span> {artifact.description}
+        </p>
+      )}
+      <p className="text-green-600 font-medium">💰 ポイントを獲得しました！</p>
+    </div>
+  </div>
+);
+
 const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
   switch (artifact.artifact_type) {
     case "IMAGE":
@@ -99,6 +123,8 @@ const ArtifactDisplay: React.FC<ArtifactDisplayProps> = ({ artifact }) => {
       return <LinkArtifact artifact={artifact} />;
     case "TEXT":
       return <TextArtifact artifact={artifact} />;
+    case "POSTING":
+      return <PostingArtifact artifact={artifact} />;
     default:
       return null;
   }

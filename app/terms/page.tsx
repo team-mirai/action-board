@@ -27,7 +27,6 @@ export default function TermsOfService() {
           </p>
           <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-3">
             <li>満18歳以上であること</li>
-            <li>日本国内に居住していること</li>
             <li>本規約に同意し、遵守する意思を有すること</li>
             <li>法令および公序良俗に反しない行動を取ることができること</li>
           </ul>
