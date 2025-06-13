@@ -11,7 +11,7 @@ import type { Layer, Map, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 
-const GeomanMap = dynamic(() => import("@/components/GeomanMap"), {
+const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
   ssr: false,
 });
 
