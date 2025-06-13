@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Json } from "@/lib/types/supabase";
+import { nanoid } from "nanoid";
 
 export interface MapShape {
   id?: string;
-  user_id?: string;
   type: "polygon" | "text";
   coordinates: Json;
   properties?: Json;
@@ -14,20 +14,11 @@ export interface MapShape {
 const supabase = createClient();
 
 export async function saveShape(shape: MapShape) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("User must be authenticated to save shapes");
-  }
-
   const nowISO = new Date().toISOString();
 
   const shapeWithMeta = {
     ...shape,
-    user_id: user.id,
-    id: shape.id ?? crypto.randomUUID(),
+    id: shape.id ?? `c${nanoid(21)}`, // cuid-like format
     created_at: shape.created_at ?? nowISO,
     updated_at: shape.updated_at ?? nowISO,
   };
@@ -47,19 +38,7 @@ export async function saveShape(shape: MapShape) {
 }
 
 export async function deleteShape(id: string) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("User must be authenticated to delete shapes");
-  }
-
-  const { error } = await supabase
-    .from("posting_shapes")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", user.id); // Ensure user can only delete their own shapes
+  const { error } = await supabase.from("posting_shapes").delete().eq("id", id);
 
   if (error) {
     console.error("Error deleting shape:", error);
@@ -82,14 +61,6 @@ export async function loadShapes() {
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("User must be authenticated to update shapes");
-  }
-
   const updateData = {
     ...data,
     updated_at: new Date().toISOString(),
@@ -99,7 +70,6 @@ export async function updateShape(id: string, data: Partial<MapShape>) {
     .from("posting_shapes")
     .update(updateData)
     .eq("id", id)
-    .eq("user_id", user.id) // Ensure user can only update their own shapes
     .select()
     .single();
 
