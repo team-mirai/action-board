@@ -7,7 +7,7 @@ import {
   saveShape as saveMapShape,
   updateShape as updateMapShape,
 } from "@/lib/services/posting";
-import type { Layer, Map, Marker, Path } from "leaflet";
+import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 
@@ -24,10 +24,10 @@ type GeomanEvent = {
   layer?: Layer;
   target?: Layer;
 };
-type LeafletWindow = Window & { L: any };
+type LeafletWindow = Window & { L: typeof import("leaflet") };
 
 export default function PostingPageClient(_props: PostingPageClientProps) {
-  const [mapInstance, setMapInstance] = useState<Map | null>(null);
+  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const [shapeCount, setShapeCount] = useState(0);
   const autoSave = true;
 

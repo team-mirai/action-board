@@ -6,20 +6,20 @@ declare module "leaflet" {
     _shapeId?: string;
     _textDirty?: boolean;
     _url?: string;
-    toGeoJSON?(): any;
+    toGeoJSON?(): GeoJSON.Feature | GeoJSON.FeatureCollection;
     getLatLng?(): L.LatLng;
     getLayers?(): Layer[];
     feature?: {
       properties?: {
         _shapeId?: string;
-        [key: string]: any;
+        [key: string]: unknown;
       };
     };
     options?: {
       shapeId?: string;
       textMarker?: boolean;
       text?: string;
-      [key: string]: any;
+      [key: string]: unknown;
     };
   }
 
@@ -106,8 +106,8 @@ declare module "leaflet" {
     "pm:remove": (e: { layer: Layer }) => void;
     "pm:update": (e: { layer: Layer }) => void;
     "pm:cut": (e: { layer?: Layer; layers?: Layer[] }) => void;
-    "pm:undo": (e: any) => void;
-    "pm:redo": (e: any) => void;
+    "pm:undo": (e: { layer?: Layer; layers?: Layer[] }) => void;
+    "pm:redo": (e: { layer?: Layer; layers?: Layer[] }) => void;
   }
 
   // Layer events

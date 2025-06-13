@@ -1,16 +1,16 @@
 "use client";
 
-import type { Map } from "leaflet";
+import type { Map as LeafletMap } from "leaflet";
 import { useEffect, useRef } from "react";
 
 interface GeomanMapProps {
-  onMapReady?: (map: Map) => void;
+  onMapReady?: (map: LeafletMap) => void;
   className?: string;
 }
 
 export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<Map | null>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -28,7 +28,8 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       await import("@geoman-io/leaflet-geoman-free");
 
       // Fix Leaflet default markers in Next.js
-      (L.Icon.Default.prototype as any)._getIconUrl = undefined;
+      // @ts-expect-error - Leaflet internals
+      L.Icon.Default.prototype._getIconUrl = undefined;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://unpkg.com/leaflet/dist/images/marker-icon-2x.png",
