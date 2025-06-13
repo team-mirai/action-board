@@ -9,7 +9,7 @@ VALUES (
   NULL,
   'LINK',
   NULL,
-  'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//18_x_post.png',
+  'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp/18_x_post.png',
   '投稿したポストのURL',
   false,
   false)
