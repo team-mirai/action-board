@@ -37,18 +37,11 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const {
-    mission,
-    userAchievements,
-    submissions,
-    userAchievementCount,
-    referralCode,
-  } = pageData;
+  const { mission, submissions, userAchievementCount, referralCode } = pageData;
 
-  // ユーザーのランキング情報を取得
-  const rankings = user ? await getMissionRanking(id, 1) : [];
-  const userRanking = user
-    ? (rankings.find((r) => r.user_id === user.id) ?? null)
+  // ユーザーのミッション別ランキング情報を取得
+  const userWithMissionRanking = user
+    ? ((await getMissionRanking(id)).find((r) => r.user_id === user.id) ?? null)
     : null;
 
   return (
@@ -71,7 +64,7 @@ export default async function MissionPage({ params }: Props) {
               <>
                 <div className="mt-6">
                   <CurrentUserCardMission
-                    currentUser={userRanking}
+                    currentUser={userWithMissionRanking}
                     mission={mission}
                   />
                 </div>

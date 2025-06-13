@@ -44,10 +44,11 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
   let userRanking = null;
 
   if (user) {
-    // ミッション別ランキングを取得
-    const rankings = await getMissionRanking(selectedMission.id, 100);
-    // 現在のユーザーのランキングを探す
-    userRanking = rankings.find((r) => r.user_id === user.id) || null;
+    // 現在のユーザーのミッション別ランキングを探す
+    userRanking =
+      (await getMissionRanking(selectedMission.id)).find(
+        (r) => r.user_id === user.id,
+      ) ?? null;
   }
 
   return (
