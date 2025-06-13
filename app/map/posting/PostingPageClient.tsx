@@ -82,6 +82,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.on("pm:remove", async (e: GeomanEvent) => {
         console.log("Shape removed:", e.layer);
+        if (!e.layer) return; // Type guard
         const layer = e.layer;
         const sid = getShapeId(layer);
         if (sid) {
@@ -92,6 +93,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.on("pm:update", async (e: GeomanEvent) => {
         console.log("Shape updated:", e.layer);
+        if (!e.layer) return; // Type guard
         await saveOrUpdateLayer(e.layer);
       });
 
