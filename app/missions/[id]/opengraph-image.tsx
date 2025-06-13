@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { getMissionPageData } from "./_lib/data";
 
+export const runtime = "nodejs";
 export const alt = "OGP画像";
 export const size = {
   width: 1200,
@@ -14,7 +15,7 @@ async function loadGoogleFont(font: string, text: string) {
   const url = `https://fonts.googleapis.com/css2?family=${font}:wght@700&text=${encodeURIComponent(text)}`;
   const css = await (await fetch(url)).text();
   const resource = css.match(
-    /src: url\((.+)\) format\('(opentype|truetype)'\)/,
+    /src:\s*url\(([^)]+)\)\s*format\('(opentype|truetype|woff2)'\)/,
   );
 
   if (resource) {
@@ -90,6 +91,7 @@ export default async function Image({ params }: { params: { id: string } }) {
             "Noto+Sans+JP",
             `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ`,
           ),
+          weight: 700,
           style: "normal",
         },
       ],
