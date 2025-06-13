@@ -40,6 +40,11 @@ declare module "leaflet" {
         cutPolygon?: boolean;
         removalMode?: boolean;
         rotateMode?: boolean;
+        oneBlock?: boolean;
+        drawControls?: boolean;
+        editControls?: boolean;
+        optionsControls?: boolean;
+        customControls?: boolean;
       }): void;
       removeControls(): void;
 
