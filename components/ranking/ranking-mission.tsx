@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { getMissionRanking } from "@/lib/services/missionsRanking";
 import type { Tables } from "@/lib/types/supabase";
-import { Badge, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { RankingItem } from "./ranking-item";
 
@@ -29,7 +29,7 @@ export default async function RankingMission({
         <div className="">
           <h2 className="text-2xl md:text-4xl text-gray-900 mb-2 text-center">
             🏅ミッション別トップ{limit}
-            {mission && <div className="ml-2 text-lg">{mission.title}</div>}
+            {mission && <span className="ml-2 text-lg">{mission.title}</span>}
           </h2>
         </div>
 

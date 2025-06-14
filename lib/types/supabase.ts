@@ -563,6 +563,19 @@ export type Database = {
           rank: number;
         }[];
       };
+      get_user_mission_ranking: {
+        Args: { mission_id: string; user_id: string };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          level: number;
+          xp: number;
+          updated_at: string;
+          clear_count: number;
+          rank: number;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

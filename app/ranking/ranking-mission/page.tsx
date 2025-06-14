@@ -2,7 +2,7 @@ import { CurrentUserCardMission } from "@/components/ranking/current-user-card-m
 import { MissionSelect } from "@/components/ranking/mission-select";
 import RankingMission from "@/components/ranking/ranking-mission";
 import { RankingTabs } from "@/components/ranking/ranking-tabs";
-import { getMissionRanking } from "@/lib/services/missionsRanking";
+import { getUserMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
@@ -45,10 +45,7 @@ export default async function RankingMissionPage({ searchParams }: PageProps) {
 
   if (user) {
     // 現在のユーザーのミッション別ランキングを探す
-    userRanking =
-      (await getMissionRanking(selectedMission.id)).find(
-        (r) => r.user_id === user.id,
-      ) ?? null;
+    userRanking = await getUserMissionRanking(selectedMission.id, user.id);
   }
 
   return (

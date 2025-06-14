@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { generateRootMetadata } from "@/lib/metadata";
-import { getMissionRanking } from "@/lib/services/missionsRanking";
+import { getUserMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
 import Link from "next/link";
@@ -41,7 +41,7 @@ export default async function MissionPage({ params }: Props) {
 
   // ユーザーのミッション別ランキング情報を取得
   const userWithMissionRanking = user
-    ? ((await getMissionRanking(id)).find((r) => r.user_id === user.id) ?? null)
+    ? await getUserMissionRanking(id, user.id)
     : null;
 
   return (

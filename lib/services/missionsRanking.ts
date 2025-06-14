@@ -52,3 +52,46 @@ export async function getMissionRanking(
     throw error;
   }
 }
+
+export async function getUserMissionRanking(
+  missionId: string,
+  userId: string,
+): Promise<UserMissionRanking | null> {
+  try {
+    const supabase = await createClient();
+
+    // データベース関数を使用して特定ユーザーのランキングを取得
+    const { data: rankings, error: rankingsError } = await supabase
+      .rpc("get_user_mission_ranking", {
+        mission_id: missionId,
+        user_id: userId,
+      })
+      .limit(1);
+
+    if (rankingsError) {
+      console.error("Failed to fetch user mission ranking:", rankingsError);
+      throw new Error(
+        `ユーザーのミッションランキングデータの取得に失敗しました: ${rankingsError.message}`,
+      );
+    }
+
+    if (!rankings || rankings.length === 0) {
+      return null;
+    }
+
+    const ranking = rankings[0];
+    return {
+      user_id: ranking.user_id,
+      name: ranking.user_name,
+      address_prefecture: ranking.address_prefecture,
+      rank: ranking.rank,
+      level: ranking.level,
+      xp: ranking.xp,
+      updated_at: ranking.updated_at,
+      user_achievement_count: ranking.clear_count,
+    } as UserMissionRanking;
+  } catch (error) {
+    console.error("User mission ranking service error:", error);
+    throw error;
+  }
+}
