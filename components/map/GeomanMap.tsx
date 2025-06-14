@@ -12,10 +12,14 @@ interface GeomanMapProps {
 export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const isMountedRef = useRef<boolean>(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Set mounted flag
+    isMountedRef.current = true;
+
     if (!mapRef.current) return;
 
     // Prevent double initialization
@@ -32,11 +36,13 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         L = (await import("leaflet")).default;
       } catch (error) {
         console.error("Failed to load Leaflet:", error);
-        setError("地図ライブラリの読み込みに失敗しました");
-        toast.error(
-          "地図の読み込みに失敗しました。ページを再読み込みしてください。",
-        );
-        setIsLoading(false);
+        if (isMountedRef.current) {
+          setError("地図ライブラリの読み込みに失敗しました");
+          toast.error(
+            "地図の読み込みに失敗しました。ページを再読み込みしてください。",
+          );
+          setIsLoading(false);
+        }
         return;
       }
 
@@ -45,11 +51,13 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
         await import("@geoman-io/leaflet-geoman-free");
       } catch (error) {
         console.error("Failed to load Leaflet-Geoman:", error);
-        setError("地図編集ツールの読み込みに失敗しました");
-        toast.error(
-          "地図編集ツールの読み込みに失敗しました。ページを再読み込みしてください。",
-        );
-        setIsLoading(false);
+        if (isMountedRef.current) {
+          setError("地図編集ツールの読み込みに失敗しました");
+          toast.error(
+            "地図編集ツールの読み込みに失敗しました。ページを再読み込みしてください。",
+          );
+          setIsLoading(false);
+        }
         return;
       }
 
@@ -78,24 +86,33 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
 
         // Fix map sizing issues by forcing a resize after initial render
         setTimeout(() => {
-          map.invalidateSize();
+          if (isMountedRef.current && mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
         }, 100);
 
-        setIsLoading(false);
-        setError(null);
+        if (isMountedRef.current) {
+          setIsLoading(false);
+          setError(null);
+        }
       } catch (error) {
         console.error("Failed to initialize map:", error);
-        setError("地図の初期化に失敗しました");
-        toast.error(
-          "地図の初期化に失敗しました。ページを再読み込みしてください。",
-        );
-        setIsLoading(false);
+        if (isMountedRef.current) {
+          setError("地図の初期化に失敗しました");
+          toast.error(
+            "地図の初期化に失敗しました。ページを再読み込みしてください。",
+          );
+          setIsLoading(false);
+        }
       }
     };
 
     initializeMap();
 
     return () => {
+      // Set unmounted flag
+      isMountedRef.current = false;
+
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
