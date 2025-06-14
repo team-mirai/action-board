@@ -27,7 +27,7 @@ export default function Mission({
     mission.max_achievement_count !== null &&
     userAchievementCount >= (mission.max_achievement_count || 0);
 
-  const iconUrl = mission.icon_url ?? "/img/mission_fallback_icon.png";
+  const iconUrl = mission.icon_url ?? "/img/mission_fallback.svg";
 
   // 日付の整形
   const eventDate = mission.event_date ? new Date(mission.event_date) : null;
