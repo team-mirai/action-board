@@ -27,5 +27,6 @@ CREATE TRIGGER update_posting_shapes_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Grant permissions
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.posting_shapes TO anon;
+-- Only allow SELECT for anonymous users, write operations should be controlled via RLS
+GRANT SELECT ON public.posting_shapes TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.posting_shapes TO authenticated;
