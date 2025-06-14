@@ -59,8 +59,16 @@ export async function loadShapes() {
 }
 
 export async function updateShape(id: string, data: Partial<MapShape>) {
+  // Exclude protected fields that should not be updated
+  const {
+    id: _id,
+    created_at,
+    updated_at: _updated_at,
+    ...allowedFields
+  } = data;
+
   const updateData = {
-    ...data,
+    ...allowedFields,
     updated_at: new Date().toISOString(),
   };
 
