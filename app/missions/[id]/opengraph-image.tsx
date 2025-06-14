@@ -106,7 +106,7 @@ export default async function Image({ params }: { params: { id: string } }) {
               lineHeight: "1",
             }}
           >
-            {pageData?.totalAchievementCount.toLocaleString() ?? 0}
+            {(pageData?.totalAchievementCount ?? 0).toLocaleString()}
           </div>
           <div
             style={{
