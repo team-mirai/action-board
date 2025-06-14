@@ -9,10 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { generateRootMetadata } from "@/lib/metadata";
+import { config, createDefaultMetadata, notoSansJP } from "@/lib/metadata";
 import { getUserMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
@@ -21,8 +22,22 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-// メタデータ生成を外部関数に委譲
-export const generateMetadata = generateRootMetadata;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const pageData = await getMissionPageData(id);
+  if (!pageData) {
+    return createDefaultMetadata();
+  }
+  const { mission } = pageData;
+  return {
+    title: `${mission.title} | ${config.title}`,
+    description: config.description,
+    icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
+  };
+}
 
 export default async function MissionPage({ params }: Props) {
   const supabase = await createServerClient();

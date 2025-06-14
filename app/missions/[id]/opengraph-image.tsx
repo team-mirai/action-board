@@ -32,9 +32,13 @@ export default async function Image({ params }: { params: { id: string } }) {
   const pageData = await getMissionPageData(params.id);
 
   // ベース画像を読み込み
-  const baseImagePath = join(process.cwd(), "public/img/ogp-base.png");
+  const baseImagePath = join(process.cwd(), "public/img/ogo_mission_base.png");
   const baseImageBuffer = await readFile(baseImagePath);
   const baseImageBase64 = `data:image/png;base64,${baseImageBuffer.toString("base64")}`;
+
+  // titleに()や（）が含まれる場合は(や（の手前で改行する
+  const title = pageData?.mission.title ?? "ミッションが見つかりません";
+  const titleWithLineBreak = title.replace(/（/g, "\n（").replace(/\(/g, "\n(");
 
   return new ImageResponse(
     <div
@@ -42,6 +46,7 @@ export default async function Image({ params }: { params: { id: string } }) {
         fontFamily: "Noto Sans JP",
         width: "100%",
         height: "100%",
+        padding: "40px",
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
@@ -53,33 +58,65 @@ export default async function Image({ params }: { params: { id: string } }) {
     >
       <div
         style={{
-          width: "60%",
-          fontSize: 48,
-          margin: "0 48px",
-          color: "black",
-          fontWeight: "700",
-          textAlign: "left",
-          borderRadius: "15px",
-          marginBottom: "20px",
-          wordWrap: "break-word",
+          width: "62%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          justifyContent: "center",
         }}
       >
-        {pageData?.mission.title ?? "ミッションが見つかりません"}
-      </div>
-      <div
-        style={{
-          fontFamily: "Noto Sans JP",
-          width: "60%",
-          fontSize: 28,
-          margin: "0 48px",
-          color: "black",
-          fontWeight: "700",
-          textAlign: "left",
-          borderRadius: "15px",
-          wordWrap: "break-word",
-        }}
-      >
-        #テクノロジーで誰も取り残さない日本へ
+        <div
+          style={{
+            fontSize: 40,
+            color: "black",
+            fontWeight: "700",
+            marginBottom: "8px",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {titleWithLineBreak}
+        </div>
+        <div
+          style={{
+            fontFamily: "Noto Sans JP",
+            fontSize: 28,
+            color: "black",
+            fontWeight: "700",
+            marginBottom: "24px",
+          }}
+        >
+          #テクノロジーで誰も取り残さない日本へ
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "baseline",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "Noto Sans JP",
+              fontSize: "58px",
+              color: "#0d9488",
+              textAlign: "center",
+              lineHeight: "1",
+            }}
+          >
+            {(pageData?.totalAchievementCount ?? 0).toLocaleString()}
+          </div>
+          <div
+            style={{
+              marginLeft: "8px",
+              fontFamily: "Noto Sans JP",
+              fontSize: "24px",
+              color: "#0d9488",
+              textAlign: "center",
+            }}
+          >
+            件のアクションが達成されました！
+          </div>
+        </div>
       </div>
     </div>,
     {
@@ -89,7 +126,7 @@ export default async function Image({ params }: { params: { id: string } }) {
           name: "Noto Sans JP",
           data: await loadGoogleFont(
             "Noto+Sans+JP",
-            `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ`,
+            `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ ${pageData?.totalAchievementCount ?? 0}件のアクションが達成されました！`,
           ),
           weight: 700,
           style: "normal",
