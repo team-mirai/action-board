@@ -1,7 +1,6 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/lib/types/supabase";
 import type { UserRanking } from "./ranking";
 
 export interface UserMissionRanking extends UserRanking {
@@ -16,11 +15,13 @@ export async function getMissionRanking(
     const supabase = await createClient();
 
     // データベース関数を使用してランキングを取得
-    const { data: rankings, error: rankingsError } = await supabase
-      .rpc("get_mission_ranking", {
+    const { data: rankings, error: rankingsError } = await supabase.rpc(
+      "get_mission_ranking",
+      {
         mission_id: missionId,
-      })
-      .limit(limit);
+        limit_count: limit,
+      },
+    );
 
     if (rankingsError) {
       console.error("Failed to fetch mission rankings:", rankingsError);

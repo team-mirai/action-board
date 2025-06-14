@@ -551,7 +551,7 @@ export type Database = {
     };
     Functions: {
       get_mission_ranking: {
-        Args: { mission_id: string };
+        Args: { mission_id: string; limit_count: number };
         Returns: {
           user_id: string;
           user_name: string;
