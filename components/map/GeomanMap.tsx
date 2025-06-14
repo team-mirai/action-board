@@ -38,7 +38,7 @@ export default function GeomanMap({ onMapReady, className }: GeomanMapProps) {
       });
 
       // Create map
-      const map = L.map(mapRef.current).setView([35.6762, 139.6503], 10);
+      const map = L.map(mapRef.current!).setView([35.6762, 139.6503], 10);
       mapInstanceRef.current = map;
 
       console.log("Map created, pm available:", !!map.pm);

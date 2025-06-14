@@ -6,8 +6,8 @@ declare module "leaflet" {
     _shapeId?: string;
     _textDirty?: boolean;
     _url?: string;
-    toGeoJSON?(): GeoJSON.Feature | GeoJSON.FeatureCollection;
-    getLatLng?(): L.LatLng;
+    toGeoJSON(): any;
+    getLatLng(): L.LatLng;
     getLayers?(): Layer[];
     feature?: {
       properties?: {
@@ -21,6 +21,11 @@ declare module "leaflet" {
       text?: string;
       [key: string]: unknown;
     };
+  }
+
+  interface MarkerOptions {
+    textMarker?: boolean;
+    text?: string;
   }
 
   interface Map {

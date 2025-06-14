@@ -73,17 +73,14 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
         console.log("Shape created:", e.layer);
-        if (e.layer) {
-          await saveOrUpdateLayer(e.layer);
-          attachTextEvents(e.layer);
-          updateShapeCount();
-        }
+        await saveOrUpdateLayer(e.layer!);
+        attachTextEvents(e.layer!);
+        updateShapeCount();
       });
 
       mapInstance.on("pm:remove", async (e: GeomanEvent) => {
         console.log("Shape removed:", e.layer);
-        if (!e.layer) return; // Type guard
-        const layer = e.layer;
+        const layer = e.layer!;
         const sid = getShapeId(layer);
         if (sid) {
           await deleteMapShape(sid);
@@ -93,8 +90,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.on("pm:update", async (e: GeomanEvent) => {
         console.log("Shape updated:", e.layer);
-        if (!e.layer) return; // Type guard
-        await saveOrUpdateLayer(e.layer);
+        await saveOrUpdateLayer(e.layer!);
       });
 
       mapInstance.on("pm:cut", (e: GeomanEvent) => {
@@ -124,34 +120,37 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
         for (const shape of savedShapes) {
           try {
-            let layer: Layer;
+            let layer: any;
 
             if (shape.type === "text") {
-              const [lng, lat] = shape.coordinates.coordinates;
-              const text = shape.properties?.text || "";
+              const coords = shape.coordinates as any;
+              const [lng, lat] = coords.coordinates;
+              const text = (shape.properties as any)?.text || "";
               layer = L.marker([lat, lng], {
                 textMarker: true,
                 text,
-              });
+              } as any) as any;
               layer._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
-              layer = L.geoJSON(shape.coordinates);
+              layer = L.geoJSON(shape.coordinates as any) as any;
               layer._shapeId = shape.id; // preserve id
             }
 
-            layer.addTo(mapInstance);
+            if (layer) {
+              layer.addTo(mapInstance);
 
-            propagateShapeId(layer, shape.id);
+              propagateShapeId(layer, shape.id);
 
-            if (
-              shape.type === "text" ||
-              shape.properties?.originalType === "Text"
-            ) {
-              attachTextEvents(layer);
+              if (
+                shape.type === "text" ||
+                (shape.properties as any)?.originalType === "Text"
+              ) {
+                attachTextEvents(layer);
+              }
+
+              console.log("Loaded shape:", shape.type);
             }
-
-            console.log("Loaded shape:", shape.type);
           } catch (layerError) {
             console.error(
               "Failed to create layer for shape:",
@@ -240,7 +239,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     const geoJSON = layer.toGeoJSON();
     return {
       type: "polygon",
-      coordinates: geoJSON.geometry,
+      coordinates: geoJSON.geometry as any,
       properties: geoJSON.properties || {},
     };
   };
@@ -263,12 +262,12 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   function propagateShapeId(layer: Layer, id: string) {
     if (!layer) return;
     layer._shapeId = id;
-    if (layer.options) layer.options.shapeId = id;
+    if (layer.options) (layer.options as any).shapeId = id;
     if (layer.feature?.properties) {
       layer.feature.properties._shapeId = id;
     }
     if (layer.getLayers) {
-      for (const sub of layer.getLayers()) {
+      for (const sub of layer.getLayers!()) {
         propagateShapeId(sub, id);
       }
     }
@@ -294,7 +293,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   const getShapeId = (layer: Layer): string | undefined => {
     return (
       layer._shapeId ||
-      layer?.options?.shapeId ||
+      (layer?.options as any)?.shapeId ||
       layer?.feature?.properties?._shapeId
     );
   };
