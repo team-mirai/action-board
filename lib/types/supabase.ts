@@ -563,6 +563,18 @@ export type Database = {
           rank: number;
         }[];
       };
+      get_prefecture_ranking: {
+        Args: { prefecture: string; limit_count?: number };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
+        }[];
+      };
       get_user_mission_ranking: {
         Args: { mission_id: string; user_id: string };
         Returns: {
@@ -574,6 +586,18 @@ export type Database = {
           updated_at: string;
           clear_count: number;
           rank: number;
+        }[];
+      };
+      get_user_prefecture_ranking: {
+        Args: { prefecture: string; target_user_id: string };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
         }[];
       };
     };
