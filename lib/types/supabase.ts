@@ -246,33 +246,6 @@ export type Database = {
           },
         ];
       };
-      mission_point_settings: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          id: string;
-          mission_type: string;
-          points_per_unit: number;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          mission_type: string;
-          points_per_unit: number;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          mission_type?: string;
-          points_per_unit?: number;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       missions: {
         Row: {
           artifact_label: string | null;
@@ -282,12 +255,13 @@ export type Database = {
           event_date: string | null;
           icon_url: string | null;
           id: string;
+          is_featured: boolean;
+          is_hidden: boolean;
           max_achievement_count: number | null;
           ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
           updated_at: string;
-          is_featured: boolean;
         };
         Insert: {
           artifact_label?: string | null;
@@ -297,12 +271,13 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id: string;
+          is_featured?: boolean;
+          is_hidden?: boolean;
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
-          is_featured: boolean;
         };
         Update: {
           artifact_label?: string | null;
@@ -312,42 +287,13 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id?: string;
+          is_featured?: boolean;
+          is_hidden?: boolean;
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;
-          is_featured: boolean;
-        };
-        Relationships: [];
-      };
-      posting_shapes: {
-        Row: {
-          coordinates: Json;
-          created_at: string | null;
-          id: string;
-          properties: Json | null;
-          type: string;
-          updated_at: string | null;
-          user_id: string;
-        };
-        Insert: {
-          coordinates: Json;
-          created_at?: string | null;
-          id?: string;
-          properties?: Json | null;
-          type: string;
-          updated_at?: string | null;
-          user_id: string;
-        };
-        Update: {
-          coordinates?: Json;
-          created_at?: string | null;
-          id?: string;
-          properties?: Json | null;
-          type?: string;
-          updated_at?: string | null;
-          user_id?: string;
         };
         Relationships: [];
       };
@@ -385,6 +331,33 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      posting_shapes: {
+        Row: {
+          coordinates: Json;
+          created_at: string | null;
+          id: string;
+          properties: Json | null;
+          type: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          coordinates: Json;
+          created_at?: string | null;
+          id: string;
+          properties?: Json | null;
+          type: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          coordinates?: Json;
+          created_at?: string | null;
+          id?: string;
+          properties?: Json | null;
+          type?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
       };
       private_users: {
         Row: {
