@@ -57,7 +57,7 @@ describe("XP差分計算", () => {
       expect(xpDelta(4)).toBe(85);
     });
 
-    it("レベル10から11の差分は160XP", () => {
+    it("レベル10から11の差分は175XP", () => {
       expect(xpDelta(10)).toBe(175);
     });
   });
