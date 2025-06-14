@@ -246,33 +246,6 @@ export type Database = {
           },
         ];
       };
-      mission_point_settings: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          id: string;
-          mission_type: string;
-          points_per_unit: number;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          mission_type: string;
-          points_per_unit: number;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          mission_type?: string;
-          points_per_unit?: number;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       missions: {
         Row: {
           artifact_label: string | null;
@@ -282,12 +255,13 @@ export type Database = {
           event_date: string | null;
           icon_url: string | null;
           id: string;
+          is_featured: boolean;
+          is_hidden: boolean;
           max_achievement_count: number | null;
           ogp_image_url: string | null;
           required_artifact_type: string;
           title: string;
           updated_at: string;
-          is_featured: boolean;
         };
         Insert: {
           artifact_label?: string | null;
@@ -297,12 +271,13 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id: string;
+          is_featured?: boolean;
+          is_hidden?: boolean;
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title: string;
           updated_at?: string;
-          is_featured: boolean;
         };
         Update: {
           artifact_label?: string | null;
@@ -312,12 +287,13 @@ export type Database = {
           event_date?: string | null;
           icon_url?: string | null;
           id?: string;
+          is_featured?: boolean;
+          is_hidden?: boolean;
           max_achievement_count?: number | null;
           ogp_image_url?: string | null;
           required_artifact_type?: string;
           title?: string;
           updated_at?: string;
-          is_featured: boolean;
         };
         Relationships: [];
       };
@@ -574,7 +550,56 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      get_mission_ranking: {
+        Args: { mission_id: string; limit_count: number };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          level: number;
+          xp: number;
+          updated_at: string;
+          clear_count: number;
+          rank: number;
+        }[];
+      };
+      get_prefecture_ranking: {
+        Args: { prefecture: string; limit_count?: number };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
+        }[];
+      };
+      get_user_mission_ranking: {
+        Args: { mission_id: string; user_id: string };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          level: number;
+          xp: number;
+          updated_at: string;
+          clear_count: number;
+          rank: number;
+        }[];
+      };
+      get_user_prefecture_ranking: {
+        Args: { prefecture: string; target_user_id: string };
+        Returns: {
+          user_id: string;
+          user_name: string;
+          address_prefecture: string;
+          rank: number;
+          level: number;
+          xp: number;
+          updated_at: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
