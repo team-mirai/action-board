@@ -6,8 +6,8 @@ returns table (
   level int,
   xp int,
   updated_at timestamp,
-  clear_count int,
-  rank int
+  clear_count bigint,
+  rank bigint
 )
 language sql
 as $$
