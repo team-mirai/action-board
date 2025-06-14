@@ -1,4 +1,4 @@
-create or replace function get_mission_ranking(mission_id uuid)
+create or replace function get_mission_ranking(mission_id uuid, limit_count Integer default 10)
 returns table (
   user_id uuid,
   user_name text,
@@ -32,4 +32,5 @@ as $$
   left join user_ranking_view r on u.id = r.user_id
   left join mission_achievements ma on u.id = ma.user_id
   order by rank
+  limit get_mission_ranking.limit_count;
 $$;
