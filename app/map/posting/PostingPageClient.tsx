@@ -12,6 +12,7 @@ import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const GeomanMap = dynamic(() => import("@/components/map/GeomanMap"), {
   ssr: false,
@@ -37,15 +38,36 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     if (!mapInstance) return;
 
     const initializePostingMap = async () => {
-      const L = (await import("leaflet")).default;
+      let L: typeof import("leaflet");
+
+      try {
+        L = (await import("leaflet")).default;
+      } catch (error) {
+        console.error("Failed to load Leaflet in PostingPageClient:", error);
+        toast.error(
+          "地図ライブラリの読み込みに失敗しました。ページを再読み込みしてください。",
+        );
+        return;
+      }
 
       console.log("Map instance received, pm available:", !!mapInstance.pm);
 
-      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution:
-          '&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>',
-      }).addTo(mapInstance);
+      try {
+        L.tileLayer(
+          "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+          {
+            maxZoom: 18,
+            attribution:
+              '&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>',
+          },
+        ).addTo(mapInstance);
+      } catch (error) {
+        console.error("Failed to add tile layer:", error);
+        toast.error(
+          "地図タイルの読み込みに失敗しました。インターネット接続を確認してください。",
+        );
+        // Continue without tiles - the map will still be functional for drawing
+      }
 
       mapInstance.pm.addControls({
         position: "topleft",
@@ -124,7 +146,15 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     const loadExistingShapes = async () => {
       try {
         const savedShapes = await loadMapShapes();
-        const L = (await import("leaflet")).default;
+
+        let L: typeof import("leaflet");
+        try {
+          L = (await import("leaflet")).default;
+        } catch (error) {
+          console.error("Failed to load Leaflet for shapes:", error);
+          toast.error("保存された図形の読み込みに失敗しました。");
+          return;
+        }
 
         for (const shape of savedShapes) {
           try {
