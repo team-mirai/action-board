@@ -14,6 +14,12 @@ const config = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  collectCoverage: true,
+  collectCoverageFrom: ["components/**/*.tsx"],
+  coverageReporters: ["html", "text", "lcov"],
+  coverageDirectory: "<rootDir>/coverage",
+  coveragePathIgnorePatterns: [],
+  coverageProvider: "v8",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
