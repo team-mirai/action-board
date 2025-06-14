@@ -20,12 +20,16 @@ describe("userLevel service", () => {
         expect(calculateMissionXp(3)).toBe(200);
       });
 
+      it("難易度4（★4 Super hard）は400XP", () => {
+        expect(calculateMissionXp(4)).toBe(400);
+      });
+
       it("無効な難易度（0）はデフォルト50XP", () => {
         expect(calculateMissionXp(0)).toBe(50);
       });
 
-      it("無効な難易度（4）はデフォルト50XP", () => {
-        expect(calculateMissionXp(4)).toBe(50);
+      it("無効な難易度（5）はデフォルト50XP", () => {
+        expect(calculateMissionXp(5)).toBe(50);
       });
 
       it("負の難易度はデフォルト50XP", () => {
