@@ -157,6 +157,25 @@ mainブランチはリリース可能な状態に保ちましょう。
 3. コンフリクトが発生している場合は解消を依頼してください。
 4. 開発スレッドにてレビュー依頼をお願いします。
 
+### migrationファイル追加手順
+
+#### migrationファイル新規作成
+
+下記コマンドで `supabase/migrations/` ディレクトリに `20250612123456_{名前}.sql` という名前の空ファイルが作成されます。このファイルに SQL を記述してください。
+
+```bash
+supabase migration new {名前}
+```
+
+※ `{名前}` はmigrationの内容を表す英語名（例: `add_mission_join_slack` ）
+
+#### migrationの適用
+
+作成したmigrationファイルがまだ適用されていない場合、下記コマンドでローカルDBに反映できます。
+
+```bash
+supabase migration up
+```
 
 ### migrationファイル追加後の型定義生成
 
@@ -320,3 +339,8 @@ npm run storybook
 
    * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
    * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
+
+---
+
+# for CodeRabbit
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/team-mirai-volunteer/action-board?utm_source=oss&utm_medium=github&utm_campaign=team-mirai-volunteer%2Faction-board&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
