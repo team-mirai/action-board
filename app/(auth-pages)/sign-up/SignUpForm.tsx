@@ -84,7 +84,13 @@ function SignUpFormContent({
         />
         <Label htmlFor="password">パスワード</Label>
         <p className="text-xs text-muted-foreground mb-2">
-          ※8文字以上で半角英数を含めてください。英数と一部記号が使えます。
+          ・8文字以上32文字以下
+          <br />
+          ・半角英数を含める
+          <br />
+          ・使用可能文字は英数と以下の記号
+          <br />
+          <p className="ml-3"> @+*/#$%&!- </p>
         </p>
         <Input
           type="password"
