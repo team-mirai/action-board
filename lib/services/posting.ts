@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Json } from "@/lib/types/supabase";
-import { nanoid } from "nanoid";
 
 export interface MapShape {
   id?: string;
@@ -18,7 +17,6 @@ export async function saveShape(shape: MapShape) {
 
   const shapeWithMeta = {
     ...shape,
-    id: shape.id ?? `c${nanoid(21)}`, // cuid-like format
     created_at: shape.created_at ?? nowISO,
     updated_at: shape.updated_at ?? nowISO,
   };

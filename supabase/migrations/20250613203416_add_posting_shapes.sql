@@ -1,7 +1,7 @@
 -- Create posting_shapes table for map drawing functionality
 -- Schema matches the required format for CSV import compatibility
 CREATE TABLE IF NOT EXISTS public.posting_shapes (
-  id TEXT PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   type TEXT NOT NULL CHECK (type IN ('polygon', 'text')),
   coordinates JSONB NOT NULL,
   properties JSONB DEFAULT '{}',

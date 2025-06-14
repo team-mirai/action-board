@@ -335,16 +335,16 @@ export type Database = {
       posting_shapes: {
         Row: {
           coordinates: Json;
-          created_at: string | null;
+          created_at: string;
           id: string;
           properties: Json | null;
           type: string;
-          updated_at: string | null;
+          updated_at: string;
         };
         Insert: {
           coordinates: Json;
           created_at?: string | null;
-          id: string;
+          id?: string;
           properties?: Json | null;
           type: string;
           updated_at?: string | null;
@@ -578,7 +578,7 @@ export type Database = {
     };
     Functions: {
       get_mission_ranking: {
-        Args: { mission_id: string; limit_count: number };
+        Args: { mission_id: string; limit_count?: number };
         Returns: {
           user_id: string;
           user_name: string;
