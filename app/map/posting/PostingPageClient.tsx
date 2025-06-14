@@ -7,6 +7,8 @@ import {
   saveShape as saveMapShape,
   updateShape as updateMapShape,
 } from "@/lib/services/posting";
+import type { PolygonProperties, TextCoordinates } from "@/lib/types/map-types";
+import type { Json } from "@/lib/types/supabase";
 import type { Layer, Map as LeafletMap, Marker, Path } from "leaflet";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
@@ -73,24 +75,30 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
       mapInstance.on("pm:create", async (e: GeomanEvent) => {
         console.log("Shape created:", e.layer);
-        await saveOrUpdateLayer(e.layer!);
-        attachTextEvents(e.layer!);
-        updateShapeCount();
+        if (e.layer) {
+          await saveOrUpdateLayer(e.layer);
+          attachTextEvents(e.layer);
+          updateShapeCount();
+        }
       });
 
       mapInstance.on("pm:remove", async (e: GeomanEvent) => {
         console.log("Shape removed:", e.layer);
-        const layer = e.layer!;
-        const sid = getShapeId(layer);
-        if (sid) {
-          await deleteMapShape(sid);
+        const layer = e.layer;
+        if (layer) {
+          const sid = getShapeId(layer);
+          if (sid) {
+            await deleteMapShape(sid);
+          }
+          updateShapeCount();
         }
-        updateShapeCount();
       });
 
       mapInstance.on("pm:update", async (e: GeomanEvent) => {
         console.log("Shape updated:", e.layer);
-        await saveOrUpdateLayer(e.layer!);
+        if (e.layer) {
+          await saveOrUpdateLayer(e.layer);
+        }
       });
 
       mapInstance.on("pm:cut", (e: GeomanEvent) => {
@@ -120,20 +128,22 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
         for (const shape of savedShapes) {
           try {
-            let layer: any;
+            let layer: Layer | undefined;
 
             if (shape.type === "text") {
-              const coords = shape.coordinates as any;
+              const coords = shape.coordinates as unknown as TextCoordinates;
               const [lng, lat] = coords.coordinates;
-              const text = (shape.properties as any)?.text || "";
+              const text = (shape.properties as { text?: string })?.text || "";
               layer = L.marker([lat, lng], {
                 textMarker: true,
                 text,
-              } as any) as any;
+              } as L.MarkerOptions) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
               attachTextEvents(layer);
             } else if (shape.type === "polygon") {
-              layer = L.geoJSON(shape.coordinates as any) as any;
+              layer = L.geoJSON(
+                shape.coordinates as unknown as GeoJSON.Polygon,
+              ) as unknown as Layer;
               layer._shapeId = shape.id; // preserve id
             }
 
@@ -144,7 +154,7 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
 
               if (
                 shape.type === "text" ||
-                (shape.properties as any)?.originalType === "Text"
+                (shape.properties as PolygonProperties)?.originalType === "Text"
               ) {
                 attachTextEvents(layer);
               }
@@ -236,10 +246,10 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
     }
 
     // Default to polygon for all other shapes
-    const geoJSON = layer.toGeoJSON();
+    const geoJSON = layer.toGeoJSON() as GeoJSON.Feature;
     return {
       type: "polygon",
-      coordinates: geoJSON.geometry as any,
+      coordinates: geoJSON.geometry as unknown as Json,
       properties: geoJSON.properties || {},
     };
   };
@@ -262,13 +272,16 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   function propagateShapeId(layer: Layer, id: string) {
     if (!layer) return;
     layer._shapeId = id;
-    if (layer.options) (layer.options as any).shapeId = id;
+    if (layer.options) (layer.options as Record<string, unknown>).shapeId = id;
     if (layer.feature?.properties) {
       layer.feature.properties._shapeId = id;
     }
     if (layer.getLayers) {
-      for (const sub of layer.getLayers!()) {
-        propagateShapeId(sub, id);
+      const layers = layer.getLayers?.();
+      if (layers) {
+        for (const sub of layers) {
+          propagateShapeId(sub, id);
+        }
       }
     }
 
@@ -293,8 +306,10 @@ export default function PostingPageClient(_props: PostingPageClientProps) {
   const getShapeId = (layer: Layer): string | undefined => {
     return (
       layer._shapeId ||
-      (layer?.options as any)?.shapeId ||
-      layer?.feature?.properties?._shapeId
+      ((layer?.options as Record<string, unknown>)?.shapeId as
+        | string
+        | undefined) ||
+      (layer?.feature?.properties?._shapeId as string | undefined)
     );
   };
 

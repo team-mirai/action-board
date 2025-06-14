@@ -25,7 +25,7 @@ export async function saveShape(shape: MapShape) {
 
   const { data, error } = await supabase
     .from("posting_shapes")
-    .insert([shapeWithMeta] as any)
+    .insert([shapeWithMeta as never])
     .select()
     .single();
 
