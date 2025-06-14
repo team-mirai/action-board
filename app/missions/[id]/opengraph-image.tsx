@@ -36,6 +36,10 @@ export default async function Image({ params }: { params: { id: string } }) {
   const baseImageBuffer = await readFile(baseImagePath);
   const baseImageBase64 = `data:image/png;base64,${baseImageBuffer.toString("base64")}`;
 
+  // titleに()や（）が含まれる場合は(や（の手前で改行する
+  const title = pageData?.mission.title ?? "ミッションが見つかりません";
+  const titleWithLineBreak = title.replace(/（/g, "\n（").replace(/\(/g, "\n(");
+
   return new ImageResponse(
     <div
       style={{
@@ -62,9 +66,10 @@ export default async function Image({ params }: { params: { id: string } }) {
           borderRadius: "15px",
           marginBottom: "20px",
           wordWrap: "break-word",
+          whiteSpace: "pre-wrap",
         }}
       >
-        {pageData?.mission.title ?? "ミッションが見つかりません"}
+        {titleWithLineBreak}
       </div>
       <div
         style={{
@@ -81,6 +86,42 @@ export default async function Image({ params }: { params: { id: string } }) {
       >
         #テクノロジーで誰も取り残さない日本へ
       </div>
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          bottom: "100px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "baseline" }}>
+          <div
+            style={{
+              bottom: "48px",
+              fontFamily: "Noto Sans JP",
+              fontSize: "72px",
+              color: "#059669",
+              textAlign: "center",
+              lineHeight: "1",
+            }}
+          >
+            {pageData?.totalAchievementCount.toLocaleString() ?? 0}
+          </div>
+          <div
+            style={{
+              marginLeft: "8px",
+              bottom: "48px",
+              fontFamily: "Noto Sans JP",
+              fontSize: "32px",
+              color: "black",
+              textAlign: "center",
+            }}
+          >
+            件のアクションが達成されました！
+          </div>
+        </div>
+      </div>
     </div>,
     {
       ...size,
@@ -89,7 +130,7 @@ export default async function Image({ params }: { params: { id: string } }) {
           name: "Noto Sans JP",
           data: await loadGoogleFont(
             "Noto+Sans+JP",
-            `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ`,
+            `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ ${pageData?.totalAchievementCount ?? 0}件のアクションが達成されました！`,
           ),
           weight: 700,
           style: "normal",

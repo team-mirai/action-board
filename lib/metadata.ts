@@ -12,7 +12,7 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 // 基本設定
 // ==========================================
 
-const config = {
+export const config = {
   title: "チームみらい アクションボード",
   description:
     "政治活動をもっと身近に。政治活動をゲーム感覚で楽しめる、チームみらいのアクションボード。",
