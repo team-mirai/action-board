@@ -32,5 +32,5 @@ returns table (
     ranked_users.updated_at
   from ranked_users
   order by ranked_users.rank
-  limit limit_count
+  limit get_prefecture_ranking.limit_count
 $$;

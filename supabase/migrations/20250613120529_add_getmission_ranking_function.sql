@@ -1,4 +1,4 @@
-create or replace function get_mission_ranking(mission_id uuid, limit_count Integer default 10)
+create or replace function get_mission_ranking(mission_id uuid, limit_count integer default 10)
 returns table (
   user_id uuid,
   user_name text,
@@ -6,8 +6,8 @@ returns table (
   level int,
   xp int,
   updated_at timestamp,
-  clear_count int,
-  rank int
+  clear_count bigint,
+  rank bigint
 )
 language sql
 as $$
