@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { getMissionPageData } from "@/app/missions/[id]/_lib/data";
+import { sanitizeImageUrl } from "@/lib/metadata";
 import { ImageResponse } from "next/og";
-import { getMissionPageData } from "./_lib/data";
+import type { NextRequest } from "next/server";
 
 export const runtime = "nodejs";
 export const alt = "OGP画像";
@@ -28,8 +30,44 @@ async function loadGoogleFont(font: string, text: string) {
   throw new Error("failed to load font data");
 }
 
-export default async function Image({ params }: { params: { id: string } }) {
-  const pageData = await getMissionPageData(params.id);
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  if (typeof id !== "string") {
+    return new Response("Invalid mission ID", { status: 400 });
+  }
+
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+  const pageData = await getMissionPageData(id);
+  if (!pageData) {
+    return new Response("Mission not found", { status: 404 });
+  }
+
+  const searchParams = request.nextUrl.searchParams;
+  const type = searchParams.get("type");
+
+  if (type === "complete") {
+    let ogpImageUrl: string | null = null;
+    ogpImageUrl = pageData?.mission?.ogp_image_url || null;
+    if (!ogpImageUrl) {
+      return new Response("OGP image not found", { status: 404 });
+    }
+    const sanitizedImageUrl = sanitizeImageUrl(ogpImageUrl);
+    if (!sanitizedImageUrl) {
+      return new Response("Invalid OGP image URL", { status: 400 });
+    }
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: sanitizedImageUrl,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  }
 
   // ベース画像を読み込み
   const baseImagePath = join(process.cwd(), "public/img/ogo_mission_base.png");
