@@ -9,20 +9,64 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { generateRootMetadata } from "@/lib/metadata";
+import {
+  config,
+  createDefaultMetadata,
+  defaultUrl,
+  notoSansJP,
+} from "@/lib/metadata";
 import { getUserMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
 
 type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
   params: Promise<{ id: string }>;
 };
 
-// メタデータ生成を外部関数に委譲
-export const generateMetadata = generateRootMetadata;
+export async function generateMetadata({
+  searchParams,
+  params,
+}: Props): Promise<Metadata> {
+  const { id } = await params;
+  const pageData = await getMissionPageData(id);
+  if (!pageData) {
+    return createDefaultMetadata();
+  }
+  const { mission } = pageData;
+  let ogpImageUrl = `${defaultUrl}/api/missions/${id}/og`;
+
+  // searchParamsをogpImageUrlに追加
+  const searchParamsResolved = await searchParams;
+  ogpImageUrl =
+    searchParamsResolved.type === "complete"
+      ? `${ogpImageUrl}?type=complete`
+      : ogpImageUrl;
+
+  return {
+    title: `${mission.title} | ${config.title}`,
+    description: config.description,
+    openGraph: {
+      title: config.title,
+      description: config.description,
+      images: [ogpImageUrl],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: config.title,
+      description: config.description,
+      images: [ogpImageUrl],
+    },
+    icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
+  };
+}
 
 export default async function MissionPage({ params }: Props) {
   const supabase = await createServerClient();
