@@ -47,8 +47,6 @@ export async function generateMetadata({
       ? `${ogpImageUrl}?type=complete`
       : ogpImageUrl;
 
-  console.log("OGP Image URL:", ogpImageUrl);
-
   return {
     title: `${mission.title} | ${config.title}`,
     description: config.description,
