@@ -23,7 +23,7 @@ export function LevelUpDialog({
         style={{ width: "90vw", maxWidth: "360px" }}
       >
         <DialogTitle className="text-2xl font-bold text-gray-800 text-center">
-          ボランティアレベルが <br /> アップしました！
+          サポーターレベルが <br /> アップしました！
         </DialogTitle>
         <div className="flex flex-col items-center">
           <div className="relative mt-3 mb-8">
