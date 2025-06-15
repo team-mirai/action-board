@@ -1,19 +1,21 @@
-import { LevelBadge } from "@/components/ranking/ranking-level-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import UserAvatar from "@/components/user-avatar";
-import type { UserRanking } from "@/lib/services/ranking";
+import type { UserMissionRanking } from "@/lib/services/missionsRanking";
+import type { Tables } from "@/lib/types/supabase";
 import {
   formatUserDisplayName,
   formatUserPrefecture,
 } from "@/lib/utils/ranking-utils";
 import { User } from "lucide-react";
+import { Badge } from "../ui/badge";
 
 interface CurrentUserCardProps {
-  currentUser: UserRanking | null;
+  currentUser: UserMissionRanking | null;
+  mission: Tables<"missions">;
 }
 
-export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
+export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
   currentUser,
+  mission,
 }) => {
   if (!currentUser) {
     return null;
@@ -23,8 +25,6 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
     rank: currentUser.rank || 0,
     name: formatUserDisplayName(currentUser.name),
     address_prefecture: formatUserPrefecture(currentUser.address_prefecture),
-    level: currentUser.level || 0,
-    xp: currentUser.xp || 0,
   };
   return (
     <div className="max-w-6xl mx-auto">
@@ -50,13 +50,17 @@ export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 mb-1">
-                <LevelBadge level={displayUser.level} />
-                <div className="text-lg font-bold">
-                  {displayUser.xp.toLocaleString()}pt
-                </div>
-              </div>
+            <div className="flex items-center gap-3">
+              <Badge
+                className={
+                  "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
+                }
+              >
+                {(displayUser?.user_achievement_count ?? 0).toLocaleString()}回
+              </Badge>
+              <span className="font-bold text-lg">
+                {(displayUser.total_points ?? 0).toLocaleString()}pt
+              </span>
             </div>
           </div>
         </CardContent>

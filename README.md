@@ -182,7 +182,7 @@ supabase migration up
 migrationファイルの追加や編集で、テーブルの追加や更新を行った場合は、型定義を生成してください。
 
 ```
-npx supabase gen types typescript --local > utils/types/supabase.ts
+npx supabase gen types typescript --local > lib/types/supabase.ts
 ```
 
 ## E2Eテスト
@@ -339,3 +339,8 @@ npm run storybook
 
    * [Staging Variables](https://app.terraform.io/app/gamification/workspaces/action-board-staging/variables)
    * [Production Variables](https://app.terraform.io/app/gamification/workspaces/action-board-production/variables)
+
+---
+
+# for CodeRabbit
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/team-mirai-volunteer/action-board?utm_source=oss&utm_medium=github&utm_campaign=team-mirai-volunteer%2Faction-board&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)

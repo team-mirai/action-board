@@ -31,6 +31,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env*.test
 .env
 
 # vercel
@@ -51,3 +52,5 @@ playwright-report/
 copilot-instructions.md
 # Sentry Config File
 .env.sentry-build-plugin
+
+.cursor

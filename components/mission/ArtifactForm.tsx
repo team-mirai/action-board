@@ -61,8 +61,10 @@ export function ArtifactForm({
         {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactLink">{mission.artifact_label}</Label>
-            <span className="artifactText">(必須)</span>
+            <Label htmlFor="artifactLink">
+              {mission.artifact_label}
+              <span className="artifactText"> (必須)</span>
+            </Label>
             <Input
               type="url"
               name="artifactLink"
@@ -79,7 +81,7 @@ export function ArtifactForm({
           <div className="space-y-2">
             <Label htmlFor="artifactText">
               {mission.artifact_label}
-              <span className="artifactText">(必須)</span>
+              <span className="artifactText"> (必須)</span>
             </Label>
             <Input
               name="artifactText"
@@ -115,7 +117,8 @@ export function ArtifactForm({
 
             <div className="space-y-2">
               <Label htmlFor="locationText">
-                ポスティング場所 <span className="text-red-500">*</span>
+                ポスティング場所の郵便番号（ハイフンなし）
+                <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="text"
@@ -124,10 +127,10 @@ export function ArtifactForm({
                 required
                 maxLength={100}
                 disabled={disabled}
-                placeholder="例：東京都世田谷区代田1丁目"
+                placeholder="例：1540017"
               />
               <p className="text-xs text-gray-500">
-                市区町村レベルまでの住所を入力してください
+                対象エリアの郵便番号をご入力ください
               </p>
             </div>
           </div>

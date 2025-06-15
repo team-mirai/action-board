@@ -1,19 +1,20 @@
-import { LevelBadge } from "@/components/ranking/ranking-level-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import UserAvatar from "@/components/user-avatar";
 import type { UserRanking } from "@/lib/services/ranking";
 import {
   formatUserDisplayName,
   formatUserPrefecture,
 } from "@/lib/utils/ranking-utils";
 import { User } from "lucide-react";
+import { LevelBadge } from "./ranking-level-badge";
 
 interface CurrentUserCardProps {
   currentUser: UserRanking | null;
+  prefecture: string;
 }
 
-export const CurrentUserCard: React.FC<CurrentUserCardProps> = ({
+export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
   currentUser,
+  prefecture,
 }) => {
   if (!currentUser) {
     return null;

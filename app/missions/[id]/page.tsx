@@ -1,4 +1,6 @@
 import { MissionDetails } from "@/components/mission/MissionDetails";
+import { CurrentUserCardMission } from "@/components/ranking/current-user-card-mission";
+import RankingMission from "@/components/ranking/ranking-mission";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,19 +9,64 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { generateRootMetadata } from "@/lib/metadata";
+import {
+  config,
+  createDefaultMetadata,
+  defaultUrl,
+  notoSansJP,
+} from "@/lib/metadata";
+import { getUserMissionRanking } from "@/lib/services/missionsRanking";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { LogIn, Shield } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MissionWithSubmissionHistory } from "./_components/MissionWithSubmissionHistory";
 import { getMissionPageData } from "./_lib/data";
 
 type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
   params: Promise<{ id: string }>;
 };
 
-// メタデータ生成を外部関数に委譲
-export const generateMetadata = generateRootMetadata;
+export async function generateMetadata({
+  searchParams,
+  params,
+}: Props): Promise<Metadata> {
+  const { id } = await params;
+  const pageData = await getMissionPageData(id);
+  if (!pageData) {
+    return createDefaultMetadata();
+  }
+  const { mission } = pageData;
+  let ogpImageUrl = `${defaultUrl}/api/missions/${id}/og`;
+
+  // searchParamsをogpImageUrlに追加
+  const searchParamsResolved = await searchParams;
+  ogpImageUrl =
+    searchParamsResolved.type === "complete"
+      ? `${ogpImageUrl}?type=complete`
+      : ogpImageUrl;
+
+  return {
+    title: `${mission.title} | ${config.title}`,
+    description: config.description,
+    openGraph: {
+      title: config.title,
+      description: config.description,
+      images: [ogpImageUrl],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: config.title,
+      description: config.description,
+      images: [ogpImageUrl],
+    },
+    icons: config.icons,
+    other: {
+      "font-family": notoSansJP.style.fontFamily,
+    },
+  };
+}
 
 export default async function MissionPage({ params }: Props) {
   const supabase = await createServerClient();
@@ -34,13 +81,12 @@ export default async function MissionPage({ params }: Props) {
     return <div className="p-4">ミッションが見つかりません。</div>;
   }
 
-  const {
-    mission,
-    userAchievements,
-    submissions,
-    userAchievementCount,
-    referralCode,
-  } = pageData;
+  const { mission, submissions, userAchievementCount, referralCode } = pageData;
+
+  // ユーザーのミッション別ランキング情報を取得
+  const userWithMissionRanking = user
+    ? await getUserMissionRanking(id, user.id)
+    : null;
 
   return (
     <div className="container mx-auto max-w-4xl p-4">
@@ -48,14 +94,34 @@ export default async function MissionPage({ params }: Props) {
         <MissionDetails mission={mission} />
 
         {user ? (
-          <MissionWithSubmissionHistory
-            mission={mission}
-            authUser={user}
-            referralCode={referralCode}
-            initialUserAchievementCount={userAchievementCount}
-            initialSubmissions={submissions}
-            missionId={id}
-          />
+          <>
+            <MissionWithSubmissionHistory
+              mission={mission}
+              authUser={user}
+              referralCode={referralCode}
+              initialUserAchievementCount={userAchievementCount}
+              initialSubmissions={submissions}
+              missionId={id}
+            />
+            {/* ミッションの達成回数が無制限の場合のみ、ユーザーのランキングを表示 */}
+            {mission.max_achievement_count === null && (
+              <>
+                <div className="mt-6">
+                  <CurrentUserCardMission
+                    currentUser={userWithMissionRanking}
+                    mission={mission}
+                  />
+                </div>
+                <div className="mt-6">
+                  <RankingMission
+                    limit={10}
+                    showDetailedInfo={true}
+                    mission={mission}
+                  />
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <Card className="border-dashed border-2 border-muted-foreground/25">
             <CardHeader className="text-center">
