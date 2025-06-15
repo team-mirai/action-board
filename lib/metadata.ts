@@ -2,7 +2,6 @@
 // 【最小限版】lib/metadata.ts - 必要最低限の機能のみ
 // ==========================================
 
-import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 
@@ -85,83 +84,14 @@ export function createDefaultMetadata(): Metadata {
   };
 }
 
-// 動的OGPメタデータ
-export function createOgpMetadata(imageUrl: string): Metadata {
-  const sanitizedImageUrl = sanitizeImageUrl(imageUrl);
-
-  if (!sanitizedImageUrl) {
-    return createDefaultMetadata();
-  }
-
-  return {
-    title: config.title,
-    description: config.description,
-    openGraph: {
-      title: config.title,
-      description: config.description,
-      images: [sanitizedImageUrl],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: config.title,
-      description: config.description,
-      images: [sanitizedImageUrl],
-    },
-    icons: config.icons,
-    other: {
-      "font-family": notoSansJP.style.fontFamily,
-    },
-  };
-}
-
 // ==========================================
 // Next.js generateMetadata関数
 // ==========================================
 
 export async function generateRootMetadata({
-  searchParams,
   params,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
   params?: Promise<{ [key: string]: string | undefined }>;
 }): Promise<Metadata> {
-  try {
-    const supabase = await createClient();
-    const searchParamsResolved = await searchParams;
-    const paramsResolved = await params;
-
-    // searchParamsがnullまたはundefinedの場合の安全な処理
-    if (!searchParamsResolved) {
-      return createDefaultMetadata();
-    }
-
-    let ogpImageUrl: string | null = null;
-
-    // type=completeの場合、paramsからミッションIDを取得してogp_image_urlを取得
-    if (searchParamsResolved.type === "complete" && paramsResolved?.id) {
-      const missionId = paramsResolved.id;
-      const { data: mission } = await supabase
-        .from("missions")
-        .select("ogp_image_url")
-        .eq("id", missionId)
-        .single();
-
-      ogpImageUrl = mission?.ogp_image_url || null;
-    }
-
-    if (ogpImageUrl) {
-      const isValid = isValidImageUrl(ogpImageUrl);
-      const sanitized = sanitizeImageUrl(ogpImageUrl);
-      return createOgpMetadata(ogpImageUrl);
-    }
-    return createDefaultMetadata();
-  } catch (error) {
-    // searchParamsの取得に失敗した場合はデフォルトを返す
-    console.error("generateRootMetadata error:", error);
-    console.error(
-      "Error stack:",
-      error instanceof Error ? error.stack : "No stack",
-    );
-    return createDefaultMetadata();
-  }
+  return createDefaultMetadata();
 }

@@ -2,32 +2,35 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { getMissionPageData } from "@/app/missions/[id]/_lib/data";
 import { sanitizeImageUrl } from "@/lib/metadata";
+import { Noto_Sans_JP } from "next/font/google";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
-export const runtime = "nodejs";
-export const alt = "OGP画像";
-export const size = {
+const size = {
   width: 1200,
   height: 630,
 };
-export const contentType = "image/png";
 
 async function loadGoogleFont(font: string, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@700&text=${encodeURIComponent(text)}`;
-  const css = await (await fetch(url)).text();
-  const resource = css.match(
-    /src:\s*url\(([^)]+)\)\s*format\('(opentype|truetype|woff2)'\)/,
-  );
+  try {
+    const url = `https://fonts.googleapis.com/css2?family=${font}:wght@700&text=${encodeURIComponent(text)}`;
+    const css = await (await fetch(url)).text();
+    const resource = css.match(
+      /src:\s*url\(([^)]+)\)\s*format\('(opentype|truetype|woff2)'\)/,
+    );
 
-  if (resource) {
-    const response = await fetch(resource[1]);
-    if (response.status === 200) {
-      return await response.arrayBuffer();
+    if (resource) {
+      const response = await fetch(resource[1]);
+      if (response.status === 200) {
+        return await response.arrayBuffer();
+      }
     }
+    throw new Error("Font resource not found");
+  } catch (error) {
+    console.error("Font loading failed:", error);
+    // フォールバック: システムフォントを使用
+    return null;
   }
-
-  throw new Error("failed to load font data");
 }
 
 export async function GET(
@@ -69,14 +72,28 @@ export async function GET(
     });
   }
 
-  // ベース画像を読み込み
-  const baseImagePath = join(process.cwd(), "public/img/ogo_mission_base.png");
-  const baseImageBuffer = await readFile(baseImagePath);
-  const baseImageBase64 = `data:image/png;base64,${baseImageBuffer.toString("base64")}`;
+  let baseImageBase64 = "";
+  try {
+    // ベース画像を読み込み
+    const baseImagePath = join(
+      process.cwd(),
+      "public/img/ogo_mission_base.png",
+    );
+    const baseImageBuffer = await readFile(baseImagePath);
+    baseImageBase64 = `data:image/png;base64,${baseImageBuffer.toString("base64")}`;
+  } catch (error) {
+    console.error("Base image loading failed:", error);
+    return new Response("Base image not found", { status: 500 });
+  }
 
   // titleに()や（）が含まれる場合は(や（の手前で改行する
   const title = pageData?.mission.title ?? "ミッションが見つかりません";
   const titleWithLineBreak = title.replace(/（/g, "\n（").replace(/\(/g, "\n(");
+
+  const fontData = await loadGoogleFont(
+    "Noto+Sans+JP",
+    `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ ${pageData?.totalAchievementCount ?? 0}件のアクションが達成されました！`,
+  );
 
   return new ImageResponse(
     <div
@@ -159,17 +176,19 @@ export async function GET(
     </div>,
     {
       ...size,
-      fonts: [
-        {
-          name: "Noto Sans JP",
-          data: await loadGoogleFont(
-            "Noto+Sans+JP",
-            `${pageData?.mission.title ?? ""} #テクノロジーで誰も取り残さない日本へ ${pageData?.totalAchievementCount ?? 0}件のアクションが達成されました！`,
-          ),
-          weight: 700,
-          style: "normal",
-        },
-      ],
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+      },
+      fonts: fontData
+        ? [
+            {
+              name: "Noto Sans JP",
+              data: fontData,
+              weight: 700,
+              style: "normal",
+            },
+          ]
+        : [],
     },
   );
 }
