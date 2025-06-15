@@ -19,7 +19,7 @@ VALUES(
     'Xでチームみらいの投稿をリポストしよう',
     '/img/mission_fallback.svg',
     'Xでチームみらいの投稿をリポストしてみましょう！チームみらいが目指す社会を、もっと多くの人へ届けませんか？',
-    '2',
+    2,
     '2025-06-15',
     'LINK',
     null,
@@ -27,7 +27,7 @@ VALUES(
     '2025-06-15 01:57:03+00',
     'https://tibsocpjqvxxipszbwui.supabase.co/storage/v1/object/public/ogp//19_x_repost.png',
     'リポストした投稿のURL',
-    'false',
-    'false'
+    false,
+    false
 )
 ;
