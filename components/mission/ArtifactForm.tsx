@@ -61,8 +61,10 @@ export function ArtifactForm({
         {/* リンク入力フォーム */}
         {artifactConfig.key === ARTIFACT_TYPES.LINK.key && (
           <div className="space-y-2">
-            <Label htmlFor="artifactLink">{mission.artifact_label}</Label>
-            <span className="artifactText">(必須)</span>
+            <Label htmlFor="artifactLink">
+              {mission.artifact_label}
+              <span className="artifactText"> (必須)</span>
+            </Label>
             <Input
               type="url"
               name="artifactLink"
@@ -79,7 +81,7 @@ export function ArtifactForm({
           <div className="space-y-2">
             <Label htmlFor="artifactText">
               {mission.artifact_label}
-              <span className="artifactText">(必須)</span>
+              <span className="artifactText"> (必須)</span>
             </Label>
             <Input
               name="artifactText"

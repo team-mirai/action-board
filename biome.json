@@ -11,7 +11,8 @@
       "**/.next/**",
       "**/node_modules/**",
       "**/supabase/.temp/**",
-      "**/playwright-report/**"
+      "**/playwright-report/**",
+      "**/coverage/**"
     ]
   },
   "formatter": {
