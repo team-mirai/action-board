@@ -28,13 +28,12 @@ export const CurrentUserCardPrefecture: React.FC<CurrentUserCardProps> = ({
     xp: currentUser.xp || 0,
   };
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto">
       <Card className="border-teal-200 bg-teal-50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="w-5 h-5 text-teal-600" />
             あなたのランク
-            <span className="ml-2 text-sm">{prefecture}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
