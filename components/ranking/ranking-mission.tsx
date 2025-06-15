@@ -24,12 +24,11 @@ export default async function RankingMission({
   const rankings = await getMissionRanking(mission.id, limit);
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto">
       <div className="flex flex-col gap-6">
         <div className="">
-          <h2 className="text-2xl md:text-4xl text-gray-900 mb-2 text-center">
-            🏅ミッション別トップ{limit}
-            {mission && <span className="ml-2 text-lg">{mission.title}</span>}
+          <h2 className="text-xl md:text-4xl text-gray-900 mb-2 text-center">
+            🏅「{mission.title}」トップ{limit}
           </h2>
         </div>
 

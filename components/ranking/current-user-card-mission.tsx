@@ -6,6 +6,7 @@ import {
   formatUserPrefecture,
 } from "@/lib/utils/ranking-utils";
 import { User } from "lucide-react";
+import { Badge } from "../ui/badge";
 
 interface CurrentUserCardProps {
   currentUser: UserMissionRanking | null;
@@ -26,13 +27,12 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
     address_prefecture: formatUserPrefecture(currentUser.address_prefecture),
   };
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto">
       <Card className="border-teal-200 bg-teal-50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="w-5 h-5 text-teal-600" />
             あなたのランク
-            <span className="ml-2 text-sm">{mission.title}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -50,10 +50,17 @@ export const CurrentUserCardMission: React.FC<CurrentUserCardProps> = ({
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="font-bold text-lg">
-                {(displayUser.user_achievement_count ?? 0).toLocaleString()}回
-              </div>
+            <div className="flex items-center gap-3">
+              <Badge
+                className={
+                  "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
+                }
+              >
+                {(displayUser?.user_achievement_count ?? 0).toLocaleString()}回
+              </Badge>
+              <span className="font-bold text-lg">
+                {(displayUser.total_points ?? 0).toLocaleString()}pt
+              </span>
             </div>
           </div>
         </CardContent>

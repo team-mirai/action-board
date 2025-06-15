@@ -23,12 +23,11 @@ export default async function RankingPrefecture({
   const rankings = await getPrefecturesRanking(prefecture, limit);
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto">
       <div className="flex flex-col gap-6">
         <div className="">
           <h2 className="text-2xl md:text-4xl text-gray-900 mb-2 text-center">
-            🏅都道府県別トップ{limit}
-            {prefecture && <span className="ml-2 text-lg">{prefecture}</span>}
+            🏅{prefecture}トップ{limit}
           </h2>
         </div>
 

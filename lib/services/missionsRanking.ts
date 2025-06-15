@@ -5,6 +5,7 @@ import type { UserRanking } from "./ranking";
 
 export interface UserMissionRanking extends UserRanking {
   user_achievement_count: number | null;
+  total_points: number | null;
 }
 
 export async function getMissionRanking(
@@ -46,6 +47,7 @@ export async function getMissionRanking(
           xp: ranking.xp,
           updated_at: ranking.updated_at,
           user_achievement_count: ranking.clear_count,
+          total_points: ranking.total_points,
         }) as UserMissionRanking,
     );
   } catch (error) {
@@ -90,6 +92,7 @@ export async function getUserMissionRanking(
       xp: ranking.xp,
       updated_at: ranking.updated_at,
       user_achievement_count: ranking.clear_count,
+      total_points: ranking.total_points,
     } as UserMissionRanking;
   } catch (error) {
     console.error("User mission ranking service error:", error);

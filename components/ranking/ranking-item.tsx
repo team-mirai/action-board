@@ -66,17 +66,20 @@ export function RankingItem({
         </div>
       </div>
       <div className="flex items-center gap-3">
-        {/* ミッション別ランキングの場合は達成回数を表示 */}
+        {/* ミッション別ランキングの場合はポイントと達成回数を表示 */}
         {mission ? (
           <>
-            <div className="text-right">
-              <div className="font-bold text-lg">
-                {(
-                  userWithMission?.user_achievement_count ?? 0
-                ).toLocaleString()}
-                回
-              </div>
-            </div>
+            <Badge
+              className={
+                "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full"
+              }
+            >
+              {(userWithMission?.user_achievement_count ?? 0).toLocaleString()}
+              回
+            </Badge>
+            <span className="font-bold text-lg">
+              {(userWithMission?.total_points ?? 0).toLocaleString()}pt
+            </span>
           </>
         ) : (
           <>
