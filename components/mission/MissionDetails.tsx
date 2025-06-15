@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
@@ -35,11 +33,8 @@ export function MissionDetails({ mission }: MissionDetailsProps) {
       <CardContent>
         <div
           className="text-muted-foreground leading-relaxed whitespace-pre-wrap mission-content"
-          ref={(el) => {
-            if (el && mission.content) {
-              el.innerHTML = mission.content;
-            }
-          }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+          dangerouslySetInnerHTML={{ __html: mission.content || "" }}
         />
       </CardContent>
     </Card>
